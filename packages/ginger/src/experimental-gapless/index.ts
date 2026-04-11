@@ -9,7 +9,9 @@ export type ExperimentalGaplessState = {
 
 /**
  * Experimental-only helper surface.
- * This does not alter Ginger playback behavior.
+ *
+ * @deprecated This export is intentionally non-production and currently reports capabilities only.
+ * It does not alter Ginger playback behavior.
  */
 export function useExperimentalGapless(): ExperimentalGaplessState {
   const { tracks } = useGingerPlayback();

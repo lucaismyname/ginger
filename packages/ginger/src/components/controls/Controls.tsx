@@ -8,7 +8,11 @@ import type {
 } from "react";
 import { useGingerLocale } from "../../context/GingerLocaleContext";
 import { useGingerMedia, useGingerPlayback } from "../../context/GingerSplitContexts";
-import { usePlayPauseBinding, useSeekBarBinding, useVolumeSlider } from "../../hooks/useControlBindings";
+import {
+  usePlayPauseBinding,
+  useSeekBarBinding,
+  useVolumeSlider,
+} from "../../hooks/useControlBindings";
 
 export type PlayPauseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Optional labels; still headless—defaults are text for a11y */
@@ -41,7 +45,10 @@ export function PlayPause({
       {...rest}
       type={type}
       aria-label={b.ariaLabel}
-      onClick={(e) => { b.toggle(); onClick?.(e); }}
+      onClick={(e) => {
+        b.toggle();
+        onClick?.(e);
+      }}
     >
       {b.isPaused ? playLabel : pauseLabel}
     </button>
@@ -50,14 +57,24 @@ export function PlayPause({
 
 PlayPause.displayName = "Ginger.Control.PlayPause";
 
-export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ariaLabel?: string;
+};
 
-export function Repeat({ type = "button", onClick, ...rest }: RepeatProps) {
+export function Repeat({ type = "button", ariaLabel, onClick, ...rest }: RepeatProps) {
   const { repeatMode, cycleRepeat } = useGingerPlayback();
   const locale = useGingerLocale();
   const label = locale.repeat[repeatMode];
   return (
-    <button {...rest} type={type} aria-label={label} onClick={(e) => { cycleRepeat(); onClick?.(e); }}>
+    <button
+      {...rest}
+      type={type}
+      aria-label={ariaLabel ?? label}
+      onClick={(e) => {
+        cycleRepeat();
+        onClick?.(e);
+      }}
+    >
       {label}
     </button>
   );
@@ -65,32 +82,72 @@ export function Repeat({ type = "button", onClick, ...rest }: RepeatProps) {
 
 Repeat.displayName = "Ginger.Control.Repeat";
 
-export type NextProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Next({ type = "button", children = "Next", onClick, ...rest }: NextProps) {
+export type NextProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ariaLabel?: string;
+};
+export function Next({
+  type = "button",
+  children = "Next",
+  ariaLabel,
+  onClick,
+  ...rest
+}: NextProps) {
   const { next } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
-    <button {...rest} type={type} aria-label={locale.nextTrack} onClick={(e) => { next(); onClick?.(e); }}>
+    <button
+      {...rest}
+      type={type}
+      aria-label={ariaLabel ?? locale.nextTrack}
+      onClick={(e) => {
+        next();
+        onClick?.(e);
+      }}
+    >
       {children}
     </button>
   );
 }
 Next.displayName = "Ginger.Control.Next";
 
-export type PreviousProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Previous({ type = "button", children = "Previous", onClick, ...rest }: PreviousProps) {
+export type PreviousProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ariaLabel?: string;
+};
+export function Previous({
+  type = "button",
+  children = "Previous",
+  ariaLabel,
+  onClick,
+  ...rest
+}: PreviousProps) {
   const { prev } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
-    <button {...rest} type={type} aria-label={locale.previousTrack} onClick={(e) => { prev(); onClick?.(e); }}>
+    <button
+      {...rest}
+      type={type}
+      aria-label={ariaLabel ?? locale.previousTrack}
+      onClick={(e) => {
+        prev();
+        onClick?.(e);
+      }}
+    >
       {children}
     </button>
   );
 }
 Previous.displayName = "Ginger.Control.Previous";
 
-export type ShuffleProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Shuffle({ type = "button", children = "Shuffle", onClick, ...rest }: ShuffleProps) {
+export type ShuffleProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ariaLabel?: string;
+};
+export function Shuffle({
+  type = "button",
+  children = "Shuffle",
+  ariaLabel,
+  onClick,
+  ...rest
+}: ShuffleProps) {
   const { isShuffled, toggleShuffle } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
@@ -98,8 +155,11 @@ export function Shuffle({ type = "button", children = "Shuffle", onClick, ...res
       {...rest}
       type={type}
       aria-pressed={isShuffled}
-      aria-label={locale.shuffle}
-      onClick={(e) => { toggleShuffle(); onClick?.(e); }}
+      aria-label={ariaLabel ?? locale.shuffle}
+      onClick={(e) => {
+        toggleShuffle();
+        onClick?.(e);
+      }}
     >
       {children}
     </button>
@@ -113,12 +173,15 @@ export type SeekBarProps = Omit<
 > & {
   /** Remove default width style for fully custom styling. */
   unstyled?: boolean;
+  ariaLabel?: string;
   inputStyle?: CSSProperties;
 };
 
-export function SeekBar({ inputStyle, style, unstyled = false, ...rest }: SeekBarProps) {
+export function SeekBar({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: SeekBarProps) {
   const b = useSeekBarBinding();
-  const mergedStyle = unstyled ? { ...style, ...inputStyle } : { width: "100%", ...style, ...inputStyle };
+  const mergedStyle = unstyled
+    ? { ...style, ...inputStyle }
+    : { width: "100%", ...style, ...inputStyle };
   return (
     <input
       {...rest}
@@ -127,7 +190,7 @@ export function SeekBar({ inputStyle, style, unstyled = false, ...rest }: SeekBa
       max={b.max}
       step={b.step}
       value={b.value}
-      aria-label={b.ariaLabel}
+      aria-label={ariaLabel ?? b.ariaLabel}
       aria-valuetext={b.ariaValueText}
       onInput={b.onSeekInput}
       onChange={b.onSeekChange}
@@ -144,12 +207,15 @@ export type VolumeProps = Omit<
 > & {
   /** Remove default width style for fully custom styling. */
   unstyled?: boolean;
+  ariaLabel?: string;
   inputStyle?: CSSProperties;
 };
 
-export function Volume({ inputStyle, style, unstyled = false, ...rest }: VolumeProps) {
+export function Volume({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: VolumeProps) {
   const b = useVolumeSlider();
-  const mergedStyle = unstyled ? { ...style, ...inputStyle } : { width: "100%", ...style, ...inputStyle };
+  const mergedStyle = unstyled
+    ? { ...style, ...inputStyle }
+    : { width: "100%", ...style, ...inputStyle };
   return (
     <input
       {...rest}
@@ -158,7 +224,7 @@ export function Volume({ inputStyle, style, unstyled = false, ...rest }: VolumeP
       max={b.max}
       step={b.step}
       value={b.value}
-      aria-label={b.ariaLabel}
+      aria-label={ariaLabel ?? b.ariaLabel}
       aria-valuetext={b.ariaValueText}
       onInput={b.onVolumeInput}
       onChange={b.onVolumeChange}
@@ -170,11 +236,13 @@ export function Volume({ inputStyle, style, unstyled = false, ...rest }: VolumeP
 Volume.displayName = "Ginger.Control.Volume";
 
 export type MuteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ariaLabel?: string;
   muteLabel?: ReactNode;
   unmuteLabel?: ReactNode;
 };
 
 export function Mute({
+  ariaLabel,
   muteLabel,
   unmuteLabel,
   type = "button",
@@ -190,8 +258,11 @@ export function Mute({
       {...rest}
       type={type}
       aria-pressed={muted}
-      aria-label={muted ? locale.unmute : locale.mute}
-      onClick={(e) => { toggleMute(); onClick?.(e); }}
+      aria-label={ariaLabel ?? (muted ? locale.unmute : locale.mute)}
+      onClick={(e) => {
+        toggleMute();
+        onClick?.(e);
+      }}
     >
       {muted ? u : m}
     </button>
@@ -202,12 +273,21 @@ Mute.displayName = "Ginger.Control.Mute";
 
 const defaultRates = [0.5, 0.75, 1, 1.25, 1.5, 2] as const;
 
-export type PlaybackRateProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, "value" | "onChange"> & {
+export type PlaybackRateProps = Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  "value" | "onChange"
+> & {
   /** Playback speed options (default: 0.5 … 2) */
   rates?: readonly number[];
+  ariaLabel?: string;
 };
 
-export function PlaybackRate({ rates = defaultRates, style, ...rest }: PlaybackRateProps) {
+export function PlaybackRate({
+  rates = defaultRates,
+  style,
+  ariaLabel,
+  ...rest
+}: PlaybackRateProps) {
   const { playbackRate, setPlaybackRate } = useGingerMedia();
   const locale = useGingerLocale();
   const options = useMemo(
@@ -217,7 +297,7 @@ export function PlaybackRate({ rates = defaultRates, style, ...rest }: PlaybackR
   return (
     <select
       {...rest}
-      aria-label={locale.playbackSpeed}
+      aria-label={ariaLabel ?? locale.playbackSpeed}
       value={String(playbackRate)}
       style={style}
       onChange={(e) => setPlaybackRate(Number(e.currentTarget.value))}

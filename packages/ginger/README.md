@@ -1,3 +1,79 @@
+# @lucaismyname/ginger
+
+Headless React audio player primitives for building custom music and podcast UIs.
+
+## Install
+
+```bash
+npm install @lucaismyname/ginger
+```
+
+Peer dependencies:
+
+- `react >= 18`
+- `react-dom >= 18`
+
+## Quick Start
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+
+const tracks = [{ id: "a", title: "Track A", fileUrl: "/audio/a.mp3" }];
+
+export function Player() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <Ginger.Control.Previous />
+      <Ginger.Control.Next />
+      <Ginger.Control.SeekBar />
+      <Ginger.Control.Volume />
+      <Ginger.Current.Title fallback="No track" />
+    </Ginger.Provider>
+  );
+}
+```
+
+## Documentation
+
+- Getting started: [`docs/getting-started.md`](./docs/getting-started.md)
+- Testing guide: [`docs/guides/testing.md`](./docs/guides/testing.md)
+- Recipes: [`docs/guides/recipes.md`](./docs/guides/recipes.md)
+- Accessibility checklist: [`docs/guides/accessibility.md`](./docs/guides/accessibility.md)
+- Streaming adapters: [`docs/guides/streaming-adapters.md`](./docs/guides/streaming-adapters.md)
+- Components reference: [`docs/reference/components.md`](./docs/reference/components.md)
+- Hooks reference: [`docs/reference/hooks.md`](./docs/reference/hooks.md)
+- Subpath exports: [`docs/reference/subpaths.md`](./docs/reference/subpaths.md)
+- Generated API docs: [`docs/api/index.html`](./docs/api/index.html)
+
+## Subpath Exports
+
+- `@lucaismyname/ginger/client`
+- `@lucaismyname/ginger/testing`
+- `@lucaismyname/ginger/waveform`
+- `@lucaismyname/ginger/experimental-gapless`
+
+### Experimental Notice
+
+`@lucaismyname/ginger/experimental-gapless` is intentionally non-production.
+It currently provides capability metadata only and does not alter playback behavior.
+
+## Release Process
+
+- Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
+- Release note template: [`../../.github/release-template.md`](../../.github/release-template.md)
+
+Before publishing:
+
+```bash
+npm run build
+npm run test
+npm run typecheck
+npm run lint
+npm run docs:api
+```
+
 # ginger
 
 **`@lucaismyname/ginger`** is a headless React audio player built on the native **`<audio>`** element. It gives you a provider, a hidden media element, a typed state/control hook, and composable React components for transport controls, track metadata, queue metadata, and playlists.

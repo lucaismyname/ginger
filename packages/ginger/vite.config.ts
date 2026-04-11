@@ -15,9 +15,13 @@ export default defineConfig({
       exclude: [
         "**/*.test.{ts,tsx}",
         "**/testing/setup.ts",
-        "src/testing/index.tsx",
-        "src/client.ts",
       ],
+      thresholds: {
+        statements: 70,
+        branches: 60,
+        functions: 70,
+        lines: 70,
+      },
     },
   },
   build: {

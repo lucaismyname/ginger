@@ -5,6 +5,12 @@
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "build": "npm run build -w @lucaismyname/ginger",
+    "test": "npm run test -w @lucaismyname/ginger",
+    "typecheck": "npm run typecheck -w @lucaismyname/ginger",
+    "lint": "npm run lint -w @lucaismyname/ginger",
+    "lint:fix": "npm run lint:fix -w @lucaismyname/ginger",
+    "format": "npm run format -w @lucaismyname/ginger",
+    "docs:api": "npm run docs:api -w @lucaismyname/ginger",
     "dev": "npm run dev -w ginger-demo",
     "dev:landing": "npm run dev -w ginger-landing",
     "publish:lib": "npm publish -w @lucaismyname/ginger --access public"

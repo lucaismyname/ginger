@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { render } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { Ginger } from "../ginger";
 import type { Track } from "../types";
 import type { RenderGingerProviderOptions } from "./helpers";

@@ -1,6 +1,6 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A headless React audio player",
   "type": "module",
   "sideEffects": false,
@@ -44,6 +44,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check src/testing src/components/controls src/index.ts src/client.ts src/experimental-gapless",
+    "lint:fix": "biome check --write src/testing src/components/controls src/index.ts src/client.ts src/experimental-gapless",
+    "format": "biome format --write src/testing src/components/controls src/index.ts src/client.ts src/experimental-gapless",
+    "docs:api": "typedoc --options typedoc.json",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
@@ -56,7 +61,9 @@
     }
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
@@ -64,6 +71,7 @@
     "jsdom": "^29.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "typedoc": "^0.28.14",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0",

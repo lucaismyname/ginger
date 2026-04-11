@@ -1,8 +1,18 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
 import { cleanup, fireEvent, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderGinger } from "../../testing";
-import { PlayPause, Next, Previous, Shuffle, Mute, Repeat } from "./Controls";
 import type { Track } from "../../types";
+import {
+  Mute,
+  Next,
+  PlayPause,
+  PlaybackRate,
+  Previous,
+  Repeat,
+  SeekBar,
+  Shuffle,
+  Volume,
+} from "./Controls";
 
 afterEach(cleanup);
 
@@ -43,6 +53,11 @@ describe("Next", () => {
     const { container } = renderGinger(<Next onClick={spy} />, { tracks });
     fireEvent.click(within(container).getByRole("button"));
     expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it("accepts custom aria labels", () => {
+    const { container } = renderGinger(<Next ariaLabel="Skip forward" />, { tracks });
+    expect(within(container).getByRole("button", { name: "Skip forward" })).toBeTruthy();
   });
 });
 
@@ -101,5 +116,25 @@ describe("Mute", () => {
     const { container } = renderGinger(<Mute onClick={spy} />, { tracks });
     fireEvent.click(within(container).getByRole("button"));
     expect(spy).toHaveBeenCalledOnce();
+  });
+});
+
+describe("Range and select controls", () => {
+  it("supports custom aria labels for seek and volume", () => {
+    const { container } = renderGinger(
+      <>
+        <SeekBar ariaLabel="Timeline" />
+        <Volume ariaLabel="Gain" />
+      </>,
+      { tracks },
+    );
+    const view = within(container);
+    expect(view.getByRole("slider", { name: "Timeline" })).toBeTruthy();
+    expect(view.getByRole("slider", { name: "Gain" })).toBeTruthy();
+  });
+
+  it("supports custom aria labels for playback rate", () => {
+    const { container } = renderGinger(<PlaybackRate ariaLabel="Speed selector" />, { tracks });
+    expect(within(container).getByRole("combobox", { name: "Speed selector" })).toBeTruthy();
   });
 });
