@@ -1,5 +1,9 @@
 export { Ginger } from "./ginger";
 export { useGinger } from "./hooks/useGinger";
+export { useGingerLiveAnalyzer } from "./analyzer/useGingerLiveAnalyzer";
+export type { UseGingerLiveAnalyzerOptions, UseGingerLiveAnalyzerResult } from "./analyzer/useGingerLiveAnalyzer";
+export { attachLiveAnalyser, detachLiveAnalyser } from "./analyzer/liveAudioGraph";
+export type { LiveAnalyserOptions } from "./analyzer/liveAudioGraph";
 export type {
   DisplayBaseProps,
   GingerAction,

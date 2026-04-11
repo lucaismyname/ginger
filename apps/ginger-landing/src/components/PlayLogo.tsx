@@ -2,95 +2,58 @@ type PlayLogoProps = {
   className?: string;
 };
 
-/** Right-pointing triangle as 1×1 unit squares (pixel art). */
-const PLAY_PIXELS: [number, number][] = [
-  [0, 3],
-  [0, 4],
-  [1, 2],
-  [1, 3],
-  [1, 4],
-  [1, 5],
-  [2, 1],
-  [2, 2],
-  [2, 3],
-  [2, 4],
-  [2, 5],
-  [2, 6],
-  [3, 0],
-  [3, 1],
-  [3, 2],
-  [3, 3],
-  [3, 4],
-  [3, 5],
-  [3, 6],
-  [3, 7],
-  [4, 1],
-  [4, 2],
-  [4, 3],
-  [4, 4],
-  [4, 5],
-  [4, 6],
-  [5, 2],
-  [5, 3],
-  [5, 4],
-  [5, 5],
-  [6, 3],
-  [6, 4],
-];
-
-/** Single-pixel frame: 9×10 grid (play sits inset at 1,1 with 7×8 cells). */
-const FRAME_PIXELS: [number, number][] = (() => {
-  const seen = new Set<string>();
-  const cells: [number, number][] = [];
-  const add = (x: number, y: number) => {
-    const k = `${x},${y}`;
-    if (seen.has(k)) return;
-    seen.add(k);
-    cells.push([x, y]);
-  };
-  for (let x = 0; x < 9; x++) {
-    add(x, 0);
-    add(x, 9);
-  }
-  for (let y = 0; y < 10; y++) {
-    add(0, y);
-    add(8, y);
-  }
-  return cells;
-})();
-
-const PLAY_DX = 1;
-const PLAY_DY = 1;
-
+/**
+ * Wordmark / mark SVG. Uses `currentColor` so light/dark contrast comes from Tailwind `text-*` on the `<svg>`.
+ */
 export function PlayLogo({ className }: PlayLogoProps) {
   return (
     <svg
-      className={className}
-      viewBox="0 0 9 10"
+      className={[
+        "text-zinc-900 dark:text-zinc-50",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      viewBox="0 0 14 6"
       xmlns="http://www.w3.org/2000/svg"
       shapeRendering="crispEdges"
       aria-hidden
     >
-      {FRAME_PIXELS.map(([x, y]) => (
-        <rect
-          key={`f-${x}-${y}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          className="fill-zinc-400 dark:fill-zinc-600"
-        />
-      ))}
-      {PLAY_PIXELS.map(([x, y]) => (
-        <rect
-          key={`p-${x}-${y}`}
-          x={x + PLAY_DX}
-          y={y + PLAY_DY}
-          width={1}
-          height={1}
-          className="fill-ginger dark:fill-orange-400"
-        />
-      ))}
+      <path
+        d="M1 1H2V2H3V2.5H4V3.5H3V4H2V5H1V6H0V0H1V1Z"
+        fill="currentColor"
+      />
+      <rect x="6" y="1" width="1" height="1" fill="currentColor" />
+      <rect x="8" y="1" width="1" height="1" fill="currentColor" />
+      <rect x="6" y="2" width="1" height="1" fill="currentColor" />
+      <rect x="8" y="2" width="1" height="1" fill="currentColor" />
+      <rect x="6" y="3" width="1" height="1" fill="currentColor" />
+      <rect x="8" y="3" width="1" height="1" fill="currentColor" />
+      <rect x="6" y="4" width="1" height="1" fill="currentColor" />
+      <rect x="8" y="4" width="1" height="1" fill="currentColor" />
+      <rect x="6" y="5" width="1" height="1" fill="currentColor" />
+      <rect x="8" y="5" width="1" height="1" fill="currentColor" />
+      <rect x="6" width="1" height="1" fill="currentColor" />
+      <rect x="8" width="1" height="1" fill="currentColor" />
+      <rect x="11" y="2" width="1" height="1" fill="currentColor" />
+      <rect x="12" y="2" width="1" height="1" fill="currentColor" />
+      <rect
+        width="1"
+        height="1"
+        transform="matrix(1 0 0 -1 12 5)"
+        fill="currentColor"
+      />
+      <rect
+        width="1"
+        height="1"
+        transform="matrix(1 0 0 -1 12 4)"
+        fill="currentColor"
+      />
+      <rect x="13" y="2" width="1" height="1" fill="currentColor" />
+      <rect x="11" y="3" width="1" height="1" fill="currentColor" />
+      <rect x="13" y="3" width="1" height="1" fill="currentColor" />
+      <rect x="11" y="4" width="1" height="1" fill="currentColor" />
+      <rect x="13" y="4" width="1" height="1" fill="currentColor" />
     </svg>
   );
 }

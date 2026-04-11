@@ -695,7 +695,83 @@ Example:
 
 - **Buffered UI** — **`Ginger.Current.BufferRail`** shows load progress; **`Ginger.Current.TimeRail`** supports **`showBuffered`** to stack a buffered layer behind the played segment.
 
+- **Audio analyzers** — Live Web Audio data for real-time visuals (**`useGingerLiveAnalyzer`**, main package) and whole-file grids for waveforms or spectrograms (**`useAudioFileAnalysis`** / **`analyzeAudioFile`**, `@lucaismyname/ginger/waveform`). See [Audio analyzers (visualizations)](#audio-analyzers-visualizations).
+
 Recipes below cover queue lifecycle and media edge cases.
+
+## Audio analyzers (visualizations)
+
+Ginger separates **live** analysis (while the native `<audio>` element plays) from **whole-file** analysis (decode once, build static or seek-independent grids).
+
+### Live: `useGingerLiveAnalyzer`
+
+Import from the main package:
+
+```tsx
+import { Ginger, useGingerLiveAnalyzer } from "@lucaismyname/ginger";
+
+function Spectrum() {
+  const { frequencyData, frequencyBinCount, error, resume, isSuspended } = useGingerLiveAnalyzer({
+    fftSize: 2048,
+  });
+
+  if (error) return <p role="alert">{error}</p>;
+  if (isSuspended) {
+    return (
+      <button type="button" onClick={() => void resume()}>
+        Enable audio analysis
+      </button>
+    );
+  }
+
+  return (
+    <div>
+      {/* e.g. map frequencyData[0..frequencyBinCount) to bar heights */}
+      <span>{frequencyBinCount} bins</span>
+    </div>
+  );
+}
+
+// Mount <Ginger.Player crossOrigin="anonymous" /> when fileUrl is cross-origin so Web Audio can use the element.
+```
+
+Important:
+
+- **CORS** — For cross-origin `fileUrl` values, set **`crossOrigin`** on **`Ginger.Player`** (for example `"anonymous"`) so the media element is usable with **`AudioContext`**.
+- **One `MediaElementAudioSourceNode` per `<audio>`** — The library reuses a single Web Audio graph per underlying element. Multiple instances of **`useGingerLiveAnalyzer`** attach extra **`AnalyserNode`**s as taps; only one tap carries audio to **`destination`** so volume stays correct.
+- **Autoplay** — The **`AudioContext`** may start **`suspended`** until a user gesture; call **`resume()`** or start playback after interaction.
+
+### Whole file: `@lucaismyname/ginger/waveform`
+
+Use **`useAudioFileAnalysis`** (React hook) or **`analyzeAudioFile`** / **`analyzeAudioBuffer`** (imperative) for amplitude grids and optional spectrogram rows without playing the track.
+
+```tsx
+import { useAudioFileAnalysis } from "@lucaismyname/ginger/waveform";
+
+function FileViz({ url }: { url: string }) {
+  const { data, isLoading, error } = useAudioFileAnalysis(url, {
+    timeSlices: 128,
+    samplesPerSlice: 8,
+    spectrogram: true,
+    fftSize: 1024,
+    frequencyBins: 256,
+  });
+
+  if (isLoading) return <p>Loading analysis…</p>;
+  if (error) return <p role="alert">{error}</p>;
+  if (!data) return null;
+
+  return (
+    <div>
+      <p>Duration: {data.duration}s</p>
+      {/* data.amplitudeGrid: number[][] */}
+      {/* data.spectrogram?: number[][] normalized to [0, 1] */}
+    </div>
+  );
+}
+```
+
+**`useAudioPeaks`** (same subpath) remains a lightweight helper: a single row of decoded amplitude peaks. Prefer **`useAudioFileAnalysis`** when you need a 2D amplitude grid or spectrogram.
 
 ## Recipes
 
