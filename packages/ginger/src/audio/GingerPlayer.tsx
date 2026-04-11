@@ -68,8 +68,7 @@ export function GingerPlayer({
     if (!el) return;
     el.volume = state.volume;
     el.muted = state.muted;
-    el.playbackRate = state.playbackRate;
-  }, [audioRef, state.volume, state.muted, state.playbackRate]);
+  }, [audioRef, state.volume, state.muted]);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -90,6 +89,13 @@ export function GingerPlayer({
     }
     lastActiveUrlRef.current = url;
   }, [audioRef, dispatch, state.currentIndex, state.tracks, url]);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    // Browsers reset playbackRate to 1.0 when source changes + load() runs.
+    el.playbackRate = state.playbackRate;
+  }, [audioRef, state.playbackRate, url]);
 
   return (
     <audio

@@ -11,6 +11,7 @@ import { SpotifyMini } from "./examples/SpotifyMini";
 import { ThemedCssVars } from "./examples/ThemedCssVars";
 import { UnstyledShowcase } from "./examples/UnstyledShowcase";
 import { AlbumGrid } from "./examples/AlbumGrid";
+import { WaveformPlayer } from "./examples/WaveformPlayer";
 
 const examples = [
   { id: "single", label: "Single track", Component: SingleTrack },
@@ -19,6 +20,7 @@ const examples = [
   { id: "headless", label: "useGinger headless", Component: HeadlessCustomUI },
   { id: "theme", label: "CSS variables", Component: ThemedCssVars },
   { id: "spotify", label: "Spotify mini", Component: SpotifyMini },
+  { id: "waveform", label: "Waveform player", Component: WaveformPlayer },
   { id: "podcast", label: "Podcast timeline", Component: PodcastTimeline },
   { id: "glass", label: "Glassmorphism deck", Component: GlassmorphismDeck },
   { id: "neon", label: "Neon console", Component: NeonConsole },

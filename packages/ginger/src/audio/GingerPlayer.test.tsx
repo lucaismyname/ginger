@@ -22,6 +22,20 @@ function ClearQueueButton() {
   );
 }
 
+function PlaybackRateAndNextButtons() {
+  const { next, setPlaybackRate } = useGinger();
+  return (
+    <>
+      <button type="button" onClick={() => setPlaybackRate(0.5)}>
+        speed-0.5
+      </button>
+      <button type="button" onClick={() => next()}>
+        next-track
+      </button>
+    </>
+  );
+}
+
 describe("GingerPlayer + provider", () => {
   it("advances to the next track when the audio element fires ended", async () => {
     const { container } = renderGinger(
@@ -60,5 +74,30 @@ describe("GingerPlayer + provider", () => {
     });
 
     expect(root.getAttribute("data-ginger-playback")).toBe("idle");
+  });
+
+  it("re-applies playbackRate after next track source load", async () => {
+    const loadSpy = vi
+      .spyOn(window.HTMLMediaElement.prototype, "load")
+      .mockImplementation(function mockLoad(this: HTMLMediaElement) {
+        this.playbackRate = 1;
+      });
+
+    try {
+      const { container } = renderGinger(<PlaybackRateAndNextButtons />, { tracks });
+      const audio = queryAudio(container)!;
+
+      await act(async () => {
+        fireEvent.click(within(container).getByText("speed-0.5"));
+      });
+      expect(audio.playbackRate).toBe(0.5);
+
+      await act(async () => {
+        fireEvent.click(within(container).getByText("next-track"));
+      });
+      expect(audio.playbackRate).toBe(0.5);
+    } finally {
+      loadSpy.mockRestore();
+    }
   });
 });
