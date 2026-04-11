@@ -1,0 +1,52 @@
+import { GingerPlayer } from "./audio/GingerPlayer";
+import * as Current from "./components/current";
+import * as Control from "./components/controls/Controls";
+import { GingerPlaylist } from "./components/playlist/GingerPlaylist";
+import * as Queue from "./components/queue/QueueDisplay";
+import { GingerProvider } from "./context/GingerProvider";
+
+export const Ginger = {
+  Provider: GingerProvider,
+  Player: GingerPlayer,
+  Current: {
+    Title: Current.Title,
+    Artist: Current.Artist,
+    Album: Current.Album,
+    Description: Current.Description,
+    Copyright: Current.Copyright,
+    Genre: Current.Genre,
+    Label: Current.Label,
+    Isrc: Current.Isrc,
+    TrackNumber: Current.TrackNumber,
+    Year: Current.Year,
+    Lyrics: Current.Lyrics,
+    FileUrl: Current.FileUrl,
+    Artwork: Current.Artwork,
+    QueueIndex: Current.QueueIndex,
+    QueueLength: Current.QueueLength,
+    QueuePosition: Current.QueuePosition,
+    Elapsed: Current.Elapsed,
+    Duration: Current.Duration,
+    Remaining: Current.Remaining,
+    Progress: Current.Progress,
+    TimeRail: Current.TimeRail,
+    PlaybackState: Current.PlaybackState,
+    ErrorMessage: Current.ErrorMessage,
+  },
+  Queue: {
+    Title: Queue.Title,
+    Subtitle: Queue.Subtitle,
+    Description: Queue.Description,
+    Copyright: Queue.Copyright,
+    Artwork: Queue.Artwork,
+  },
+  Control: {
+    PlayPause: Control.PlayPause,
+    Repeat: Control.Repeat,
+    Next: Control.Next,
+    Previous: Control.Previous,
+    Shuffle: Control.Shuffle,
+    SeekBar: Control.SeekBar,
+  },
+  Playlist: GingerPlaylist,
+} as const;

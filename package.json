@@ -1,0 +1,9 @@
+{
+  "name": "ginger-monorepo",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "build": "npm run build -w @lucaismyname/ginger",
+    "dev": "npm run dev -w ginger-demo"
+  }
+}
