@@ -49,6 +49,7 @@ export function GingerProvider({
   persistence,
   hydrateOnMount = false,
   resumeOnTrackChange = false,
+  unstyled = false,
   className,
   style,
   onTrackChange,
@@ -536,7 +537,10 @@ export function GingerProvider({
 
   const playbackUi = derivePlaybackUiState(state);
 
-  const mergedStyle = useMemo(() => ({ ...defaultProviderStyle, ...style }), [style]);
+  const mergedStyle = useMemo(
+    () => (unstyled ? style : { ...defaultProviderStyle, ...style }),
+    [style, unstyled],
+  );
 
   return (
     <GingerLocaleProvider locale={locale}>

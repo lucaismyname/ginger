@@ -337,10 +337,18 @@ Props:
 | `initialPlaylistMeta` | `PlaylistMeta \| null` | `null` | Queue/playlist metadata |
 | `initialShuffle` | `boolean` | `false` | Start shuffled |
 | `initialRepeatMode` | `"off" \| "all" \| "one"` | `"off"` | Initial repeat mode |
+| `initialPlaybackMode` | `"playlist" \| "single"` | `"playlist"` | Playlist wraps/advances vs single-track stop behavior |
 | `initialPaused` | `boolean` | `true` | Start paused or playing |
 | `initialVolume` | `number` | `1` | Initial volume, clamped `0..1` |
 | `initialMuted` | `boolean` | `false` | Initial muted state |
 | `initialPlaybackRate` | `number` | `1` | Initial playback rate, clamped `0.25..4` |
+| `mediaSession` | `boolean` | `false` | Enables Media Session lock-screen/OS controls |
+| `beforePlay` | `() => boolean \| Promise<boolean>` | `undefined` | Policy hook run before playback starts |
+| `onPlayBlocked` | `() => void` | `undefined` | Called when `beforePlay` returns `false` |
+| `persistence` | `{ get(key): unknown; set(key, value): void }` | `undefined` | Adapter for persisted playback settings and resume state |
+| `hydrateOnMount` | `boolean` | `false` | Hydrate persisted values into initial provider state |
+| `resumeOnTrackChange` | `boolean` | `false` | Restore/save per-track playback position |
+| `unstyled` | `boolean` | `false` | Skip provider default CSS variable/theme styles |
 | `className` | `string` | `undefined` | Class for the provider wrapper |
 | `style` | `CSSProperties` | `undefined` | Inline styles / CSS variables |
 | `onTrackChange` | `(track, index) => void` | `undefined` | Fires when current track changes |
@@ -365,6 +373,7 @@ Props:
 | `style` | `CSSProperties` | `undefined` | Optional inline styles |
 | `preload` | `AudioHTMLAttributes["preload"]` | `"metadata"` | Native audio preload mode |
 | `crossOrigin` | `AudioHTMLAttributes["crossOrigin"]` | `undefined` | Native cross-origin mode |
+| `respectReducedMotion` | `boolean` | `false` | Uses lower time-update frequency when user prefers reduced motion |
 
 ### `useGinger()`
 
@@ -414,6 +423,7 @@ Returned values:
 | `setRepeatMode`, `cycleRepeat` | Repeat controls |
 | `toggleShuffle` | Toggle shuffle |
 | `setQueue` | Replace the queue after mount |
+| `insertTrackAt`, `removeTrackAt`, `moveTrack`, `enqueueNext` | Queue mutation actions |
 | `playTrackAt`, `selectTrackAt` | Pick a track by index |
 | `setPlaylistMeta` | Replace playlist metadata |
 | `audioRef` | Ref to the underlying `HTMLAudioElement` |
@@ -432,8 +442,8 @@ Transport and media controls.
 | `Ginger.Control.Next` | Go to next track | native button props |
 | `Ginger.Control.Repeat` | Cycle repeat mode | native button props |
 | `Ginger.Control.Shuffle` | Toggle shuffle on/off | native button props |
-| `Ginger.Control.SeekBar` | Controlled range input for time | `inputStyle`, native input props |
-| `Ginger.Control.Volume` | Controlled range input for volume `0..1` | `inputStyle`, native input props |
+| `Ginger.Control.SeekBar` | Controlled range input for time | `unstyled`, `inputStyle`, native input props |
+| `Ginger.Control.Volume` | Controlled range input for volume `0..1` | `unstyled`, `inputStyle`, native input props |
 | `Ginger.Control.Mute` | Toggle mute on/off | `muteLabel`, `unmuteLabel`, native button props |
 | `Ginger.Control.PlaybackRate` | Select input for playback speed | `rates`, native select props |
 
@@ -477,7 +487,7 @@ Other current-track components:
 
 | Component | Description | Important props |
 |-----------|-------------|-----------------|
-| `Ginger.Current.Artwork` | Current track artwork or playlist artwork fallback | `imgStyle`, `sizes`, `loading`, `decoding`, `onError`, display-base props |
+| `Ginger.Current.Artwork` | Current track artwork or playlist artwork fallback | `unstyled`, `imgStyle`, `sizes`, `loading`, `decoding`, `onError`, display-base props |
 | `Ginger.Current.Lyrics` | Track lyrics | `preserveWhitespace`, render-prop `children` |
 | `Ginger.Current.FileUrl` | Track `fileUrl`, hidden unless explicitly enabled | `visible`, display-base props |
 | `Ginger.Current.QueueIndex` | Current queue index | `base`, render-prop `children` |
@@ -487,9 +497,9 @@ Other current-track components:
 | `Ginger.Current.Duration` | Duration string | `format`, render-prop `children` |
 | `Ginger.Current.Remaining` | Remaining time string | `format`, render-prop `children` |
 | `Ginger.Current.Progress` | Progress as text or render-prop object | render-prop `children` |
-| `Ginger.Current.TimeRail` | Simple visual progress rail | `height`, display-base props |
+| `Ginger.Current.TimeRail` | Simple visual progress rail | `unstyled`, `height`, display-base props |
 | `Ginger.Current.PlaybackState` | Derived state label | render-prop `children` |
-| `Ginger.Current.ErrorMessage` | Media error string | render-prop `children` |
+| `Ginger.Current.ErrorMessage` | Media error string | `live`, render-prop `children` |
 
 Example:
 
@@ -514,7 +524,7 @@ Displays queue or playlist metadata from `playlistMeta`.
 | `Ginger.Queue.Copyright` | Playlist copyright |
 | `Ginger.Queue.Artwork` | Playlist artwork |
 
-These components follow the same fallback/empty behavior as other display components. `Ginger.Queue.Artwork` also accepts `imgStyle`.
+These components follow the same fallback/empty behavior as other display components. `Ginger.Queue.Artwork` accepts `unstyled` and `imgStyle`.
 
 ### `Ginger.Playlist`
 
@@ -525,6 +535,7 @@ Props:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | `undefined` | Manual mode rows |
+| `unstyled` | `boolean` | `false` | Remove default list/row styles for fully custom layout |
 | `rowStyle` | `CSSProperties` | `undefined` | Auto-mode button style override |
 | `renderTrack` | `(track, index, isActive) => ReactNode` | `undefined` | Auto-mode custom row content |
 | `playOnSelect` | `boolean` | `true` | Click plays immediately if true |
@@ -557,6 +568,7 @@ Props:
 | Prop | Type | Description |
 |------|------|-------------|
 | `index` | `number` | Queue index for the row |
+| `unstyled` | `boolean` | Remove default row button styles |
 | `liProps` | `LiHTMLAttributes<HTMLLIElement>` | Props for the wrapper `<li>` |
 | `children` | `ReactNode` | Optional custom content |
 | `...rest` | `ButtonHTMLAttributes<HTMLButtonElement>` | Props for the row button |
@@ -605,7 +617,10 @@ type Track = {
   isrc?: string;
   trackNumber?: number;
   lyrics?: string;
+  lyricsTimed?: Array<{ time: number; text: string }>;
+  chapters?: Array<{ title: string; startSeconds: number }>;
   durationSeconds?: number;
+  metadata?: Record<string, unknown>;
 };
 ```
 
@@ -621,6 +636,7 @@ type PlaylistMeta = {
   artworkUrl?: string;
   copyright?: string;
   description?: string;
+  metadata?: Record<string, unknown>;
 };
 ```
 
@@ -784,6 +800,15 @@ Provider supports `initialPlaybackMode?: "playlist" | "single"` (`"playlist"` de
 
 - `Ginger.Player` supports `respectReducedMotion` to reduce time sync update frequency.
 - `Ginger.Provider` supports `beforePlay?: () => boolean | Promise<boolean>` and `onPlayBlocked`.
+
+### Fully unstyled mode
+
+- `Ginger.Provider unstyled` disables provider theme defaults (CSS variable injection).
+- `Ginger.Control.SeekBar` and `Ginger.Control.Volume` accept `unstyled`.
+- `Ginger.Current.Artwork`, `Ginger.Queue.Artwork`, `Ginger.Current.TimeRail`, and `Ginger.Current.BufferRail` accept `unstyled`.
+- `Ginger.Playlist` and `Ginger.Playlist.Track` accept `unstyled`.
+
+This gives you a pure state+behavior layer while keeping convenience components available.
 
 ### Subpath exports
 

@@ -27,6 +27,8 @@ function usePlaylistConfig(): GingerPlaylistConfig {
 
 export type GingerPlaylistProps = Omit<HTMLAttributes<HTMLUListElement>, "children"> & {
   children?: ReactNode;
+  /** Remove default list/row styles for fully custom playlist styling. */
+  unstyled?: boolean;
   rowStyle?: CSSProperties;
   /**
    * Used only in **auto** mode (no custom `children`). Ignored when you pass custom `children`
@@ -44,6 +46,7 @@ export type GingerPlaylistProps = Omit<HTMLAttributes<HTMLUListElement>, "childr
  */
 export function GingerPlaylist({
   children,
+  unstyled = false,
   rowStyle,
   renderTrack,
   playOnSelect = true,
@@ -52,15 +55,17 @@ export function GingerPlaylist({
 }: GingerPlaylistProps) {
   const { tracks, currentIndex, playTrackAt, selectTrackAt } = useGingerPlayback();
 
-  const listStyle: CSSProperties = {
-    listStyle: "none",
-    margin: 0,
-    padding: 0,
-    fontFamily: "var(--ginger-font-family, system-ui, sans-serif)",
-    fontSize: "var(--ginger-font-size, 14px)",
-    color: "var(--ginger-primary-color, #111827)",
-    ...style,
-  };
+  const listStyle: CSSProperties = unstyled
+    ? { ...style }
+    : {
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        fontFamily: "var(--ginger-font-family, system-ui, sans-serif)",
+        fontSize: "var(--ginger-font-size, 14px)",
+        color: "var(--ginger-primary-color, #111827)",
+        ...style,
+      };
 
   const manual = children !== undefined;
 
@@ -88,14 +93,18 @@ export function GingerPlaylist({
                   else selectTrackAt(index);
                 }}
                 style={{
-                  width: "100%",
-                  textAlign: "left",
-                  border: "none",
-                  background: active ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))" : "transparent",
-                  color: "inherit",
-                  font: "inherit",
-                  cursor: "pointer",
-                  padding: "var(--ginger-playlist-row-padding, 6px 8px)",
+                  width: unstyled ? undefined : "100%",
+                  textAlign: unstyled ? undefined : "left",
+                  border: unstyled ? undefined : "none",
+                  background: unstyled
+                    ? undefined
+                    : active
+                      ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))"
+                      : "transparent",
+                  color: unstyled ? undefined : "inherit",
+                  font: unstyled ? undefined : "inherit",
+                  cursor: unstyled ? undefined : "pointer",
+                  padding: unstyled ? undefined : "var(--ginger-playlist-row-padding, 6px 8px)",
                   ...rowStyle,
                 }}
               >
@@ -120,12 +129,15 @@ GingerPlaylist.displayName = "Ginger.Playlist";
 
 export type GingerPlaylistTrackProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> & {
   index: number;
+  /** Remove default row button styles for fully custom styling. */
+  unstyled?: boolean;
   /** Optional wrapper for the row; defaults to a plain `<li>` */
   liProps?: LiHTMLAttributes<HTMLLIElement>;
 };
 
 export function GingerPlaylistTrack({
   index,
+  unstyled = false,
   className,
   style,
   children,
@@ -153,14 +165,18 @@ export function GingerPlaylistTrack({
         data-ginger-active={active || undefined}
         className={className}
         style={{
-          width: "100%",
-          textAlign: "left",
-          border: "none",
-          background: active ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))" : "transparent",
-          color: "inherit",
-          font: "inherit",
-          cursor: "pointer",
-          padding: "var(--ginger-playlist-row-padding, 6px 8px)",
+          width: unstyled ? undefined : "100%",
+          textAlign: unstyled ? undefined : "left",
+          border: unstyled ? undefined : "none",
+          background: unstyled
+            ? undefined
+            : active
+              ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))"
+              : "transparent",
+          color: unstyled ? undefined : "inherit",
+          font: unstyled ? undefined : "inherit",
+          cursor: unstyled ? undefined : "pointer",
+          padding: unstyled ? undefined : "var(--ginger-playlist-row-padding, 6px 8px)",
           ...style,
         }}
         {...buttonRest}

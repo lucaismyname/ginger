@@ -9,10 +9,12 @@ export const Description = createTextDisplay("Ginger.Queue.Description", (s) => 
 export const Copyright = createTextDisplay("Ginger.Queue.Copyright", (s) => s.playlistMeta?.copyright);
 
 export type QueueArtworkProps = DisplayBaseProps & {
+  /** Remove default wrapper/image styles for fully custom layout. */
+  unstyled?: boolean;
   imgStyle?: CSSProperties;
 };
 
-export function Artwork({ className, style, fallback, empty, imgStyle }: QueueArtworkProps) {
+export function Artwork({ className, style, fallback, empty, unstyled = false, imgStyle }: QueueArtworkProps) {
   const state = useGingerState();
   const src = state.playlistMeta?.artworkUrl;
   if (!src) {
@@ -23,22 +25,26 @@ export function Artwork({ className, style, fallback, empty, imgStyle }: QueueAr
   return (
     <span
       className={className}
-      style={{
-        display: "inline-block",
-        background: "var(--ginger-artwork-bg, #f3f4f6)",
-        borderRadius: "var(--ginger-artwork-radius, 6px)",
-        overflow: "hidden",
-        ...style,
-      }}
+      style={
+        unstyled
+          ? { ...style }
+          : {
+              display: "inline-block",
+              background: "var(--ginger-artwork-bg, #f3f4f6)",
+              borderRadius: "var(--ginger-artwork-radius, 6px)",
+              overflow: "hidden",
+              ...style,
+            }
+      }
     >
       <img
         src={src}
         alt={alt}
         style={{
-          display: "block",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
+          display: unstyled ? undefined : "block",
+          width: unstyled ? undefined : "100%",
+          height: unstyled ? undefined : "100%",
+          objectFit: unstyled ? undefined : "cover",
           ...imgStyle,
         }}
       />

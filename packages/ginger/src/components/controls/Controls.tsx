@@ -105,11 +105,14 @@ export type SeekBarProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "type" | "value" | "onChange" | "onInput" | "min" | "max" | "step"
 > & {
+  /** Remove default width style for fully custom styling. */
+  unstyled?: boolean;
   inputStyle?: CSSProperties;
 };
 
-export function SeekBar({ inputStyle, style, ...rest }: SeekBarProps) {
+export function SeekBar({ inputStyle, style, unstyled = false, ...rest }: SeekBarProps) {
   const b = useSeekBarBinding();
+  const mergedStyle = unstyled ? { ...style, ...inputStyle } : { width: "100%", ...style, ...inputStyle };
   return (
     <input
       {...rest}
@@ -122,7 +125,7 @@ export function SeekBar({ inputStyle, style, ...rest }: SeekBarProps) {
       aria-valuetext={b.ariaValueText}
       onInput={b.onSeekInput}
       onChange={b.onSeekChange}
-      style={{ width: "100%", ...style, ...inputStyle }}
+      style={mergedStyle}
     />
   );
 }
@@ -133,11 +136,14 @@ export type VolumeProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "type" | "value" | "onChange" | "onInput" | "min" | "max" | "step"
 > & {
+  /** Remove default width style for fully custom styling. */
+  unstyled?: boolean;
   inputStyle?: CSSProperties;
 };
 
-export function Volume({ inputStyle, style, ...rest }: VolumeProps) {
+export function Volume({ inputStyle, style, unstyled = false, ...rest }: VolumeProps) {
   const b = useVolumeSlider();
+  const mergedStyle = unstyled ? { ...style, ...inputStyle } : { width: "100%", ...style, ...inputStyle };
   return (
     <input
       {...rest}
@@ -150,7 +156,7 @@ export function Volume({ inputStyle, style, ...rest }: VolumeProps) {
       aria-valuetext={b.ariaValueText}
       onInput={b.onVolumeInput}
       onChange={b.onVolumeChange}
-      style={{ width: "100%", ...style, ...inputStyle }}
+      style={mergedStyle}
     />
   );
 }

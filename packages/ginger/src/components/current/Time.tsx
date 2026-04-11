@@ -81,44 +81,56 @@ export type TimeRailProps = DisplayBaseProps & {
   height?: number;
   /** When true, shows a buffered range behind the progress fill (uses `bufferedFraction`). */
   showBuffered?: boolean;
+  /** Remove default rail styles and render only inline width values. */
+  unstyled?: boolean;
 };
 
-export function TimeRail({ className, style, height = 4, showBuffered = false }: TimeRailProps) {
+export function TimeRail({
+  className,
+  style,
+  height = 4,
+  showBuffered = false,
+  unstyled = false,
+}: TimeRailProps) {
   const state = useGingerState();
   const progressPct = `${Math.round(progressFraction(state) * 100)}%`;
   const bufPct = `${Math.round(Math.min(1, Math.max(0, state.bufferedFraction)) * 100)}%`;
   return (
     <div
       className={className}
-      style={{
-        width: "100%",
-        height,
-        background: "var(--ginger-muted-color, #e5e7eb)",
-        borderRadius: 999,
-        overflow: "hidden",
-        position: "relative",
-        ...style,
-      }}
+      style={
+        unstyled
+          ? { ...style }
+          : {
+              width: "100%",
+              height,
+              background: "var(--ginger-muted-color, #e5e7eb)",
+              borderRadius: 999,
+              overflow: "hidden",
+              position: "relative",
+              ...style,
+            }
+      }
       aria-hidden
     >
       {showBuffered ? (
         <div
           style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            height: "100%",
+            position: unstyled ? undefined : "absolute",
+            left: unstyled ? undefined : 0,
+            top: unstyled ? undefined : 0,
+            height: unstyled ? undefined : "100%",
             width: bufPct,
-            background: "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
+            background: unstyled ? undefined : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
           }}
         />
       ) : null}
       <div
         style={{
-          position: "relative",
+          position: unstyled ? undefined : "relative",
           width: progressPct,
-          height: "100%",
-          background: "var(--ginger-primary-color, #111827)",
+          height: unstyled ? undefined : "100%",
+          background: unstyled ? undefined : "var(--ginger-primary-color, #111827)",
         }}
       />
     </div>
@@ -129,30 +141,36 @@ TimeRail.displayName = "Ginger.Current.TimeRail";
 
 export type BufferRailProps = DisplayBaseProps & {
   height?: number;
+  /** Remove default rail styles and render only buffered width value. */
+  unstyled?: boolean;
 };
 
 /** Buffered portion of the timeline (0…`bufferedFraction`); pair with `TimeRail` or use alone. */
-export function BufferRail({ className, style, height = 4 }: BufferRailProps) {
+export function BufferRail({ className, style, height = 4, unstyled = false }: BufferRailProps) {
   const state = useGingerState();
   const bufPct = `${Math.round(Math.min(1, Math.max(0, state.bufferedFraction)) * 100)}%`;
   return (
     <div
       className={className}
-      style={{
-        width: "100%",
-        height,
-        background: "var(--ginger-muted-color, #e5e7eb)",
-        borderRadius: 999,
-        overflow: "hidden",
-        ...style,
-      }}
+      style={
+        unstyled
+          ? { ...style }
+          : {
+              width: "100%",
+              height,
+              background: "var(--ginger-muted-color, #e5e7eb)",
+              borderRadius: 999,
+              overflow: "hidden",
+              ...style,
+            }
+      }
       aria-hidden
     >
       <div
         style={{
           width: bufPct,
-          height: "100%",
-          background: "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
+          height: unstyled ? undefined : "100%",
+          background: unstyled ? undefined : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
         }}
       />
     </div>

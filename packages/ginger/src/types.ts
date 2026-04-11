@@ -167,6 +167,8 @@ export type GingerProviderProps = {
   persistence?: GingerPersistenceAdapter;
   hydrateOnMount?: boolean;
   resumeOnTrackChange?: boolean;
+  /** Disable default CSS variable/theme styles on provider root. */
+  unstyled?: boolean;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;

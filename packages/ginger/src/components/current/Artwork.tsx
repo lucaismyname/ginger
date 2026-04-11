@@ -5,10 +5,23 @@ import { getCurrentTrack, resolvedArtwork } from "../../internal/selectors";
 
 export type ArtworkProps = DisplayBaseProps &
   Pick<ImgHTMLAttributes<HTMLImageElement>, "sizes" | "loading" | "onError" | "decoding"> & {
+    /** Remove default wrapper/image styles for fully custom layout. */
+    unstyled?: boolean;
     imgStyle?: CSSProperties;
   };
 
-export function Artwork({ className, style, fallback, empty, sizes, loading, onError, decoding, imgStyle }: ArtworkProps) {
+export function Artwork({
+  className,
+  style,
+  fallback,
+  empty,
+  sizes,
+  loading,
+  onError,
+  decoding,
+  unstyled = false,
+  imgStyle,
+}: ArtworkProps) {
   const state = useGingerState();
   const track = getCurrentTrack(state);
   const src = resolvedArtwork(state);
@@ -20,12 +33,16 @@ export function Artwork({ className, style, fallback, empty, sizes, loading, onE
   return (
     <div
       className={className}
-      style={{
-        background: "var(--ginger-artwork-bg, transparent)",
-        borderRadius: "var(--ginger-artwork-radius, 0)",
-        overflow: "hidden",
-        ...style,
-      }}
+      style={
+        unstyled
+          ? { ...style }
+          : {
+              background: "var(--ginger-artwork-bg, transparent)",
+              borderRadius: "var(--ginger-artwork-radius, 0)",
+              overflow: "hidden",
+              ...style,
+            }
+      }
     >
       <img
         src={src}
@@ -35,10 +52,10 @@ export function Artwork({ className, style, fallback, empty, sizes, loading, onE
         decoding={decoding}
         onError={onError}
         style={{
-          display: "block",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
+          display: unstyled ? undefined : "block",
+          width: unstyled ? undefined : "100%",
+          height: unstyled ? undefined : "100%",
+          objectFit: unstyled ? undefined : "cover",
           ...imgStyle,
         }}
       />
