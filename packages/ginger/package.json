@@ -1,7 +1,7 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.8",
-  "description": "Headless React audio player with compound components",
+  "version": "0.0.10",
+  "description": "A headless React audio player",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -17,6 +17,26 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
+      "require": "./dist/client.cjs"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js",
+      "require": "./dist/testing/index.cjs"
+    },
+    "./waveform": {
+      "types": "./dist/waveform/index.d.ts",
+      "import": "./dist/waveform/index.js",
+      "require": "./dist/waveform/index.cjs"
+    },
+    "./experimental-gapless": {
+      "types": "./dist/experimental-gapless/index.d.ts",
+      "import": "./dist/experimental-gapless/index.js",
+      "require": "./dist/experimental-gapless/index.cjs"
     }
   },
   "scripts": {
@@ -34,6 +54,7 @@
     }
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",

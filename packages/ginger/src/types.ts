@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 
 export type RepeatMode = "off" | "all" | "one";
+export type PlaybackMode = "playlist" | "single";
 
 /** Default control strings; override via `Ginger.Provider` `locale` prop. */
 export type GingerLocaleMessages = {
@@ -35,6 +36,8 @@ export type Track = {
   isrc?: string;
   trackNumber?: number;
   lyrics?: string;
+  lyricsTimed?: Array<{ time: number; text: string }>;
+  chapters?: Array<{ title: string; startSeconds: number }>;
   /** Hint before metadata loads; never overrides finite media duration */
   durationSeconds?: number;
   /** App-specific data for custom UI; not read by Ginger core */
@@ -77,6 +80,7 @@ export type GingerMediaSlice = {
 export type GingerPlaybackSlice = {
   tracks: Track[];
   currentIndex: number;
+  playbackMode: PlaybackMode;
   isPaused: boolean;
   isShuffled: boolean;
   repeatMode: RepeatMode;
@@ -97,12 +101,17 @@ export type GingerAction =
         isPaused?: boolean;
         isShuffled?: boolean;
         repeatMode?: RepeatMode;
+        playbackMode?: PlaybackMode;
         volume?: number;
         muted?: boolean;
         playbackRate?: number;
       };
     }
   | { type: "SET_QUEUE"; payload: { tracks: Track[]; currentIndex?: number } }
+  | { type: "INSERT_TRACK"; payload: { track: Track; index?: number; autoPlay?: boolean } }
+  | { type: "REMOVE_TRACK"; payload: { index: number } }
+  | { type: "MOVE_TRACK"; payload: { fromIndex: number; toIndex: number } }
+  | { type: "ADD_NEXT"; payload: { track: Track } }
   | { type: "SET_INDEX"; payload: { index: number; autoPlay?: boolean } }
   | { type: "PLAY" }
   | { type: "PAUSE" }
@@ -138,6 +147,7 @@ export type GingerProviderProps = {
   /** When true, shuffle starts enabled (still applies shuffle transform on mount if tracks.length > 1) */
   initialShuffle?: boolean;
   initialRepeatMode?: RepeatMode;
+  initialPlaybackMode?: PlaybackMode;
   initialPaused?: boolean;
   /** 0…1, default 1 */
   initialVolume?: number;
@@ -151,6 +161,12 @@ export type GingerProviderProps = {
   initialStateKey?: string | number;
   /** Override default English strings on built-in controls */
   locale?: Partial<GingerLocaleMessages>;
+  mediaSession?: boolean;
+  beforePlay?: () => boolean | Promise<boolean>;
+  onPlayBlocked?: () => void;
+  persistence?: GingerPersistenceAdapter;
+  hydrateOnMount?: boolean;
+  resumeOnTrackChange?: boolean;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;
@@ -158,6 +174,11 @@ export type GingerProviderProps = {
   onPause?: () => void;
   onQueueEnd?: () => void;
   onError?: (message: string) => void;
+};
+
+export type GingerPersistenceAdapter = {
+  get: (key: string) => unknown;
+  set: (key: string, value: unknown) => void;
 };
 
 export type DisplayBaseProps = {

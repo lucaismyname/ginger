@@ -697,6 +697,105 @@ Cross-origin audio must be served with compatible CORS headers. If you need the 
 
 If the browser blocks playback (autoplay policy) or `HTMLMediaElement.play()` rejects for another reason, the player dispatches a media error with a short message. **`onError`** still runs (from `errorMessage` in state), and **`Ginger.Current.ErrorMessage`** shows the same string. Associate controls with a visible label using the `id` on `Ginger.Control.SeekBar` and a `<label htmlFor="…">` in your UI.
 
+## New Optional Features
+
+All additions below are opt-in and preserve existing behavior by default.
+
+### Media Session integration
+
+Enable lock-screen and OS media controls:
+
+```tsx
+<Ginger.Provider initialTracks={tracks} mediaSession>
+  <Ginger.Player />
+  {/* ... */}
+</Ginger.Provider>
+```
+
+### Keyboard shortcuts
+
+```tsx
+import { useGingerKeyboardShortcuts } from "@lucaismyname/ginger";
+
+function Hotkeys() {
+  useGingerKeyboardShortcuts(true, {
+    playPause: " ",
+    next: "ArrowRight",
+    previous: "ArrowLeft",
+    mute: "m",
+  });
+  return null;
+}
+```
+
+### Chapters and synced lyrics
+
+```tsx
+import { useGingerChapters, useGingerLyricsSync } from "@lucaismyname/ginger";
+
+function ChapterAndLyrics() {
+  const chapters = useGingerChapters();
+  const lyrics = useGingerLyricsSync();
+  return (
+    <div>
+      <button onClick={() => chapters.seekTo(0)}>Jump to first chapter</button>
+      <p>Active lyric: {lyrics.activeLine?.text ?? "None"}</p>
+    </div>
+  );
+}
+```
+
+`Track` now supports optional `chapters` and `lyricsTimed` fields. For LRC parsing, use `parseLrc()`.
+
+### Sleep timer and drag seek
+
+```tsx
+import { useGingerSleepTimer, useSeekDrag } from "@lucaismyname/ginger";
+
+function Extras({ duration }: { duration: number }) {
+  useGingerSleepTimer({ durationMs: 10 * 60 * 1000, enabled: true });
+  const drag = useSeekDrag(duration);
+  return <div onPointerDown={drag.onPointerDown}>Drag to seek</div>;
+}
+```
+
+### Persistence + resume
+
+`Ginger.Provider` accepts:
+
+- `persistence?: { get(key): unknown; set(key, value): void }`
+- `hydrateOnMount?: boolean`
+- `resumeOnTrackChange?: boolean`
+
+This allows persisted volume/rate/repeat/index and optional per-track resume positions.
+
+### Queue mutation actions and single-track mode
+
+`useGinger()` and split playback context now include:
+
+- `insertTrackAt(track, index?, autoPlay?)`
+- `removeTrackAt(index)`
+- `moveTrack(fromIndex, toIndex)`
+- `enqueueNext(track)`
+
+Provider supports `initialPlaybackMode?: "playlist" | "single"` (`"playlist"` default).
+
+### Reduced motion and blocked-play policy
+
+- `Ginger.Player` supports `respectReducedMotion` to reduce time sync update frequency.
+- `Ginger.Provider` supports `beforePlay?: () => boolean | Promise<boolean>` and `onPlayBlocked`.
+
+### Subpath exports
+
+Additional entrypoints:
+
+- `@lucaismyname/ginger/client`
+- `@lucaismyname/ginger/testing`
+- `@lucaismyname/ginger/waveform`
+- `@lucaismyname/ginger/experimental-gapless`
+
+`experimental-gapless` is explicitly non-production and does not alter core playback.
+
 ## Notes
 
 ### CORS

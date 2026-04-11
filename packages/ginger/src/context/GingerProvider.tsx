@@ -8,8 +8,10 @@ import {
 } from "react";
 import { computeEndedTransition } from "../core/transitions";
 import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
+import { trackIdentity } from "../core/queue";
 import { derivePlaybackUiState } from "../internal/selectors";
 import type { GingerInitPayload, GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
+import { useMediaSessionBridge } from "../media/useMediaSession";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
 import { GingerLocaleProvider } from "./GingerLocaleContext";
 import { GingerMediaContext, GingerPlaybackContext, type GingerMediaContextValue, type GingerPlaybackContextValue } from "./GingerSplitContexts";
@@ -34,12 +36,19 @@ export function GingerProvider({
   initialPlaylistMeta = null,
   initialShuffle = false,
   initialRepeatMode = "off",
+  initialPlaybackMode = "playlist",
   initialPaused = true,
   initialVolume = 1,
   initialMuted = false,
   initialPlaybackRate = 1,
   initialStateKey,
   locale,
+  mediaSession = false,
+  beforePlay,
+  onPlayBlocked,
+  persistence,
+  hydrateOnMount = false,
+  resumeOnTrackChange = false,
   className,
   style,
   onTrackChange,
@@ -60,6 +69,7 @@ export function GingerProvider({
         isPaused: initialPaused,
         isShuffled: initialShuffle,
         repeatMode: initialRepeatMode,
+        playbackMode: initialPlaybackMode,
         volume: initialVolume,
         muted: initialMuted,
         playbackRate: initialPlaybackRate,
@@ -74,6 +84,7 @@ export function GingerProvider({
     isPaused: initialPaused,
     isShuffled: initialShuffle,
     repeatMode: initialRepeatMode,
+    playbackMode: initialPlaybackMode,
     volume: initialVolume,
     muted: initialMuted,
     playbackRate: initialPlaybackRate,
@@ -85,6 +96,7 @@ export function GingerProvider({
     isPaused: initialPaused,
     isShuffled: initialShuffle,
     repeatMode: initialRepeatMode,
+    playbackMode: initialPlaybackMode,
     volume: initialVolume,
     muted: initialMuted,
     playbackRate: initialPlaybackRate,
@@ -113,12 +125,13 @@ export function GingerProvider({
         isPaused: p.isPaused,
         isShuffled: p.isShuffled,
         repeatMode: p.repeatMode,
+        playbackMode: p.playbackMode,
         volume: p.volume,
         muted: p.muted,
         playbackRate: p.playbackRate,
       },
     });
-  }, [initialStateKey]);
+  }, [initialStateKey, dispatch]);
 
   useEffect(() => {
     stateRef.current = state;
@@ -208,6 +221,22 @@ export function GingerProvider({
     dispatch({ type: "SET_QUEUE", payload: { tracks, currentIndex } });
   }, []);
 
+  const insertTrackAt = useCallback((track: Track, index?: number, autoPlay?: boolean) => {
+    dispatch({ type: "INSERT_TRACK", payload: { track, index, autoPlay } });
+  }, []);
+
+  const removeTrackAt = useCallback((index: number) => {
+    dispatch({ type: "REMOVE_TRACK", payload: { index } });
+  }, []);
+
+  const moveTrack = useCallback((fromIndex: number, toIndex: number) => {
+    dispatch({ type: "MOVE_TRACK", payload: { fromIndex, toIndex } });
+  }, []);
+
+  const enqueueNext = useCallback((track: Track) => {
+    dispatch({ type: "ADD_NEXT", payload: { track } });
+  }, []);
+
   const playTrackAt = useCallback((index: number) => {
     dispatch({ type: "SET_INDEX", payload: { index, autoPlay: true } });
   }, []);
@@ -224,13 +253,89 @@ export function GingerProvider({
     dispatch({ type: "INIT", payload });
   }, []);
 
+  useEffect(() => {
+    if (!persistence || !hydrateOnMount) return;
+    const volume = persistence.get("ginger:volume");
+    const muted = persistence.get("ginger:muted");
+    const playbackRate = persistence.get("ginger:playbackRate");
+    const repeatMode = persistence.get("ginger:repeatMode");
+    const currentIndex = persistence.get("ginger:currentIndex");
+    const p = latestInitRef.current;
+    dispatch({
+      type: "INIT",
+      payload: {
+        tracks: p.tracks,
+        playlistMeta: p.playlistMeta,
+        isPaused: p.isPaused,
+        isShuffled: p.isShuffled,
+        playbackMode: p.playbackMode,
+        currentIndex: typeof currentIndex === "number" ? currentIndex : p.currentIndex,
+        repeatMode: repeatMode === "off" || repeatMode === "all" || repeatMode === "one" ? repeatMode : p.repeatMode,
+        volume: typeof volume === "number" ? volume : p.volume,
+        muted: typeof muted === "boolean" ? muted : p.muted,
+        playbackRate: typeof playbackRate === "number" ? playbackRate : p.playbackRate,
+      },
+    });
+  }, [hydrateOnMount, persistence]);
+
+  useEffect(() => {
+    if (!persistence) return;
+    persistence.set("ginger:volume", state.volume);
+    persistence.set("ginger:muted", state.muted);
+    persistence.set("ginger:playbackRate", state.playbackRate);
+    persistence.set("ginger:repeatMode", state.repeatMode);
+    persistence.set("ginger:currentIndex", state.currentIndex);
+  }, [persistence, state.volume, state.muted, state.playbackRate, state.repeatMode, state.currentIndex]);
+
+  useEffect(() => {
+    if (!persistence || !resumeOnTrackChange) return;
+    const track = state.tracks[state.currentIndex];
+    if (!track) return;
+    const key = `ginger:resume:${trackIdentity(track)}`;
+    const saved = persistence.get(key);
+    if (typeof saved === "number" && Number.isFinite(saved)) {
+      seek(saved);
+    }
+  }, [persistence, resumeOnTrackChange, state.currentIndex, state.tracks, seek]);
+
+  useEffect(() => {
+    if (!persistence || !resumeOnTrackChange) return;
+    const track = state.tracks[state.currentIndex];
+    if (!track || !(state.currentTime >= 0)) return;
+    const key = `ginger:resume:${trackIdentity(track)}`;
+    const id = setTimeout(() => persistence.set(key, state.currentTime), 250);
+    return () => clearTimeout(id);
+  }, [persistence, resumeOnTrackChange, state.currentIndex, state.tracks, state.currentTime]);
+
   const currentUrl = state.tracks[state.currentIndex]?.fileUrl;
 
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
-    if (state.isPaused) el.pause();
-    else
+    if (state.isPaused) {
+      el.pause();
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      if (beforePlay) {
+        let allowed = false;
+        try {
+          allowed = await beforePlay();
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "beforePlay rejected";
+          dispatch({ type: "MEDIA_ERROR", payload: { message } });
+          return;
+        }
+        if (!allowed) {
+          if (!cancelled) {
+            dispatch({ type: "PAUSE" });
+            onPlayBlocked?.();
+          }
+          return;
+        }
+      }
+      if (cancelled) return;
       void el.play().catch((e: unknown) => {
         const msg =
           e instanceof Error
@@ -240,7 +345,11 @@ export function GingerProvider({
               : "Playback failed (e.g. autoplay blocked or unavailable source)";
         dispatch({ type: "MEDIA_ERROR", payload: { message: msg } });
       });
-  }, [state.isPaused, currentUrl]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [beforePlay, currentUrl, onPlayBlocked, state.isPaused]);
 
   const notifyEnded = useCallback(() => {
     const transition = computeEndedTransition(stateRef.current);
@@ -260,6 +369,14 @@ export function GingerProvider({
     const nextIndex = transition.nextIndex;
     dispatch({ type: "SET_INDEX", payload: { index: nextIndex, autoPlay: true } });
   }, [onQueueEnd]);
+
+  const mediaSessionActions = useMemo(
+    () => ({ play, pause, next, prev, seek }),
+    [play, pause, next, prev, seek],
+  );
+  useMediaSessionBridge(Boolean(mediaSession), state, mediaSessionActions);
+
+  const providerDir = locale?.seek && /[\u0590-\u08FF]/.test(locale.seek) ? "rtl" : "ltr";
 
   const value = useMemo<GingerContextValue>(
     () => ({
@@ -282,6 +399,10 @@ export function GingerProvider({
       cycleRepeat,
       toggleShuffle,
       setQueue,
+      insertTrackAt,
+      removeTrackAt,
+      moveTrack,
+      enqueueNext,
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
@@ -295,6 +416,10 @@ export function GingerProvider({
       pause,
       play,
       playTrackAt,
+      insertTrackAt,
+      removeTrackAt,
+      moveTrack,
+      enqueueNext,
       selectTrackAt,
       prev,
       seek,
@@ -329,7 +454,12 @@ export function GingerProvider({
       setRepeatMode,
       cycleRepeat,
       toggleShuffle,
+      playbackMode: state.playbackMode,
       setQueue,
+      insertTrackAt,
+      removeTrackAt,
+      moveTrack,
+      enqueueNext,
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
@@ -341,6 +471,7 @@ export function GingerProvider({
       state.isPaused,
       state.isShuffled,
       state.repeatMode,
+      state.playbackMode,
       state.originalTracks,
       state.playlistMeta,
       init,
@@ -353,6 +484,10 @@ export function GingerProvider({
       cycleRepeat,
       toggleShuffle,
       setQueue,
+      insertTrackAt,
+      removeTrackAt,
+      moveTrack,
+      enqueueNext,
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
@@ -412,6 +547,7 @@ export function GingerProvider({
               className={className}
               style={mergedStyle}
               data-ginger-playback={playbackUi}
+              dir={providerDir}
             >
               {children}
             </div>

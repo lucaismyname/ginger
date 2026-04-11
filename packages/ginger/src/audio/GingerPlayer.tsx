@@ -1,4 +1,4 @@
-import { useEffect, useRef, type AudioHTMLAttributes, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type AudioHTMLAttributes, type CSSProperties } from "react";
 import { useGingerContext } from "../context/GingerContext";
 
 export type GingerPlayerProps = {
@@ -6,6 +6,7 @@ export type GingerPlayerProps = {
   style?: CSSProperties;
   preload?: AudioHTMLAttributes<HTMLAudioElement>["preload"];
   crossOrigin?: AudioHTMLAttributes<HTMLAudioElement>["crossOrigin"];
+  respectReducedMotion?: boolean;
 };
 
 function readBufferedFraction(el: HTMLAudioElement): number {
@@ -14,7 +15,13 @@ function readBufferedFraction(el: HTMLAudioElement): number {
   return Math.min(1, buffered.end(buffered.length - 1) / duration);
 }
 
-export function GingerPlayer({ className, style, preload = "metadata", crossOrigin }: GingerPlayerProps) {
+export function GingerPlayer({
+  className,
+  style,
+  preload = "metadata",
+  crossOrigin,
+  respectReducedMotion = false,
+}: GingerPlayerProps) {
   const { audioRef, dispatch, state, notifyEnded } = useGingerContext();
   const url = state.tracks[state.currentIndex]?.fileUrl ?? "";
   const lastTimeSnapshotRef = useRef({
@@ -23,6 +30,17 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
     bufferedFraction: -1,
   });
 
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (!respectReducedMotion || typeof window === "undefined") return;
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReducedMotion(mql.matches);
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, [respectReducedMotion]);
+
   const syncTime = (el: HTMLAudioElement, force = false) => {
     const next = {
       currentTime: el.currentTime,
@@ -30,8 +48,9 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
       bufferedFraction: readBufferedFraction(el),
     };
     const prev = lastTimeSnapshotRef.current;
+    const timeThreshold = reducedMotion ? 0.5 : 0.25;
     const changedEnough =
-      Math.abs(next.currentTime - prev.currentTime) >= 0.25 ||
+      Math.abs(next.currentTime - prev.currentTime) >= timeThreshold ||
       Math.abs(next.duration - prev.duration) >= 0.01 ||
       Math.abs(next.bufferedFraction - prev.bufferedFraction) >= 0.01;
     if (!force && !changedEnough) return;

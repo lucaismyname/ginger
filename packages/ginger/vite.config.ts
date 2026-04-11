@@ -7,10 +7,16 @@ export default defineConfig({
   plugins: [react(), dts({ entryRoot: "src", tsconfigPath: "./tsconfig.json" })],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: resolve(__dirname, "src/index.ts"),
+        client: resolve(__dirname, "src/client.ts"),
+        "testing/index": resolve(__dirname, "src/testing/index.tsx"),
+        "waveform/index": resolve(__dirname, "src/waveform/index.ts"),
+        "experimental-gapless/index": resolve(__dirname, "src/experimental-gapless/index.ts"),
+      },
       name: "Ginger",
       formats: ["es", "cjs"],
-      fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
+      fileName: (format, entryName) => `${entryName}.${format === "es" ? "js" : "cjs"}`,
     },
     rollupOptions: {
       external: ["react", "react-dom", "react/jsx-runtime"],

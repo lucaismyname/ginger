@@ -21,6 +21,10 @@ export type GingerPlaybackActions = {
   cycleRepeat: () => void;
   toggleShuffle: () => void;
   setQueue: (tracks: Track[], currentIndex?: number) => void;
+  insertTrackAt: (track: Track, index?: number, autoPlay?: boolean) => void;
+  removeTrackAt: (index: number) => void;
+  moveTrack: (fromIndex: number, toIndex: number) => void;
+  enqueueNext: (track: Track) => void;
   playTrackAt: (index: number) => void;
   selectTrackAt: (index: number) => void;
   setPlaylistMeta: (meta: PlaylistMeta | null) => void;
@@ -88,6 +92,10 @@ export function gingerStateFromContextValues(
     cycleRepeat: _cr,
     toggleShuffle: _ts,
     setQueue: _sq,
+    insertTrackAt: _ita,
+    removeTrackAt: _rta,
+    moveTrack: _mt,
+    enqueueNext: _en,
     playTrackAt: _pta,
     selectTrackAt: _sta,
     setPlaylistMeta: _spm,

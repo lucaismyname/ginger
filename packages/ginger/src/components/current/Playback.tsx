@@ -21,19 +21,26 @@ export function PlaybackState({ className, style, fallback, empty, children }: P
 PlaybackState.displayName = "Ginger.Current.PlaybackState";
 
 export type ErrorMessageProps = DisplayBaseProps & {
+  live?: "polite" | "assertive" | "off";
   children?: (value: string, state: GingerState) => ReactNode;
 };
 
-export function ErrorMessage({ className, style, fallback, empty, children }: ErrorMessageProps) {
+export function ErrorMessage({ className, style, fallback, empty, live = "polite", children }: ErrorMessageProps) {
   const state = useGingerState();
   const value = state.errorMessage ?? "";
   if (!value) {
     const node = empty ?? fallback ?? null;
     return node ? <span className={className} style={style}>{node}</span> : null;
   }
-  if (children) return <span className={className} style={style}>{children(value, state)}</span>;
+  if (children) {
+    return (
+      <span className={className} style={style} aria-live={live}>
+        {children(value, state)}
+      </span>
+    );
+  }
   return (
-    <span className={className} style={style}>
+    <span className={className} style={style} aria-live={live}>
       {value}
     </span>
   );

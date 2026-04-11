@@ -8,28 +8,31 @@ export type EndedTransition =
   | { kind: "stop"; nextIndex: number };
 
 export function computeEndedTransition(state: GingerState): EndedTransition {
-  const { tracks, currentIndex, repeatMode } = state;
+  const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return { kind: "stop", nextIndex: 0 };
   if (repeatMode === "one") return { kind: "replay_same" };
+  if (playbackMode === "single") return { kind: "stop", nextIndex: clampIndex(currentIndex, len) };
   if (currentIndex < len - 1) return { kind: "advance", nextIndex: currentIndex + 1 };
   if (repeatMode === "all") return { kind: "wrap", nextIndex: 0 };
   return { kind: "stop", nextIndex: clampIndex(currentIndex, len) };
 }
 
 export function computeNextIndex(state: GingerState): number {
-  const { tracks, currentIndex, repeatMode } = state;
+  const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return 0;
+  if (playbackMode === "single") return clampIndex(currentIndex, len);
   if (currentIndex < len - 1) return currentIndex + 1;
   if (repeatMode === "all") return 0;
   return clampIndex(currentIndex, len);
 }
 
 export function computePrevIndex(state: GingerState): number {
-  const { tracks, currentIndex, repeatMode } = state;
+  const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return 0;
+  if (playbackMode === "single") return clampIndex(currentIndex, len);
   if (currentIndex > 0) return currentIndex - 1;
   if (repeatMode === "all") return len - 1;
   return 0;

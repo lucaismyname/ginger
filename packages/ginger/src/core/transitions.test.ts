@@ -41,6 +41,14 @@ describe("computeEndedTransition", () => {
     });
     expect(computeEndedTransition(state)).toEqual({ kind: "stop", nextIndex: 1 });
   });
+
+  it("stops when playback mode is single", () => {
+    const state = createInitialState({
+      tracks: [t("a", "/a.mp3"), t("b", "/b.mp3")],
+      playbackMode: "single",
+    });
+    expect(computeEndedTransition(state)).toEqual({ kind: "stop", nextIndex: 0 });
+  });
 });
 
 describe("computeNextIndex", () => {
@@ -74,6 +82,14 @@ describe("computeNextIndex", () => {
     });
     expect(computeNextIndex(state)).toBe(0);
   });
+
+  it("does not advance when playback mode is single", () => {
+    const state = createInitialState({
+      tracks: [t("a", "/a.mp3"), t("b", "/b.mp3")],
+      playbackMode: "single",
+    });
+    expect(computeNextIndex(state)).toBe(0);
+  });
 });
 
 describe("computePrevIndex", () => {
@@ -104,6 +120,15 @@ describe("computePrevIndex", () => {
       tracks: [t("a", "/a.mp3"), t("b", "/b.mp3")],
       currentIndex: 0,
       repeatMode: "all",
+    });
+    expect(computePrevIndex(state)).toBe(1);
+  });
+
+  it("does not rewind when playback mode is single", () => {
+    const state = createInitialState({
+      tracks: [t("a", "/a.mp3"), t("b", "/b.mp3")],
+      currentIndex: 1,
+      playbackMode: "single",
     });
     expect(computePrevIndex(state)).toBe(1);
   });

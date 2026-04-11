@@ -1,5 +1,13 @@
 import type { GingerAction, GingerState, RepeatMode, Track } from "../types";
-import { clampIndex, findIndexByTrackIdentity, shuffleWithAnchor } from "./queue";
+import {
+  addNextTrack,
+  clampIndex,
+  findIndexByTrackIdentity,
+  insertTrackAt,
+  moveTrack,
+  removeTrackAt,
+  shuffleWithAnchor,
+} from "./queue";
 import { computeNextIndex, computePrevIndex, cycleRepeatMode } from "./transitions";
 
 export function clampVolume(v: number): number {
@@ -35,6 +43,7 @@ export function createInitialState(params: {
   isPaused?: boolean;
   isShuffled?: boolean;
   repeatMode?: RepeatMode;
+  playbackMode?: GingerState["playbackMode"];
   volume?: number;
   muted?: boolean;
   playbackRate?: number;
@@ -53,6 +62,7 @@ export function createInitialState(params: {
   return {
     tracks: ordered,
     currentIndex,
+    playbackMode: params.playbackMode ?? "playlist",
     isPaused: params.isPaused ?? true,
     isShuffled: Boolean(params.isShuffled && ordered.length > 1),
     repeatMode: params.repeatMode ?? "off",
@@ -75,6 +85,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         isPaused,
         isShuffled,
         repeatMode,
+        playbackMode,
         volume,
         muted,
         playbackRate,
@@ -86,6 +97,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         isPaused: isPaused ?? true,
         isShuffled: isShuffled ?? false,
         repeatMode: repeatMode ?? "off",
+        playbackMode: playbackMode ?? "playlist",
         volume,
         muted,
         playbackRate,
@@ -102,6 +114,73 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         isShuffled: false,
         originalTracks: null,
         ...resetTimingOnly,
+      };
+    }
+    case "INSERT_TRACK": {
+      const insertIndex = action.payload.index ?? state.tracks.length;
+      const tracks = insertTrackAt(state.tracks, action.payload.track, insertIndex);
+      if (action.payload.autoPlay) {
+        const idx = clampIndex(insertIndex, tracks.length);
+        return {
+          ...state,
+          tracks,
+          currentIndex: idx,
+          isShuffled: false,
+          originalTracks: null,
+          isPaused: false,
+          ...resetTimingOnly,
+        };
+      }
+      const currentIndex =
+        insertIndex <= state.currentIndex ? state.currentIndex + 1 : state.currentIndex;
+      return {
+        ...state,
+        tracks,
+        isShuffled: false,
+        originalTracks: null,
+        currentIndex: clampIndex(currentIndex, tracks.length),
+      };
+    }
+    case "REMOVE_TRACK": {
+      const index = action.payload.index;
+      const tracks = removeTrackAt(state.tracks, index);
+      const currentIndex =
+        index < state.currentIndex
+          ? state.currentIndex - 1
+          : index === state.currentIndex
+            ? Math.min(state.currentIndex, Math.max(0, tracks.length - 1))
+            : state.currentIndex;
+      return {
+        ...state,
+        tracks,
+        isShuffled: false,
+        originalTracks: null,
+        currentIndex: clampIndex(currentIndex, tracks.length),
+        ...(index === state.currentIndex ? resetTimingOnly : {}),
+      };
+    }
+    case "MOVE_TRACK": {
+      const { fromIndex, toIndex } = action.payload;
+      const tracks = moveTrack(state.tracks, fromIndex, toIndex);
+      let currentIndex = state.currentIndex;
+      if (state.currentIndex === fromIndex) currentIndex = toIndex;
+      else if (fromIndex < state.currentIndex && toIndex >= state.currentIndex) currentIndex -= 1;
+      else if (fromIndex > state.currentIndex && toIndex <= state.currentIndex) currentIndex += 1;
+      return {
+        ...state,
+        tracks,
+        isShuffled: false,
+        originalTracks: null,
+        currentIndex: clampIndex(currentIndex, tracks.length),
+      };
+    }
+    case "ADD_NEXT": {
+      const tracks = addNextTrack(state.tracks, state.currentIndex, action.payload.track);
+      return {
+        ...state,
+        tracks,
+        isShuffled: false,
+        originalTracks: null,
       };
     }
     case "SET_INDEX": {

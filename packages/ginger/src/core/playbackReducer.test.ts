@@ -120,3 +120,59 @@ describe("track identity helpers", () => {
     expect(findIndexByTrackIdentity(duplicateUrls, duplicateUrls[1])).toBe(0);
   });
 });
+
+describe("queue mutation actions", () => {
+  it("insert track before current index shifts current index", () => {
+    const state = createInitialState({
+      tracks,
+      currentIndex: 1,
+    });
+    const next = gingerReducer(state, {
+      type: "INSERT_TRACK",
+      payload: { index: 0, track: { id: "x", title: "X", fileUrl: "/x.mp3" } },
+    });
+    expect(next.currentIndex).toBe(2);
+    expect(next.tracks[0]?.id).toBe("x");
+  });
+
+  it("remove active track resets timing and clamps index", () => {
+    const state = {
+      ...createInitialState({
+        tracks,
+        currentIndex: 2,
+      }),
+      currentTime: 42,
+    };
+    const next = gingerReducer(state, {
+      type: "REMOVE_TRACK",
+      payload: { index: 2 },
+    });
+    expect(next.currentIndex).toBe(1);
+    expect(next.currentTime).toBe(0);
+  });
+
+  it("move track keeps active track identity when moved", () => {
+    const state = createInitialState({
+      tracks,
+      currentIndex: 2,
+    });
+    const next = gingerReducer(state, {
+      type: "MOVE_TRACK",
+      payload: { fromIndex: 2, toIndex: 0 },
+    });
+    expect(next.currentIndex).toBe(0);
+    expect(next.tracks[0]?.id).toBe("three");
+  });
+
+  it("add-next inserts immediately after current track", () => {
+    const state = createInitialState({
+      tracks,
+      currentIndex: 0,
+    });
+    const next = gingerReducer(state, {
+      type: "ADD_NEXT",
+      payload: { track: { id: "x", title: "X", fileUrl: "/x.mp3" } },
+    });
+    expect(next.tracks[1]?.id).toBe("x");
+  });
+});

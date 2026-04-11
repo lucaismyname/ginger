@@ -6,9 +6,11 @@ export type {
   GingerInitPayload,
   GingerLocaleMessages,
   GingerMediaSlice,
+  GingerPersistenceAdapter,
   GingerPlaybackSlice,
   GingerProviderProps,
   GingerState,
+  PlaybackMode,
   PlaybackUiState,
   PlaylistMeta,
   RepeatMode,
@@ -36,6 +38,17 @@ export type {
   VolumeBinding,
 } from "./hooks/useControlBindings";
 export { usePlayPauseBinding, useSeekBarBinding, useVolumeSlider } from "./hooks/useControlBindings";
+export type { GingerKeyboardShortcutBindings } from "./hooks/useGingerKeyboardShortcuts";
+export { useGingerKeyboardShortcuts } from "./hooks/useGingerKeyboardShortcuts";
+export type { GingerChapter, GingerChapterState } from "./hooks/useGingerChapters";
+export { useGingerChapters } from "./hooks/useGingerChapters";
+export type { GingerLyricsSyncState } from "./hooks/useGingerLyricsSync";
+export { useGingerLyricsSync } from "./hooks/useGingerLyricsSync";
+export type { GingerSleepTimerOptions } from "./hooks/useGingerSleepTimer";
+export { useGingerSleepTimer } from "./hooks/useGingerSleepTimer";
+export { useGingerDebugLog } from "./hooks/useGingerDebugLog";
+export type { SeekDragState } from "./hooks/useSeekDrag";
+export { useSeekDrag } from "./hooks/useSeekDrag";
 export type { GingerPlayerProps } from "./audio/GingerPlayer";
 export type {
   GingerPlaylistProps,
@@ -71,3 +84,4 @@ export type {
   ShuffleProps,
   VolumeProps,
 } from "./components/controls/Controls";
+export { parseLrc } from "./internal/lyrics";
