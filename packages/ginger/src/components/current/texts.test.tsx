@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import { describe, expect, it, afterEach } from "vitest";
 import { cleanup, within } from "@testing-library/react";
 import { renderGinger } from "../../testing";

@@ -6,7 +6,19 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   plugins: [react(), dts({ entryRoot: "src", tsconfigPath: "./tsconfig.json" })],
   test: {
+    environment: "jsdom",
     setupFiles: ["src/testing/setup.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "**/*.test.{ts,tsx}",
+        "**/testing/setup.ts",
+        "src/testing/index.tsx",
+        "src/client.ts",
+      ],
+    },
   },
   build: {
     lib: {
