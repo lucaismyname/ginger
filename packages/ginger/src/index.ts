@@ -26,10 +26,13 @@ export type { LyricsProps } from "./components/current/Lyrics";
 export type { ProgressProps, TimeRailProps, TimeTextProps } from "./components/current/Time";
 export type { QueueArtworkProps } from "./components/queue/QueueDisplay";
 export type {
+  MuteProps,
   NextProps,
+  PlaybackRateProps,
   PlayPauseProps,
   PreviousProps,
   RepeatProps,
   SeekBarProps,
   ShuffleProps,
+  VolumeProps,
 } from "./components/controls/Controls";

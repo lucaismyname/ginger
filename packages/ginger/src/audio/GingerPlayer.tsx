@@ -21,6 +21,14 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
+    el.volume = state.volume;
+    el.muted = state.muted;
+    el.playbackRate = state.playbackRate;
+  }, [audioRef, state.volume, state.muted, state.playbackRate]);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
     if (!url) {
       el.removeAttribute("src");
       return;
@@ -65,6 +73,13 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
       onPause={() => dispatch({ type: "MEDIA_PAUSE" })}
       onWaiting={() => dispatch({ type: "MEDIA_WAITING" })}
       onCanPlay={() => dispatch({ type: "MEDIA_CANPLAY" })}
+      onVolumeChange={(e) => {
+        const el = e.currentTarget;
+        dispatch({
+          type: "MEDIA_VOLUME_SYNC",
+          payload: { volume: el.volume, muted: el.muted },
+        });
+      }}
       onError={() => {
         const el = audioRef.current;
         const code = el?.error?.code;

@@ -43,6 +43,8 @@ export function Player() {
 
 Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden `<audio>` element exists. Style everything with your own CSS / Tailwind; the library uses **inline defaults** and **CSS custom properties** (see below).
 
+**Volume / mute / speed:** **`Ginger.Control.Volume`** (range 0–1), **`Ginger.Control.Mute`**, **`Ginger.Control.PlaybackRate`** (select; optional `rates` prop). Optional **`initialVolume`**, **`initialMuted`**, **`initialPlaybackRate`** on **`Ginger.Provider`**. Read **`state.volume`**, **`state.muted`**, **`state.playbackRate`** from **`useGinger()`**.
+
 ### Headless hook
 
 Anything rendered by `Ginger.Current.*` / `Ginger.Queue.*` can also be read from **`useGinger()`** for fully custom UIs.

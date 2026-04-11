@@ -47,6 +47,9 @@ export const Ginger = {
     Previous: Control.Previous,
     Shuffle: Control.Shuffle,
     SeekBar: Control.SeekBar,
+    Volume: Control.Volume,
+    Mute: Control.Mute,
+    PlaybackRate: Control.PlaybackRate,
   },
   Playlist: GingerPlaylistCompound,
 };

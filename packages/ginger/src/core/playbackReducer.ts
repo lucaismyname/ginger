@@ -2,12 +2,30 @@ import type { GingerAction, GingerState, RepeatMode, Track } from "../types";
 import { clampIndex, findIndexByFileUrl, shuffleWithAnchor } from "./queue";
 import { computeNextIndex, computePrevIndex, cycleRepeatMode } from "./transitions";
 
-const defaultMedia = {
+export function clampVolume(v: number): number {
+  if (!Number.isFinite(v)) return 1;
+  return Math.min(1, Math.max(0, v));
+}
+
+export function clampPlaybackRate(r: number): number {
+  if (!Number.isFinite(r)) return 1;
+  return Math.min(4, Math.max(0.25, r));
+}
+
+/** Reset when the active track / position changes; keeps volume / mute / speed */
+const resetTimingOnly = {
   currentTime: 0,
   duration: 0,
   bufferedFraction: 0,
   isBuffering: false,
   errorMessage: null as string | null,
+};
+
+const defaultMedia = {
+  ...resetTimingOnly,
+  volume: 1,
+  muted: false,
+  playbackRate: 1,
 };
 
 export function createInitialState(params: {
@@ -17,6 +35,9 @@ export function createInitialState(params: {
   isPaused?: boolean;
   isShuffled?: boolean;
   repeatMode?: RepeatMode;
+  volume?: number;
+  muted?: boolean;
+  playbackRate?: number;
 }): GingerState {
   const tracks = [...params.tracks];
   let currentIndex = clampIndex(params.currentIndex ?? 0, tracks.length);
@@ -38,13 +59,26 @@ export function createInitialState(params: {
     originalTracks,
     playlistMeta: params.playlistMeta ?? null,
     ...defaultMedia,
+    volume: clampVolume(params.volume ?? 1),
+    muted: params.muted ?? false,
+    playbackRate: clampPlaybackRate(params.playbackRate ?? 1),
   };
 }
 
 export function gingerReducer(state: GingerState, action: GingerAction): GingerState {
   switch (action.type) {
     case "INIT": {
-      const { tracks, currentIndex, playlistMeta, isPaused, isShuffled, repeatMode } = action.payload;
+      const {
+        tracks,
+        currentIndex,
+        playlistMeta,
+        isPaused,
+        isShuffled,
+        repeatMode,
+        volume,
+        muted,
+        playbackRate,
+      } = action.payload;
       return createInitialState({
         tracks,
         currentIndex,
@@ -52,6 +86,9 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         isPaused: isPaused ?? true,
         isShuffled: isShuffled ?? false,
         repeatMode: repeatMode ?? "off",
+        volume,
+        muted,
+        playbackRate,
       });
     }
     case "SET_QUEUE": {
@@ -62,7 +99,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         ...state,
         tracks: next,
         currentIndex: idx,
-        ...defaultMedia,
+        ...resetTimingOnly,
       };
     }
     case "SET_INDEX": {
@@ -73,7 +110,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return {
         ...state,
         currentIndex: idx,
-        ...defaultMedia,
+        ...resetTimingOnly,
         isPaused,
       };
     }
@@ -118,7 +155,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return {
         ...state,
         currentIndex: nextIndex,
-        ...(same ? {} : defaultMedia),
+        ...(same ? {} : resetTimingOnly),
         isPaused: same ? state.isPaused : false,
       };
     }
@@ -128,7 +165,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return {
         ...state,
         currentIndex: prevIndex,
-        ...(same ? {} : defaultMedia),
+        ...(same ? {} : resetTimingOnly),
         isPaused: same ? state.isPaused : false,
       };
     }
@@ -166,6 +203,20 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return { ...state, isPaused: true };
     case "RESET_MEDIA_TIMES":
       return { ...state, currentTime: 0, duration: 0, bufferedFraction: 0 };
+    case "SET_VOLUME":
+      return { ...state, volume: clampVolume(action.payload) };
+    case "SET_MUTED":
+      return { ...state, muted: action.payload };
+    case "TOGGLE_MUTE":
+      return { ...state, muted: !state.muted };
+    case "SET_PLAYBACK_RATE":
+      return { ...state, playbackRate: clampPlaybackRate(action.payload) };
+    case "MEDIA_VOLUME_SYNC": {
+      const { volume, muted } = action.payload;
+      const v = clampVolume(volume);
+      if (v === state.volume && muted === state.muted) return state;
+      return { ...state, volume: v, muted };
+    }
     default:
       return state;
   }

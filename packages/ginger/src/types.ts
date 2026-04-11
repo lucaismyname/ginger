@@ -43,6 +43,12 @@ export type GingerMediaSlice = {
   bufferedFraction: number;
   isBuffering: boolean;
   errorMessage: string | null;
+  /** 0…1, mirrored on HTMLMediaElement.volume */
+  volume: number;
+  /** Mirrored on HTMLMediaElement.muted */
+  muted: boolean;
+  /** Mirrored on HTMLMediaElement.playbackRate (typically 0.25–4) */
+  playbackRate: number;
 };
 
 export type GingerPlaybackSlice = {
@@ -68,6 +74,9 @@ export type GingerAction =
         isPaused?: boolean;
         isShuffled?: boolean;
         repeatMode?: RepeatMode;
+        volume?: number;
+        muted?: boolean;
+        playbackRate?: number;
       };
     }
   | { type: "SET_QUEUE"; payload: { tracks: Track[]; currentIndex?: number } }
@@ -88,7 +97,12 @@ export type GingerAction =
   | { type: "MEDIA_CANPLAY" }
   | { type: "MEDIA_PLAY" }
   | { type: "MEDIA_PAUSE" }
-  | { type: "RESET_MEDIA_TIMES" };
+  | { type: "RESET_MEDIA_TIMES" }
+  | { type: "SET_VOLUME"; payload: number }
+  | { type: "SET_MUTED"; payload: boolean }
+  | { type: "TOGGLE_MUTE" }
+  | { type: "SET_PLAYBACK_RATE"; payload: number }
+  | { type: "MEDIA_VOLUME_SYNC"; payload: { volume: number; muted: boolean } };
 
 export type GingerProviderProps = {
   children: ReactNode;
@@ -99,6 +113,11 @@ export type GingerProviderProps = {
   initialShuffle?: boolean;
   initialRepeatMode?: RepeatMode;
   initialPaused?: boolean;
+  /** 0…1, default 1 */
+  initialVolume?: number;
+  initialMuted?: boolean;
+  /** Default 1; clamped ~0.25–4 on set */
+  initialPlaybackRate?: number;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;

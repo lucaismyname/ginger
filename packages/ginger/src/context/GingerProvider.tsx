@@ -7,7 +7,7 @@ import {
   type CSSProperties,
 } from "react";
 import { computeEndedTransition } from "../core/transitions";
-import { gingerReducer, createInitialState } from "../core/playbackReducer";
+import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
 import type { GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
 
@@ -29,6 +29,9 @@ export function GingerProvider({
   initialShuffle = false,
   initialRepeatMode = "off",
   initialPaused = true,
+  initialVolume = 1,
+  initialMuted = false,
+  initialPlaybackRate = 1,
   className,
   style,
   onTrackChange,
@@ -49,6 +52,9 @@ export function GingerProvider({
         isPaused: initialPaused,
         isShuffled: initialShuffle,
         repeatMode: initialRepeatMode,
+        volume: initialVolume,
+        muted: initialMuted,
+        playbackRate: initialPlaybackRate,
       }),
   );
 
@@ -102,15 +108,19 @@ export function GingerProvider({
   }, []);
 
   const setVolume = useCallback((volume: number) => {
-    const el = audioRef.current;
-    if (!el) return;
-    el.volume = Math.min(1, Math.max(0, volume));
+    dispatch({ type: "SET_VOLUME", payload: clampVolume(volume) });
   }, []);
 
   const setMuted = useCallback((muted: boolean) => {
-    const el = audioRef.current;
-    if (!el) return;
-    el.muted = muted;
+    dispatch({ type: "SET_MUTED", payload: muted });
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    dispatch({ type: "TOGGLE_MUTE" });
+  }, []);
+
+  const setPlaybackRate = useCallback((rate: number) => {
+    dispatch({ type: "SET_PLAYBACK_RATE", payload: clampPlaybackRate(rate) });
   }, []);
 
   const next = useCallback(() => {
@@ -201,6 +211,8 @@ export function GingerProvider({
       seek,
       setVolume,
       setMuted,
+      toggleMute,
+      setPlaybackRate,
       next,
       prev,
       setRepeatMode,
@@ -223,11 +235,13 @@ export function GingerProvider({
       prev,
       seek,
       setMuted,
+      setPlaybackRate,
       setQueue,
       setRepeatMode,
       setPlaylistMeta,
       setVolume,
       state,
+      toggleMute,
       togglePlayPause,
       toggleShuffle,
     ],
