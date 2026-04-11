@@ -1,9 +1,11 @@
 {
   "name": "ginger-monorepo",
+  "version": "0.0.0",
   "private": true,
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "build": "npm run build -w @lucaismyname/ginger",
-    "dev": "npm run dev -w ginger-demo"
+    "dev": "npm run dev -w ginger-demo",
+    "publish:lib": "npm publish -w @lucaismyname/ginger --access public"
   }
 }

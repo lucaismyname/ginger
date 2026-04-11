@@ -68,7 +68,15 @@ Playback rules live in **`packages/ginger/src/core/`** (pure TypeScript). React 
 
 ## Publish
 
-From `packages/ginger` (with npm auth for the `@lucaismyname` scope):
+Do **not** run `npm publish` at the repo root: the root package is **`private: true`** (monorepo shell only), so npm will error with `EPRIVATE`.
+
+From the repo root, publish the library workspace (with npm auth for the `@lucaismyname` scope):
+
+```bash
+npm run publish:lib
+```
+
+Or from `packages/ginger`:
 
 ```bash
 npm publish --access public
