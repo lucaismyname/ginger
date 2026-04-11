@@ -1,10 +1,14 @@
 import { Ginger, useGinger, useGingerMedia } from "@lucaismyname/ginger";
 import { useState } from "react";
 import { ThemeToggle } from "./components/ThemeToggle";
-
+import {scan } from "react-scan";
 const NPM_CMD = "npm install @lucaismyname/ginger";
 const NPM_URL = "https://www.npmjs.com/package/@lucaismyname/ginger";
 const REPO_URL = "https://github.com/lucaismyname/ginger";
+scan({
+  enabled: true,
+  showToolbar: true,
+});
 const LANDING_TRACKS = [
   {
     title: "SoundHelix Song 1",
