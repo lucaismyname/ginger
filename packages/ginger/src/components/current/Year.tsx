@@ -1,5 +1,5 @@
 import type { TextDisplayProps } from "./createTextDisplay";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 import { getCurrentTrack } from "../../internal/selectors";
 
 export type YearProps = TextDisplayProps & {
@@ -7,7 +7,7 @@ export type YearProps = TextDisplayProps & {
 };
 
 export function Year({ className, style, fallback, empty, children, format }: YearProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const y = getCurrentTrack(state)?.year;
   if (typeof y !== "number" || !Number.isFinite(y)) {
     const node = empty ?? fallback ?? null;

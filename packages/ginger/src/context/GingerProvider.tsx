@@ -8,8 +8,11 @@ import {
 } from "react";
 import { computeEndedTransition } from "../core/transitions";
 import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
+import { derivePlaybackUiState } from "../internal/selectors";
 import type { GingerInitPayload, GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
+import { GingerLocaleProvider } from "./GingerLocaleContext";
+import { GingerMediaContext, GingerPlaybackContext, type GingerMediaContextValue, type GingerPlaybackContextValue } from "./GingerSplitContexts";
 
 const defaultProviderStyle: CSSProperties = {
   ["--ginger-primary-color" as string]: "#111827",
@@ -19,6 +22,9 @@ const defaultProviderStyle: CSSProperties = {
   ["--ginger-playlist-row-padding" as string]: "6px 8px",
   ["--ginger-artwork-radius" as string]: "6px",
   ["--ginger-artwork-bg" as string]: "#f3f4f6",
+  ["--ginger-playlist-active-bg" as string]: "rgba(17, 24, 39, 0.06)",
+  ["--ginger-buffer-color" as string]: "rgba(107, 114, 128, 0.35)",
+  ["--ginger-focus-ring" as string]: "0 0 0 2px rgba(59, 130, 246, 0.45)",
 };
 
 export function GingerProvider({
@@ -33,6 +39,7 @@ export function GingerProvider({
   initialMuted = false,
   initialPlaybackRate = 1,
   initialStateKey,
+  locale,
   className,
   style,
   onTrackChange,
@@ -304,13 +311,113 @@ export function GingerProvider({
     ],
   );
 
+  const playbackValue = useMemo<GingerPlaybackContextValue>(
+    () => ({
+      tracks: state.tracks,
+      currentIndex: state.currentIndex,
+      isPaused: state.isPaused,
+      isShuffled: state.isShuffled,
+      repeatMode: state.repeatMode,
+      originalTracks: state.originalTracks,
+      playlistMeta: state.playlistMeta,
+      init,
+      play,
+      pause,
+      togglePlayPause,
+      next,
+      prev,
+      setRepeatMode,
+      cycleRepeat,
+      toggleShuffle,
+      setQueue,
+      playTrackAt,
+      selectTrackAt,
+      setPlaylistMeta,
+      dispatch,
+    }),
+    [
+      state.tracks,
+      state.currentIndex,
+      state.isPaused,
+      state.isShuffled,
+      state.repeatMode,
+      state.originalTracks,
+      state.playlistMeta,
+      init,
+      play,
+      pause,
+      togglePlayPause,
+      next,
+      prev,
+      setRepeatMode,
+      cycleRepeat,
+      toggleShuffle,
+      setQueue,
+      playTrackAt,
+      selectTrackAt,
+      setPlaylistMeta,
+      dispatch,
+    ],
+  );
+
+  const mediaValue = useMemo<GingerMediaContextValue>(
+    () => ({
+      currentTime: state.currentTime,
+      duration: state.duration,
+      bufferedFraction: state.bufferedFraction,
+      isBuffering: state.isBuffering,
+      errorMessage: state.errorMessage,
+      volume: state.volume,
+      muted: state.muted,
+      playbackRate: state.playbackRate,
+      seek,
+      setVolume,
+      setMuted,
+      toggleMute,
+      setPlaybackRate,
+      audioRef,
+      notifyEnded,
+      dispatch,
+    }),
+    [
+      state.currentTime,
+      state.duration,
+      state.bufferedFraction,
+      state.isBuffering,
+      state.errorMessage,
+      state.volume,
+      state.muted,
+      state.playbackRate,
+      seek,
+      setVolume,
+      setMuted,
+      toggleMute,
+      setPlaybackRate,
+      audioRef,
+      notifyEnded,
+      dispatch,
+    ],
+  );
+
+  const playbackUi = derivePlaybackUiState(state);
+
   const mergedStyle = useMemo(() => ({ ...defaultProviderStyle, ...style }), [style]);
 
   return (
-    <GingerContext.Provider value={value}>
-      <div className={className} style={mergedStyle}>
-        {children}
-      </div>
-    </GingerContext.Provider>
+    <GingerLocaleProvider locale={locale}>
+      <GingerPlaybackContext.Provider value={playbackValue}>
+        <GingerMediaContext.Provider value={mediaValue}>
+          <GingerContext.Provider value={value}>
+            <div
+              className={className}
+              style={mergedStyle}
+              data-ginger-playback={playbackUi}
+            >
+              {children}
+            </div>
+          </GingerContext.Provider>
+        </GingerMediaContext.Provider>
+      </GingerPlaybackContext.Provider>
+    </GingerLocaleProvider>
   );
 }

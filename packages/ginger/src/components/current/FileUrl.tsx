@@ -1,5 +1,5 @@
 import type { TextDisplayProps } from "./createTextDisplay";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 import { getCurrentTrack } from "../../internal/selectors";
 
 export type FileUrlProps = TextDisplayProps & {
@@ -8,7 +8,7 @@ export type FileUrlProps = TextDisplayProps & {
 };
 
 export function FileUrl({ visible = false, className, style, fallback, empty, children }: FileUrlProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   if (!visible) return null;
   const value = getCurrentTrack(state)?.fileUrl ?? "";
   if (!value) {

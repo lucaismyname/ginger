@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 import type { DisplayBaseProps, GingerState, Track } from "../../types";
 import { getCurrentTrack } from "../../internal/selectors";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 
 export type TextDisplayProps = DisplayBaseProps & {
   children?: (value: string, state: GingerState) => ReactNode;
@@ -12,7 +12,7 @@ export function createTextDisplay(
   select: (state: GingerState) => string | undefined,
 ): (props: TextDisplayProps) => ReactElement | null {
   function Comp(props: TextDisplayProps) {
-    const { state } = useGingerContext();
+    const state = useGingerState();
     const raw = select(state) ?? "";
     const value = raw.trim();
     const { className, style, fallback, empty, children } = props;

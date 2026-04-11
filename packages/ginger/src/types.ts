@@ -2,6 +2,23 @@ import type { CSSProperties, ReactNode } from "react";
 
 export type RepeatMode = "off" | "all" | "one";
 
+/** Default control strings; override via `Ginger.Provider` `locale` prop. */
+export type GingerLocaleMessages = {
+  seek: string;
+  volume: string;
+  playbackSpeed: string;
+  nextTrack: string;
+  previousTrack: string;
+  shuffle: string;
+  mute: string;
+  unmute: string;
+  play: string;
+  pause: string;
+  repeat: Record<RepeatMode, string>;
+  playbackRateNormal: string;
+  playbackRateTimes: (rate: number) => string;
+};
+
 export type Track = {
   /** Optional stable identity for duplicate URLs / queue mutations */
   id?: string;
@@ -20,6 +37,8 @@ export type Track = {
   lyrics?: string;
   /** Hint before metadata loads; never overrides finite media duration */
   durationSeconds?: number;
+  /** App-specific data for custom UI; not read by Ginger core */
+  metadata?: Record<string, unknown>;
 };
 
 export type PlaylistMeta = {
@@ -29,6 +48,8 @@ export type PlaylistMeta = {
   artworkUrl?: string;
   copyright?: string;
   description?: string;
+  /** App-specific data for custom UI; not read by Ginger core */
+  metadata?: Record<string, unknown>;
 };
 
 export type PlaybackUiState =
@@ -128,6 +149,8 @@ export type GingerProviderProps = {
    * and other `initial*` props (same as calling `init()`). First paint still uses the reducer initializer only.
    */
   initialStateKey?: string | number;
+  /** Override default English strings on built-in controls */
+  locale?: Partial<GingerLocaleMessages>;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;

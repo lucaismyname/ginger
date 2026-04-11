@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useGingerContext } from "../context/GingerContext";
+import { gingerStateFromContextValues, useGingerMedia, useGingerPlayback } from "../context/GingerSplitContexts";
 import {
   derivePlaybackUiState,
   effectiveDuration,
@@ -11,62 +11,43 @@ import {
 } from "../internal/selectors";
 
 export function useGinger() {
-  const ctx = useGingerContext();
-  const { state } = ctx;
+  const pb = useGingerPlayback();
+  const md = useGingerMedia();
 
   return useMemo(
-    () => ({
-      state,
-      currentTrack: getCurrentTrack(state),
-      playbackUi: derivePlaybackUiState(state),
-      duration: effectiveDuration(state),
-      remaining: effectiveRemaining(state),
-      progress: progressFraction(state),
-      artworkUrl: resolvedArtwork(state),
-      albumLine: resolvedAlbumLine(state),
-      play: ctx.play,
-      pause: ctx.pause,
-      togglePlayPause: ctx.togglePlayPause,
-      seek: ctx.seek,
-      setVolume: ctx.setVolume,
-      setMuted: ctx.setMuted,
-      toggleMute: ctx.toggleMute,
-      setPlaybackRate: ctx.setPlaybackRate,
-      next: ctx.next,
-      prev: ctx.prev,
-      setRepeatMode: ctx.setRepeatMode,
-      cycleRepeat: ctx.cycleRepeat,
-      toggleShuffle: ctx.toggleShuffle,
-      setQueue: ctx.setQueue,
-      playTrackAt: ctx.playTrackAt,
-      selectTrackAt: ctx.selectTrackAt,
-      setPlaylistMeta: ctx.setPlaylistMeta,
-      init: ctx.init,
-      audioRef: ctx.audioRef,
-      dispatch: ctx.dispatch,
-    }),
-    [
-      ctx.audioRef,
-      ctx.cycleRepeat,
-      ctx.dispatch,
-      ctx.init,
-      ctx.next,
-      ctx.pause,
-      ctx.play,
-      ctx.playTrackAt,
-      ctx.selectTrackAt,
-      ctx.prev,
-      ctx.seek,
-      ctx.setMuted,
-      ctx.setPlaybackRate,
-      ctx.setPlaylistMeta,
-      ctx.setQueue,
-      ctx.setRepeatMode,
-      ctx.setVolume,
-      ctx.toggleMute,
-      ctx.togglePlayPause,
-      ctx.toggleShuffle,
-      state,
-    ],
+    () => {
+      const state = gingerStateFromContextValues(pb, md);
+      return {
+        state,
+        currentTrack: getCurrentTrack(state),
+        playbackUi: derivePlaybackUiState(state),
+        duration: effectiveDuration(state),
+        remaining: effectiveRemaining(state),
+        progress: progressFraction(state),
+        artworkUrl: resolvedArtwork(state),
+        albumLine: resolvedAlbumLine(state),
+        play: pb.play,
+        pause: pb.pause,
+        togglePlayPause: pb.togglePlayPause,
+        seek: md.seek,
+        setVolume: md.setVolume,
+        setMuted: md.setMuted,
+        toggleMute: md.toggleMute,
+        setPlaybackRate: md.setPlaybackRate,
+        next: pb.next,
+        prev: pb.prev,
+        setRepeatMode: pb.setRepeatMode,
+        cycleRepeat: pb.cycleRepeat,
+        toggleShuffle: pb.toggleShuffle,
+        setQueue: pb.setQueue,
+        playTrackAt: pb.playTrackAt,
+        selectTrackAt: pb.selectTrackAt,
+        setPlaylistMeta: pb.setPlaylistMeta,
+        init: pb.init,
+        audioRef: md.audioRef,
+        dispatch: pb.dispatch,
+      };
+    },
+    [pb, md],
   );
 }

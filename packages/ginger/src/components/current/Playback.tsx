@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { DisplayBaseProps, GingerState, PlaybackUiState } from "../../types";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 import { derivePlaybackUiState } from "../../internal/selectors";
 
 export type PlaybackStateProps = DisplayBaseProps & {
@@ -8,7 +8,7 @@ export type PlaybackStateProps = DisplayBaseProps & {
 };
 
 export function PlaybackState({ className, style, fallback, empty, children }: PlaybackStateProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const value = derivePlaybackUiState(state);
   if (children) return <span className={className} style={style}>{children(value, state)}</span>;
   return (
@@ -25,7 +25,7 @@ export type ErrorMessageProps = DisplayBaseProps & {
 };
 
 export function ErrorMessage({ className, style, fallback, empty, children }: ErrorMessageProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const value = state.errorMessage ?? "";
   if (!value) {
     const node = empty ?? fallback ?? null;

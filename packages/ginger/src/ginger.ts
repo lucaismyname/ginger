@@ -30,6 +30,7 @@ export const Ginger = {
     Remaining: Current.Remaining,
     Progress: Current.Progress,
     TimeRail: Current.TimeRail,
+    BufferRail: Current.BufferRail,
     PlaybackState: Current.PlaybackState,
     ErrorMessage: Current.ErrorMessage,
   },

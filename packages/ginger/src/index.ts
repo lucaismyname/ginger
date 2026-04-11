@@ -4,6 +4,7 @@ export type {
   DisplayBaseProps,
   GingerAction,
   GingerInitPayload,
+  GingerLocaleMessages,
   GingerMediaSlice,
   GingerPlaybackSlice,
   GingerProviderProps,
@@ -15,6 +16,26 @@ export type {
 } from "./types";
 export { clampPlaybackRate, clampVolume } from "./core/playbackReducer";
 export { derivePlaybackUiState } from "./internal/selectors";
+export {
+  gingerStateFromContexts,
+  gingerStateFromContextValues,
+  useGingerMedia,
+  useGingerPlayback,
+  useGingerState,
+} from "./context/GingerSplitContexts";
+export type {
+  GingerMediaActions,
+  GingerMediaContextValue,
+  GingerPlaybackActions,
+  GingerPlaybackContextValue,
+} from "./context/GingerSplitContexts";
+export { defaultGingerLocale, useGingerLocale } from "./context/GingerLocaleContext";
+export type {
+  PlayPauseBinding,
+  SeekBarBinding,
+  VolumeBinding,
+} from "./hooks/useControlBindings";
+export { usePlayPauseBinding, useSeekBarBinding, useVolumeSlider } from "./hooks/useControlBindings";
 export type { GingerPlayerProps } from "./audio/GingerPlayer";
 export type {
   GingerPlaylistProps,
@@ -27,7 +48,12 @@ export type {
 export type { ArtworkProps as CurrentArtworkProps } from "./components/current/Artwork";
 export type { FileUrlProps } from "./components/current/FileUrl";
 export type { LyricsProps } from "./components/current/Lyrics";
-export type { ProgressProps, TimeRailProps, TimeTextProps } from "./components/current/Time";
+export type {
+  BufferRailProps,
+  ProgressProps,
+  TimeRailProps,
+  TimeTextProps,
+} from "./components/current/Time";
 export type {
   QueueIndexProps,
   QueueLengthProps,

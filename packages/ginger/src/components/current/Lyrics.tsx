@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { DisplayBaseProps, GingerState } from "../../types";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 import { getCurrentTrack } from "../../internal/selectors";
 
 export type LyricsProps = DisplayBaseProps & {
@@ -10,7 +10,7 @@ export type LyricsProps = DisplayBaseProps & {
 };
 
 export function Lyrics({ className, style, fallback, empty, children, preserveWhitespace = true }: LyricsProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const raw = getCurrentTrack(state)?.lyrics ?? "";
   const value = preserveWhitespace ? raw.replace(/^\s+|\s+$/g, "") : raw.trim();
   if (!value) {

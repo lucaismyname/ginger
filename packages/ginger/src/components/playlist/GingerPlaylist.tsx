@@ -7,7 +7,7 @@ import {
   type LiHTMLAttributes,
   type ReactNode,
 } from "react";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerPlayback } from "../../context/GingerSplitContexts";
 import { trackIdentity } from "../../core/queue";
 import type { Track } from "../../types";
 
@@ -50,7 +50,7 @@ export function GingerPlaylist({
   style,
   ...rest
 }: GingerPlaylistProps) {
-  const { state, playTrackAt, selectTrackAt } = useGingerContext();
+  const { tracks, currentIndex, playTrackAt, selectTrackAt } = useGingerPlayback();
 
   const listStyle: CSSProperties = {
     listStyle: "none",
@@ -77,8 +77,8 @@ export function GingerPlaylist({
   return (
     <GingerPlaylistConfigContext.Provider value={{ playOnSelect }}>
       <ul style={listStyle} {...rest}>
-        {state.tracks.map((track, index) => {
-          const active = index === state.currentIndex;
+        {tracks.map((track, index) => {
+          const active = index === currentIndex;
           return (
             <li key={`${index}-${trackIdentity(track)}`}>
               <button
@@ -91,7 +91,7 @@ export function GingerPlaylist({
                   width: "100%",
                   textAlign: "left",
                   border: "none",
-                  background: active ? "rgba(17, 24, 39, 0.06)" : "transparent",
+                  background: active ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))" : "transparent",
                   color: "inherit",
                   font: "inherit",
                   cursor: "pointer",
@@ -134,9 +134,9 @@ export function GingerPlaylistTrack({
   ...buttonRest
 }: GingerPlaylistTrackProps) {
   const { playOnSelect } = usePlaylistConfig();
-  const { state, playTrackAt, selectTrackAt } = useGingerContext();
-  const active = index === state.currentIndex;
-  const track = state.tracks[index];
+  const { tracks, currentIndex, playTrackAt, selectTrackAt } = useGingerPlayback();
+  const active = index === currentIndex;
+  const track = tracks[index];
   const defaultLabel =
     track != null ? (
       <span>
@@ -156,7 +156,7 @@ export function GingerPlaylistTrack({
           width: "100%",
           textAlign: "left",
           border: "none",
-          background: active ? "rgba(17, 24, 39, 0.06)" : "transparent",
+          background: active ? "var(--ginger-playlist-active-bg, rgba(17, 24, 39, 0.06))" : "transparent",
           color: "inherit",
           font: "inherit",
           cursor: "pointer",

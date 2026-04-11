@@ -1,6 +1,6 @@
 import type { CSSProperties, ImgHTMLAttributes } from "react";
 import type { DisplayBaseProps } from "../../types";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 import { getCurrentTrack, resolvedArtwork } from "../../internal/selectors";
 
 export type ArtworkProps = DisplayBaseProps &
@@ -9,7 +9,7 @@ export type ArtworkProps = DisplayBaseProps &
   };
 
 export function Artwork({ className, style, fallback, empty, sizes, loading, onError, decoding, imgStyle }: ArtworkProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const track = getCurrentTrack(state);
   const src = resolvedArtwork(state);
   if (!src) {

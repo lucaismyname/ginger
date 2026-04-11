@@ -637,6 +637,11 @@ CSS variables available on `Ginger.Provider`:
 - `--ginger-playlist-row-padding`
 - `--ginger-artwork-radius`
 - `--ginger-artwork-bg`
+- `--ginger-playlist-active-bg` (playlist current row)
+- `--ginger-buffer-color` (buffered range in `TimeRail` / `BufferRail`)
+- `--ginger-focus-ring` (documented for your own focus styles; native controls vary by browser)
+
+The root element under `Ginger.Provider` sets **`data-ginger-playback`** to one of `idle` \| `loading` \| `playing` \| `paused` \| `ended` \| `error` so you can target themes in CSS (e.g. `[data-ginger-playback="error"]`).
 
 Example:
 
@@ -653,6 +658,24 @@ Example:
   {/* ... */}
 </Ginger.Provider>
 ```
+
+## Building custom UI
+
+- **`useGinger()`** — One object with merged `state`, derived fields (`duration`, `progress`, `playbackUi`, …), actions, `dispatch`, and `audioRef`. Best default when you want everything in one place.
+
+- **`useGingerPlayback()`** / **`useGingerMedia()`** — Subscribe to queue/transport vs time/volume/buffering separately so dense UIs re-render less often.
+
+- **`useGingerState()`** — Merged `GingerState` only (no actions); use inside custom display components together with hooks above for controls.
+
+- **Headless control bindings** (bind to your own components): **`useSeekBarBinding()`**, **`useVolumeSlider()`**, **`usePlayPauseBinding({ playAriaLabel?, pauseAriaLabel? })`**. Each returns props such as `value`, `min`, `max`, handlers, and `ariaLabel` / `ariaValueText` where relevant.
+
+- **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
+
+- **Track extras** — Optional **`metadata?: Record<string, unknown>`** on **`Track`** (and on **`PlaylistMeta`**) is ignored by core logic; use it for badges, flags, or UI-only fields.
+
+- **Buffered UI** — **`Ginger.Current.BufferRail`** shows load progress; **`Ginger.Current.TimeRail`** supports **`showBuffered`** to stack a buffered layer behind the played segment.
+
+Recipes below cover queue lifecycle and media edge cases.
 
 ## Recipes
 

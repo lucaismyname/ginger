@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { DisplayBaseProps } from "../../types";
 import { createTextDisplay } from "../current/createTextDisplay";
-import { useGingerContext } from "../../context/GingerContext";
+import { useGingerState } from "../../context/GingerSplitContexts";
 
 export const Title = createTextDisplay("Ginger.Queue.Title", (s) => s.playlistMeta?.title);
 export const Subtitle = createTextDisplay("Ginger.Queue.Subtitle", (s) => s.playlistMeta?.subtitle);
@@ -13,7 +13,7 @@ export type QueueArtworkProps = DisplayBaseProps & {
 };
 
 export function Artwork({ className, style, fallback, empty, imgStyle }: QueueArtworkProps) {
-  const { state } = useGingerContext();
+  const state = useGingerState();
   const src = state.playlistMeta?.artworkUrl;
   if (!src) {
     const node = empty ?? fallback ?? null;
