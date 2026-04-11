@@ -21,3 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Improved testing harness and coverage configuration for internal package tests.
 
+## [0.0.20] - 2026-04-11
+
+- 

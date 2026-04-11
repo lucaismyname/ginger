@@ -22,6 +22,7 @@ export type PlayPauseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   playAriaLabel?: string;
   /** Screen-reader label when playing (action would pause); defaults to match `pauseLabel` when it is a string */
   pauseAriaLabel?: string;
+  children?: ReactNode;
 };
 
 export function PlayPause({
@@ -29,6 +30,7 @@ export function PlayPause({
   pauseLabel = "Pause",
   playAriaLabel,
   pauseAriaLabel,
+  children,
   type = "button",
   onClick,
   ...rest
@@ -50,7 +52,7 @@ export function PlayPause({
         onClick?.(e);
       }}
     >
-      {b.isPaused ? playLabel : pauseLabel}
+      {children ?? (b.isPaused ? playLabel : pauseLabel)}
     </button>
   );
 }
