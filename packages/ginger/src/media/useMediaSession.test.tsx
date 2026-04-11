@@ -1,8 +1,11 @@
-import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
-import { render, cleanup, act } from "@testing-library/react";
-import { useMediaSessionBridge } from "./useMediaSession";
+import { act, cleanup, render } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createInitialState } from "../core/playbackReducer";
-import { installNavigatorMediaSession, type NavigatorMediaSessionInstall } from "../testing/helpers";
+import {
+  type NavigatorMediaSessionInstall,
+  installNavigatorMediaSession,
+} from "../testing/helpers";
+import { useMediaSessionBridge } from "./useMediaSession";
 import type { MediaSessionBridgeActions } from "./useMediaSession";
 
 afterEach(cleanup);

@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, cleanup, fireEvent, act, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { Next, PlayPause, Previous } from "../components/controls/Controls";
+import { Artist, Title } from "../components/current/texts";
 import { Ginger } from "../ginger";
-import { PlayPause, Next, Previous } from "../components/controls/Controls";
-import { Title, Artist } from "../components/current/texts";
 import type { Track } from "../types";
 
 afterEach(cleanup);
@@ -13,7 +13,9 @@ const tracks: Track[] = [
   { id: "three", title: "Song Three", artist: "Artist C", fileUrl: "/three.mp3" },
 ];
 
-function TestPlayer({ onTrackChange }: { onTrackChange?: (track: Track | null, index: number) => void }) {
+function TestPlayer({
+  onTrackChange,
+}: { onTrackChange?: (track: Track | null, index: number) => void }) {
   return (
     <Ginger.Provider initialTracks={tracks} onTrackChange={onTrackChange}>
       <Ginger.Player />

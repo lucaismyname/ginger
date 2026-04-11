@@ -50,10 +50,16 @@ export function cycleRepeatMode(mode: RepeatMode): RepeatMode {
   return "off";
 }
 
-export function resolveArtworkUrl(track: Track | null, playlistArtwork?: string | null): string | undefined {
+export function resolveArtworkUrl(
+  track: Track | null,
+  playlistArtwork?: string | null,
+): string | undefined {
   return track?.artworkUrl ?? playlistArtwork ?? undefined;
 }
 
-export function resolveAlbumLine(track: Track | null, playlistSubtitle?: string | null): string | undefined {
+export function resolveAlbumLine(
+  track: Track | null,
+  playlistSubtitle?: string | null,
+): string | undefined {
   return track?.album ?? playlistSubtitle ?? undefined;
 }

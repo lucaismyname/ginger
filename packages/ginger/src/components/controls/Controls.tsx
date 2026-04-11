@@ -107,7 +107,7 @@ export function Next({
         onClick?.(e);
       }}
     >
-      {children ?? locale.previousTrack}
+      {children ?? locale.nextTrack}
     </button>
   );
 }

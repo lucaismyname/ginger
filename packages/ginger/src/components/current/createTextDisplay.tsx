@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
-import type { DisplayBaseProps, GingerState, Track } from "../../types";
-import { getCurrentTrack } from "../../internal/selectors";
 import { useGingerState } from "../../context/GingerSplitContexts";
+import { getCurrentTrack } from "../../internal/selectors";
+import type { DisplayBaseProps, GingerState, Track } from "../../types";
 
 export type TextDisplayProps = DisplayBaseProps & {
   children?: (value: string, state: GingerState) => ReactNode;
@@ -18,9 +18,18 @@ export function createTextDisplay(
     const { className, style, fallback, empty, children } = props;
     if (!value) {
       const node = empty ?? fallback ?? null;
-      return node ? <span className={className} style={style}>{node}</span> : null;
+      return node ? (
+        <span className={className} style={style}>
+          {node}
+        </span>
+      ) : null;
     }
-    if (children) return <span className={className} style={style}>{children(value, state)}</span>;
+    if (children)
+      return (
+        <span className={className} style={style}>
+          {children(value, state)}
+        </span>
+      );
     return (
       <span className={className} style={style}>
         {value}

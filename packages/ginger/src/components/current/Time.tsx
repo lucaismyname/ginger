@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode } from "react";
-import type { DisplayBaseProps, GingerState } from "../../types";
 import { useGingerState } from "../../context/GingerSplitContexts";
-import { effectiveDuration, effectiveRemaining, progressFraction } from "../../internal/selectors";
 import { formatMmSs } from "../../internal/formatTime";
+import { effectiveDuration, effectiveRemaining, progressFraction } from "../../internal/selectors";
+import type { DisplayBaseProps, GingerState } from "../../types";
 
 export type TimeTextProps = DisplayBaseProps & {
   format?: (seconds: number) => string;
@@ -17,10 +17,19 @@ function renderTime(
   const { className, style, fallback, empty, children, format = formatMmSs } = props;
   if (!(valueSeconds >= 0) || !Number.isFinite(valueSeconds)) {
     const node = empty ?? fallback ?? null;
-    return node ? <span className={className} style={style}>{node}</span> : null;
+    return node ? (
+      <span className={className} style={style}>
+        {node}
+      </span>
+    ) : null;
   }
   const text = format(valueSeconds);
-  if (children) return <span className={className} style={style}>{children(text, state)}</span>;
+  if (children)
+    return (
+      <span className={className} style={style}>
+        {children(text, state)}
+      </span>
+    );
   return (
     <span className={className} style={style}>
       {text}
@@ -50,7 +59,10 @@ export function Remaining(props: TimeTextProps) {
 Remaining.displayName = "Ginger.Current.Remaining";
 
 export type ProgressProps = DisplayBaseProps & {
-  children?: (value: { fraction: number; currentTime: number; duration: number }, state: GingerState) => ReactNode;
+  children?: (
+    value: { fraction: number; currentTime: number; duration: number },
+    state: GingerState,
+  ) => ReactNode;
 };
 
 export function Progress({ className, style, fallback, empty, children }: ProgressProps) {
@@ -59,7 +71,11 @@ export function Progress({ className, style, fallback, empty, children }: Progre
   const fraction = progressFraction(state);
   if (!(duration > 0)) {
     const node = empty ?? fallback ?? null;
-    return node ? <span className={className} style={style}>{node}</span> : null;
+    return node ? (
+      <span className={className} style={style}>
+        {node}
+      </span>
+    ) : null;
   }
   if (children)
     return (
@@ -121,7 +137,9 @@ export function TimeRail({
             top: unstyled ? undefined : 0,
             height: unstyled ? undefined : "100%",
             width: bufPct,
-            background: unstyled ? undefined : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
+            background: unstyled
+              ? undefined
+              : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
           }}
         />
       ) : null}
@@ -170,7 +188,9 @@ export function BufferRail({ className, style, height = 4, unstyled = false }: B
         style={{
           width: bufPct,
           height: unstyled ? undefined : "100%",
-          background: unstyled ? undefined : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
+          background: unstyled
+            ? undefined
+            : "var(--ginger-buffer-color, rgba(107, 114, 128, 0.35))",
         }}
       />
     </div>

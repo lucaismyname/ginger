@@ -58,9 +58,9 @@ export function ThemeToggle() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="lucide lucide-blend-icon lucide-blend"
         >
           <circle cx="9" cy="9" r="7" />
@@ -74,9 +74,9 @@ export function ThemeToggle() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="lucide lucide-blend-icon lucide-blend"
         >
           <circle cx="9" cy="9" r="7" />

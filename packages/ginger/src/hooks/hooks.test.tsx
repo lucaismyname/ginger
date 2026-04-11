@@ -1,15 +1,15 @@
-import { describe, expect, it, afterEach, vi } from "vitest";
-import { cleanup, fireEvent, act, renderHook, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, renderHook, screen } from "@testing-library/react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Ginger } from "../ginger";
-import { renderGinger, queryAudio } from "../testing";
-import { useNextTrackPrefetch } from "./useNextTrackPrefetch";
-import { useSeekDrag } from "./useSeekDrag";
+import { queryAudio, renderGinger } from "../testing";
+import type { Track } from "../types";
+import { usePlayPauseBinding, useSeekBarBinding, useVolumeSlider } from "./useControlBindings";
+import { useGinger } from "./useGinger";
 import { useGingerChapters } from "./useGingerChapters";
 import { useGingerLyricsSync } from "./useGingerLyricsSync";
-import { useSeekBarBinding, useVolumeSlider, usePlayPauseBinding } from "./useControlBindings";
-import { useGinger } from "./useGinger";
-import type { Track } from "../types";
+import { useNextTrackPrefetch } from "./useNextTrackPrefetch";
+import { useSeekDrag } from "./useSeekDrag";
 
 afterEach(cleanup);
 

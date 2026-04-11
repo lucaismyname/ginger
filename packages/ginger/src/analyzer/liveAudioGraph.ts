@@ -33,7 +33,9 @@ export function attachLiveAnalyser(
 ): { id: number; context: AudioContext; analyser: AnalyserNode } {
   let entry = entries.get(element);
   if (!entry) {
-    const Context = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const Context =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Context) {
       throw new Error("Web Audio API is not available");
     }

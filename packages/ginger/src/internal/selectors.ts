@@ -1,5 +1,5 @@
-import type { GingerState, PlaybackUiState, Track } from "../types";
 import { resolveAlbumLine, resolveArtworkUrl } from "../core/transitions";
+import type { GingerState, PlaybackUiState, Track } from "../types";
 
 export function getCurrentTrack(state: GingerState): Track | null {
   const t = state.tracks[state.currentIndex];

@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useGinger } from "../hooks/useGinger";
-import { attachLiveAnalyser, detachLiveAnalyser, type LiveAnalyserOptions } from "./liveAudioGraph";
+import { type LiveAnalyserOptions, attachLiveAnalyser, detachLiveAnalyser } from "./liveAudioGraph";
 
 export type UseGingerLiveAnalyzerOptions = {
   /** When false, the analyser is detached and no frames are read. Default true. */
@@ -26,7 +26,9 @@ export type UseGingerLiveAnalyzerResult = {
 const emptyFreq = new Uint8Array(0);
 const emptyTime = new Uint8Array(0);
 
-export function useGingerLiveAnalyzer(options: UseGingerLiveAnalyzerOptions = {}): UseGingerLiveAnalyzerResult {
+export function useGingerLiveAnalyzer(
+  options: UseGingerLiveAnalyzerOptions = {},
+): UseGingerLiveAnalyzerResult {
   const {
     enabled = true,
     fftSize = 2048,
@@ -84,9 +86,9 @@ export function useGingerLiveAnalyzer(options: UseGingerLiveAnalyzerOptions = {}
       const a = analyserHolderRef.current;
       const fq = freqRef.current;
       const td = timeRef.current;
-          if (a && fq.length > 0 && td.length > 0) {
-            a.getByteFrequencyData(fq as Uint8Array<ArrayBuffer>);
-            a.getByteTimeDomainData(td as Uint8Array<ArrayBuffer>);
+      if (a && fq.length > 0 && td.length > 0) {
+        a.getByteFrequencyData(fq as Uint8Array<ArrayBuffer>);
+        a.getByteTimeDomainData(td as Uint8Array<ArrayBuffer>);
         setFrame((n) => n + 1);
       }
       rafId = requestAnimationFrame(runLoop);

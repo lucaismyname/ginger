@@ -22,7 +22,10 @@ export function trackIdentity(track: Track | null | undefined): string {
   return track.id != null && track.id !== "" ? `id:${track.id}` : `file:${track.fileUrl}`;
 }
 
-export function findIndexByTrackIdentity(tracks: Track[], target: Track | null | undefined): number {
+export function findIndexByTrackIdentity(
+  tracks: Track[],
+  target: Track | null | undefined,
+): number {
   if (!target) return 0;
   const byRef = tracks.findIndex((t) => t === target);
   if (byRef !== -1) return byRef;

@@ -1,14 +1,16 @@
 import { Ginger, useGinger, useGingerMedia } from "@lucaismyname/ginger";
 import { useState } from "react";
 import { ThemeToggle } from "./components/ThemeToggle";
-import {scan } from "react-scan";
+import { scan } from "react-scan";
 const NPM_CMD = "npm install @lucaismyname/ginger";
 const NPM_URL = "https://www.npmjs.com/package/@lucaismyname/ginger";
 const REPO_URL = "https://github.com/lucaismyname/ginger";
-scan({
-  enabled: true,
-  showToolbar: true,
-});
+if (import.meta.env.DEV) {
+  scan({
+    enabled: true,
+    showToolbar: true,
+  });
+}
 const LANDING_TRACKS = [
   {
     title: "SoundHelix Song 1",
@@ -60,7 +62,7 @@ function LandingPlayerControls() {
       <section className="flex items-center justify-between w-full shrink-1 gap-4">
         <div className="flex items-center gap-2">
           <Ginger.Control.Mute
-            className=" p-1.5 text-xs text-zinc-900dark:text-zinc-50"
+            className="p-1.5 text-xs text-zinc-900 dark:text-zinc-50"
             muteLabel={
               <svg
                 aria-hidden="true"
@@ -156,9 +158,9 @@ export function App() {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="lucide lucide-copy-icon lucide-copy"
                   >
                     <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
@@ -168,14 +170,14 @@ export function App() {
               </div>
             </div>
 
-            <p className="mt-8 text-zinc-600 dark:text-zinc-400">
+            <div className="mt-8 text-zinc-600 dark:text-zinc-400">
               <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
                 Links
               </p>
               <section className="flex flex-row gap-4 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -183,14 +185,14 @@ export function App() {
                 </a>
                 <a
                   href={REPO_URL}
-                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
                   GitHub
                 </a>
               </section>
-            </p>
+            </div>
           </section>
         </section>
       </main>

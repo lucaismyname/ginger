@@ -1,6 +1,10 @@
 import { useCallback, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { useGingerMedia, useGingerPlayback, gingerStateFromContextValues } from "../context/GingerSplitContexts";
+import {
+  gingerStateFromContextValues,
+  useGingerMedia,
+  useGingerPlayback,
+} from "../context/GingerSplitContexts";
 import { progressFraction } from "../internal/selectors";
 
 export type SeekDragState = {

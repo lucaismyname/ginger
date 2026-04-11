@@ -6,7 +6,8 @@ describe("analyzeAudioBuffer", () => {
     const Ctx =
       typeof globalThis.AudioContext !== "undefined"
         ? globalThis.AudioContext
-        : (globalThis as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        : (globalThis as unknown as { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
     if (!Ctx) {
       return;
     }

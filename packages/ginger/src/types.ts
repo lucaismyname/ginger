@@ -55,13 +55,7 @@ export type PlaylistMeta = {
   metadata?: Record<string, unknown>;
 };
 
-export type PlaybackUiState =
-  | "idle"
-  | "loading"
-  | "playing"
-  | "paused"
-  | "ended"
-  | "error";
+export type PlaybackUiState = "idle" | "loading" | "playing" | "paused" | "ended" | "error";
 
 export type GingerMediaSlice = {
   currentTime: number;
@@ -121,7 +115,10 @@ export type GingerAction =
   | { type: "TOGGLE_SHUFFLE" }
   | { type: "NEXT" }
   | { type: "PREV" }
-  | { type: "MEDIA_TIME_UPDATE"; payload: { currentTime: number; duration: number; bufferedFraction: number } }
+  | {
+      type: "MEDIA_TIME_UPDATE";
+      payload: { currentTime: number; duration: number; bufferedFraction: number };
+    }
   | { type: "MEDIA_LOADED_METADATA"; payload: { duration: number; bufferedFraction: number } }
   | { type: "SET_PLAYLIST_META"; payload: PlaylistMeta | null }
   | { type: "SET_PLAYBACK_MODE"; payload: PlaybackMode }

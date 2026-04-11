@@ -1,9 +1,9 @@
-import { describe, expect, it, afterEach } from "vitest";
-import { cleanup, within, fireEvent, act, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { renderGinger } from "../../testing";
+import type { Track } from "../../types";
 import { Chapters } from "./Chapters";
 import { LyricsSynced } from "./LyricsSynced";
-import type { Track } from "../../types";
 
 afterEach(cleanup);
 

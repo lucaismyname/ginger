@@ -1,16 +1,14 @@
 import { describe, expect, it } from "vitest";
+import { createInitialState } from "../core/playbackReducer";
+import type { Track } from "../types";
 import {
   derivePlaybackUiState,
   effectiveDuration,
   effectiveRemaining,
   progressFraction,
 } from "./selectors";
-import { createInitialState } from "../core/playbackReducer";
-import type { Track } from "../types";
 
-const tracks: Track[] = [
-  { id: "a", title: "A", fileUrl: "/a.mp3", durationSeconds: 120 },
-];
+const tracks: Track[] = [{ id: "a", title: "A", fileUrl: "/a.mp3", durationSeconds: 120 }];
 
 function makeState(overrides: Partial<ReturnType<typeof createInitialState>> = {}) {
   return { ...createInitialState({ tracks }), ...overrides };
@@ -34,11 +32,15 @@ describe("derivePlaybackUiState", () => {
   });
 
   it("returns paused when paused midway", () => {
-    expect(derivePlaybackUiState(makeState({ isPaused: true, currentTime: 10, duration: 120 }))).toBe("paused");
+    expect(
+      derivePlaybackUiState(makeState({ isPaused: true, currentTime: 10, duration: 120 })),
+    ).toBe("paused");
   });
 
   it("returns ended when paused at the end", () => {
-    expect(derivePlaybackUiState(makeState({ isPaused: true, currentTime: 119.96, duration: 120 }))).toBe("ended");
+    expect(
+      derivePlaybackUiState(makeState({ isPaused: true, currentTime: 119.96, duration: 120 })),
+    ).toBe("ended");
   });
 });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import type { Track } from "../types";
 import { createInitialState } from "./playbackReducer";
 import { computeEndedTransition, computeNextIndex, computePrevIndex } from "./transitions";
-import type { Track } from "../types";
 
 const t = (id: string, url: string): Track => ({ id, title: id, fileUrl: url });
 

@@ -19,11 +19,11 @@ describe("formatMmSs", () => {
   });
 
   it("returns 0:00 for NaN", () => {
-    expect(formatMmSs(NaN)).toBe("0:00");
+    expect(formatMmSs(Number.NaN)).toBe("0:00");
   });
 
   it("returns 0:00 for Infinity", () => {
-    expect(formatMmSs(Infinity)).toBe("0:00");
+    expect(formatMmSs(Number.POSITIVE_INFINITY)).toBe("0:00");
   });
 
   it("returns 0:00 for negative values", () => {

@@ -40,3 +40,9 @@ jobs:
 
       - name: Generate API docs
         run: npm run docs:api
+
+      - name: Build demo app
+        run: npm run build -w ginger-demo
+
+      - name: Build landing app
+        run: npm run build -w ginger-landing

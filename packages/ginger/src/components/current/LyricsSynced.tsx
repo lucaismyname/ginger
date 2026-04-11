@@ -1,8 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { DisplayBaseProps, GingerState } from "../../types";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { useGingerLyricsSync } from "../../hooks/useGingerLyricsSync";
 import type { TimedLyricLine } from "../../internal/lyrics";
+import type { DisplayBaseProps, GingerState } from "../../types";
 
 export type LyricsSyncedProps = Omit<DisplayBaseProps, "children"> & {
   unstyled?: boolean;
@@ -10,7 +10,12 @@ export type LyricsSyncedProps = Omit<DisplayBaseProps, "children"> & {
   activeClassName?: string;
   /** Class applied to every line. */
   lineClassName?: string;
-  children?: (line: TimedLyricLine, index: number, active: boolean, state: GingerState) => ReactNode;
+  children?: (
+    line: TimedLyricLine,
+    index: number,
+    active: boolean,
+    state: GingerState,
+  ) => ReactNode;
 };
 
 export function LyricsSynced({
@@ -28,7 +33,11 @@ export function LyricsSynced({
 
   if (lines.length === 0) {
     const node = empty ?? fallback ?? null;
-    return node ? <span className={className} style={style}>{node}</span> : null;
+    return node ? (
+      <span className={className} style={style}>
+        {node}
+      </span>
+    ) : null;
   }
 
   const listStyle: CSSProperties = unstyled
@@ -51,7 +60,10 @@ export function LyricsSynced({
             key={`${line.time}-${index}`}
             aria-current={active ? "true" : undefined}
             data-ginger-active={active || undefined}
-            className={[lineClassName, active ? activeClassName : undefined].filter(Boolean).join(" ") || undefined}
+            className={
+              [lineClassName, active ? activeClassName : undefined].filter(Boolean).join(" ") ||
+              undefined
+            }
             style={
               unstyled
                 ? undefined

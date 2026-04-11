@@ -1,8 +1,8 @@
-import { describe, expect, it, afterEach } from "vitest";
 import { cleanup, within } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { renderGinger } from "../../testing";
-import { Title, Artist, Album, Description, Genre, TrackNumber } from "./texts";
 import type { Track } from "../../types";
+import { Album, Artist, Description, Genre, Title, TrackNumber } from "./texts";
 
 afterEach(cleanup);
 
@@ -36,10 +36,9 @@ describe("Title", () => {
   });
 
   it("supports render-prop children", () => {
-    const { container } = renderGinger(
-      <Title>{(v) => <strong>{v.toUpperCase()}</strong>}</Title>,
-      { tracks: [track] },
-    );
+    const { container } = renderGinger(<Title>{(v) => <strong>{v.toUpperCase()}</strong>}</Title>, {
+      tracks: [track],
+    });
     expect(within(container).getByText("MY SONG")).toBeTruthy();
   });
 });

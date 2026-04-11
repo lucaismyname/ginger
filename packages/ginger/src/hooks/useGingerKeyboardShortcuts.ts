@@ -26,7 +26,11 @@ export function useGingerKeyboardShortcuts(
 
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
+      if (
+        target &&
+        (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)
+      )
+        return;
       const key = event.key.toLowerCase();
       if (key === playPause) {
         event.preventDefault();
@@ -44,5 +48,15 @@ export function useGingerKeyboardShortcuts(
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [bindings.next, bindings.playPause, bindings.previous, enabled, muteBinding, next, prev, toggleMute, togglePlayPause]);
+  }, [
+    bindings.next,
+    bindings.playPause,
+    bindings.previous,
+    enabled,
+    muteBinding,
+    next,
+    prev,
+    toggleMute,
+    togglePlayPause,
+  ]);
 }

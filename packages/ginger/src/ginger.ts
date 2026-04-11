@@ -1,6 +1,6 @@
 import { GingerPlayer } from "./audio/GingerPlayer";
-import * as Current from "./components/current";
 import * as Control from "./components/controls/Controls";
+import * as Current from "./components/current";
 import { GingerPlaylistCompound } from "./components/playlist/GingerPlaylist";
 import * as Queue from "./components/queue/QueueDisplay";
 import { GingerProvider } from "./context/GingerProvider";

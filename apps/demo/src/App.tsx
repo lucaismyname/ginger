@@ -13,10 +13,12 @@ import { UnstyledShowcase } from "./examples/UnstyledShowcase";
 import { AlbumGrid } from "./examples/AlbumGrid";
 import { WaveformPlayer } from "./examples/WaveformPlayer";
 import { scan } from "react-scan";
-scan({
-  enabled: true,
-  showToolbar: true,
-});
+if (import.meta.env.DEV) {
+  scan({
+    enabled: true,
+    showToolbar: true,
+  });
+}
 const examples = [
   { id: "single", label: "Single track", Component: SingleTrack },
   { id: "playlist", label: "Playlist + controls", Component: PlaylistBasic },

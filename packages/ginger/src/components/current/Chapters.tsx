@@ -1,15 +1,20 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { DisplayBaseProps, GingerState } from "../../types";
 import { useGingerState } from "../../context/GingerSplitContexts";
-import { useGingerChapters, type GingerChapter } from "../../hooks/useGingerChapters";
+import { type GingerChapter, useGingerChapters } from "../../hooks/useGingerChapters";
 import { formatMmSs } from "../../internal/formatTime";
+import type { DisplayBaseProps, GingerState } from "../../types";
 
 export type ChaptersProps = Omit<DisplayBaseProps, "children"> & {
   /** Remove default list/row styles for fully custom styling. */
   unstyled?: boolean;
   /** Prefix before each chapter title (default: `formatMmSs(startSeconds)`). */
   formatStart?: (startSeconds: number) => string;
-  children?: (chapter: GingerChapter, index: number, active: boolean, state: GingerState) => ReactNode;
+  children?: (
+    chapter: GingerChapter,
+    index: number,
+    active: boolean,
+    state: GingerState,
+  ) => ReactNode;
 };
 
 export function Chapters({
@@ -26,7 +31,11 @@ export function Chapters({
 
   if (list.length === 0) {
     const node = empty ?? fallback ?? null;
-    return node ? <span className={className} style={style}>{node}</span> : null;
+    return node ? (
+      <span className={className} style={style}>
+        {node}
+      </span>
+    ) : null;
   }
 
   const listStyle: CSSProperties = unstyled
@@ -70,7 +79,9 @@ export function Chapters({
                 children(chapter, index, active, state)
               ) : (
                 <span>
-                  <span style={{ opacity: 0.75, marginRight: "0.35em" }}>{formatStart(chapter.startSeconds)}</span>
+                  <span style={{ opacity: 0.75, marginRight: "0.35em" }}>
+                    {formatStart(chapter.startSeconds)}
+                  </span>
                   {chapter.title}
                 </span>
               )}

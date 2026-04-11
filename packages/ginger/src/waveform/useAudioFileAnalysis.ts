@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { analyzeAudioFile, type AnalyzeAudioFileOptions, type AudioFileAnalysis } from "./analyzeAudioFile";
+import {
+  type AnalyzeAudioFileOptions,
+  type AudioFileAnalysis,
+  analyzeAudioFile,
+} from "./analyzeAudioFile";
 
 export type UseAudioFileAnalysisState = {
   data: AudioFileAnalysis | null;

@@ -1,15 +1,14 @@
+import { type CSSProperties, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  type CSSProperties,
-} from "react";
-import { computeEndedTransition } from "../core/transitions";
-import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
+  clampPlaybackRate,
+  clampVolume,
+  createInitialState,
+  gingerReducer,
+} from "../core/playbackReducer";
 import { trackIdentity } from "../core/queue";
+import { computeEndedTransition } from "../core/transitions";
 import { derivePlaybackUiState } from "../internal/selectors";
+import { useMediaSessionBridge } from "../media/useMediaSession";
 import type {
   GingerInitPayload,
   GingerProviderProps,
@@ -18,10 +17,14 @@ import type {
   RepeatMode,
   Track,
 } from "../types";
-import { useMediaSessionBridge } from "../media/useMediaSession";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
 import { GingerLocaleProvider } from "./GingerLocaleContext";
-import { GingerMediaContext, GingerPlaybackContext, type GingerMediaContextValue, type GingerPlaybackContextValue } from "./GingerSplitContexts";
+import {
+  GingerMediaContext,
+  type GingerMediaContextValue,
+  GingerPlaybackContext,
+  type GingerPlaybackContextValue,
+} from "./GingerSplitContexts";
 
 const defaultProviderStyle: CSSProperties = {
   ["--ginger-primary-color" as string]: "#111827",
@@ -66,22 +69,19 @@ export function GingerProvider({
   onError,
 }: GingerProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [state, dispatch] = useReducer(
-    gingerReducer,
-    undefined,
-    () =>
-      createInitialState({
-        tracks: initialTracks,
-        currentIndex: initialIndex,
-        playlistMeta: initialPlaylistMeta,
-        isPaused: initialPaused,
-        isShuffled: initialShuffle,
-        repeatMode: initialRepeatMode,
-        playbackMode: initialPlaybackMode,
-        volume: initialVolume,
-        muted: initialMuted,
-        playbackRate: initialPlaybackRate,
-      }),
+  const [state, dispatch] = useReducer(gingerReducer, undefined, () =>
+    createInitialState({
+      tracks: initialTracks,
+      currentIndex: initialIndex,
+      playlistMeta: initialPlaylistMeta,
+      isPaused: initialPaused,
+      isShuffled: initialShuffle,
+      repeatMode: initialRepeatMode,
+      playbackMode: initialPlaybackMode,
+      volume: initialVolume,
+      muted: initialMuted,
+      playbackRate: initialPlaybackRate,
+    }),
   );
   const stateRef = useRef(state);
 
@@ -282,7 +282,10 @@ export function GingerProvider({
         isShuffled: p.isShuffled,
         playbackMode: p.playbackMode,
         currentIndex: typeof currentIndex === "number" ? currentIndex : p.currentIndex,
-        repeatMode: repeatMode === "off" || repeatMode === "all" || repeatMode === "one" ? repeatMode : p.repeatMode,
+        repeatMode:
+          repeatMode === "off" || repeatMode === "all" || repeatMode === "one"
+            ? repeatMode
+            : p.repeatMode,
         volume: typeof volume === "number" ? volume : p.volume,
         muted: typeof muted === "boolean" ? muted : p.muted,
         playbackRate: typeof playbackRate === "number" ? playbackRate : p.playbackRate,
@@ -297,7 +300,14 @@ export function GingerProvider({
     persistence.set("ginger:playbackRate", state.playbackRate);
     persistence.set("ginger:repeatMode", state.repeatMode);
     persistence.set("ginger:currentIndex", state.currentIndex);
-  }, [persistence, state.volume, state.muted, state.playbackRate, state.repeatMode, state.currentIndex]);
+  }, [
+    persistence,
+    state.volume,
+    state.muted,
+    state.playbackRate,
+    state.repeatMode,
+    state.currentIndex,
+  ]);
 
   useEffect(() => {
     if (!persistence || !resumeOnTrackChange) return;

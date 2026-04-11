@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { findIndexByTrackIdentity, trackIdentity } from "./queue";
-import { createInitialState, gingerReducer } from "./playbackReducer";
 import type { Track } from "../types";
+import { createInitialState, gingerReducer } from "./playbackReducer";
+import { findIndexByTrackIdentity, trackIdentity } from "./queue";
 
 const tracks: Track[] = [
   { id: "one", title: "One", fileUrl: "/one.mp3" },

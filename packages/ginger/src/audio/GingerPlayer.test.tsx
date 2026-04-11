@@ -1,9 +1,9 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { cleanup, fireEvent, act, within } from "@testing-library/react";
-import { renderGinger, queryAudio } from "../testing";
-import { Title } from "../components/current/texts";
+import { act, cleanup, fireEvent, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ErrorMessage } from "../components/current/Playback";
+import { Title } from "../components/current/texts";
 import { useGinger } from "../hooks/useGinger";
+import { queryAudio, renderGinger } from "../testing";
 import type { Track } from "../types";
 
 afterEach(cleanup);
@@ -38,12 +38,7 @@ function PlaybackRateAndNextButtons() {
 
 describe("GingerPlayer + provider", () => {
   it("advances to the next track when the audio element fires ended", async () => {
-    const { container } = renderGinger(
-      <>
-        <Title />
-      </>,
-      { tracks },
-    );
+    const { container } = renderGinger(<Title />, { tracks });
     const audio = queryAudio(container);
     expect(audio).toBeTruthy();
     await act(async () => {

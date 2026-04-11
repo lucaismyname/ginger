@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { type ReactNode, createContext, useContext } from "react";
 import type { GingerLocaleMessages } from "../types";
 
 export const defaultGingerLocale: GingerLocaleMessages = {

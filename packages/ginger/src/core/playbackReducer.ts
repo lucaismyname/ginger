@@ -186,8 +186,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
     case "SET_INDEX": {
       const idx = clampIndex(action.payload.index, state.tracks.length);
       const ap = action.payload.autoPlay;
-      const isPaused =
-        ap === true ? false : ap === false ? true : state.isPaused;
+      const isPaused = ap === true ? false : ap === false ? true : state.isPaused;
       return {
         ...state,
         currentIndex: idx,
@@ -253,14 +252,18 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return {
         ...state,
         currentTime: action.payload.currentTime,
-        duration: Number.isFinite(action.payload.duration) ? action.payload.duration : state.duration,
+        duration: Number.isFinite(action.payload.duration)
+          ? action.payload.duration
+          : state.duration,
         bufferedFraction: action.payload.bufferedFraction,
         isBuffering: false,
       };
     case "MEDIA_LOADED_METADATA":
       return {
         ...state,
-        duration: Number.isFinite(action.payload.duration) ? action.payload.duration : state.duration,
+        duration: Number.isFinite(action.payload.duration)
+          ? action.payload.duration
+          : state.duration,
         bufferedFraction: action.payload.bufferedFraction,
         errorMessage: null,
       };

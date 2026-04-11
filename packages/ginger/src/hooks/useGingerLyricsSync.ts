@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGingerMedia, useGingerPlayback } from "../context/GingerSplitContexts";
-import { parseLrc, type TimedLyricLine } from "../internal/lyrics";
+import { type TimedLyricLine, parseLrc } from "../internal/lyrics";
 
 export type GingerLyricsSyncState = {
   lines: TimedLyricLine[];
@@ -36,6 +36,6 @@ export function useGingerLyricsSync(): GingerLyricsSyncState {
   return {
     lines,
     activeIndex,
-    activeLine: activeIndex >= 0 ? lines[activeIndex] ?? null : null,
+    activeLine: activeIndex >= 0 ? (lines[activeIndex] ?? null) : null,
   };
 }

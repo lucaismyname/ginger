@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type AudioHTMLAttributes, type CSSProperties } from "react";
+import { type AudioHTMLAttributes, type CSSProperties, useEffect, useRef, useState } from "react";
 import { useGingerContext } from "../context/GingerContext";
 
 export type GingerPlayerProps = {

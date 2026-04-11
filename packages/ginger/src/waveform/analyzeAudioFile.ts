@@ -106,9 +106,7 @@ function buildSpectrogram(
 
   for (let t = 0; t < timeSlices; t += 1) {
     const start =
-      timeSlices <= 1
-        ? 0
-        : Math.min(Math.floor((t * (len - n)) / (timeSlices - 1)), len - n);
+      timeSlices <= 1 ? 0 : Math.min(Math.floor((t * (len - n)) / (timeSlices - 1)), len - n);
     const frame = new Float64Array(n);
     for (let i = 0; i < n; i += 1) {
       frame[i] = (channel[start + i] ?? 0) * (window[i] ?? 0);
@@ -129,7 +127,10 @@ function buildSpectrogram(
 /**
  * Decodes an `AudioBuffer` into visualization-friendly grids (no network).
  */
-export function analyzeAudioBuffer(buffer: AudioBuffer, options: AnalyzeAudioFileOptions = {}): AudioFileAnalysis {
+export function analyzeAudioBuffer(
+  buffer: AudioBuffer,
+  options: AnalyzeAudioFileOptions = {},
+): AudioFileAnalysis {
   const timeSlices = Math.max(1, options.timeSlices ?? 128);
   const samplesPerSlice = Math.max(1, options.samplesPerSlice ?? 8);
   const wantSpec = Boolean(options.spectrogram);
@@ -167,7 +168,9 @@ export async function analyzeAudioFile(
     throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
   }
   const raw = await response.arrayBuffer();
-  const Context = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const Context =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!Context) {
     throw new Error("Web Audio API is not available");
   }

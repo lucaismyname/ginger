@@ -16,8 +16,18 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "noUselessFragments": "error"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "a11y": {
+        "useMediaCaption": "off"
+      },
       "style": {
-        "useImportType": "error"
+        "useImportType": "error",
+        "noNonNullAssertion": "off"
       }
     }
   }

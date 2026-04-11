@@ -35,7 +35,7 @@ export function useGingerChapters(): GingerChapterState {
   return {
     list,
     activeIndex,
-    active: activeIndex >= 0 ? list[activeIndex] ?? null : null,
+    active: activeIndex >= 0 ? (list[activeIndex] ?? null) : null,
     seekTo: (index: number) => {
       const chapter = list[index];
       if (chapter) seek(chapter.startSeconds);

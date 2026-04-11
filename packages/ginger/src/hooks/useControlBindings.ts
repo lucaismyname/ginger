@@ -1,10 +1,14 @@
 import { useMemo } from "react";
 import type { FormEvent } from "react";
-import type { GingerState } from "../types";
-import { gingerStateFromContextValues, useGingerMedia, useGingerPlayback } from "../context/GingerSplitContexts";
-import { effectiveDuration } from "../internal/selectors";
-import { formatMmSs } from "../internal/formatTime";
 import { useGingerLocale } from "../context/GingerLocaleContext";
+import {
+  gingerStateFromContextValues,
+  useGingerMedia,
+  useGingerPlayback,
+} from "../context/GingerSplitContexts";
+import { formatMmSs } from "../internal/formatTime";
+import { effectiveDuration } from "../internal/selectors";
+import type { GingerState } from "../types";
 
 export type SeekBarBinding = {
   state: GingerState;

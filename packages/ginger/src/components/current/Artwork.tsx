@@ -1,7 +1,7 @@
 import type { CSSProperties, ImgHTMLAttributes } from "react";
-import type { DisplayBaseProps } from "../../types";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { getCurrentTrack, resolvedArtwork } from "../../internal/selectors";
+import type { DisplayBaseProps } from "../../types";
 
 export type ArtworkProps = DisplayBaseProps &
   Pick<ImgHTMLAttributes<HTMLImageElement>, "sizes" | "loading" | "onError" | "decoding"> & {
@@ -27,7 +27,11 @@ export function Artwork({
   const src = resolvedArtwork(state);
   if (!src) {
     const node = empty ?? fallback ?? null;
-    return node ? <span className={className} style={style}>{node}</span> : null;
+    return node ? (
+      <span className={className} style={style}>
+        {node}
+      </span>
+    ) : null;
   }
   const alt = [track?.title, track?.artist].filter(Boolean).join(" — ") || "Artwork";
   return (
