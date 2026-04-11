@@ -101,9 +101,9 @@ export function App() {
 
       <main className="w-full max-w-xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
-          <h1 className="font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+          <h1 className="md:-ml-8 font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
             &lt;
-            <span className="font-bold text-orange-500 dark:text-orange-400">
+            <span className=" font-bold text-orange-500 dark:text-orange-400">
               Ginger
             </span>{" "}
             /&gt;
@@ -164,7 +164,7 @@ export function App() {
               <section className="flex flex-row gap-4 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className=" rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -172,7 +172,7 @@ export function App() {
                 </a>
                 <a
                   href={REPO_URL}
-                  className=" rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >

@@ -2,6 +2,14 @@
   "name": "ginger-landing",
   "private": true,
   "type": "module",
+  "version": "0.0.1",
+  "description": "Ginger landing page",
+  "author": "LucaIsMyName",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucaismyname/ginger/apps/ginger-landing"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
