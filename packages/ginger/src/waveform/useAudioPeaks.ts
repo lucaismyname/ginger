@@ -23,6 +23,7 @@ export function useAudioPeaks(fileUrl: string | null | undefined, buckets = 64):
     void (async () => {
       try {
         const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
         const buffer = await response.arrayBuffer();
         const audioContext = new AudioContext();
         const audioBuffer = await audioContext.decodeAudioData(buffer);

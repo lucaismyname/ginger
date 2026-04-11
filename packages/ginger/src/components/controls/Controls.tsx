@@ -26,6 +26,7 @@ export function PlayPause({
   playAriaLabel,
   pauseAriaLabel,
   type = "button",
+  onClick,
   ...rest
 }: PlayPauseProps) {
   const locale = useGingerLocale();
@@ -36,7 +37,12 @@ export function PlayPause({
     pauseAriaLabel: pauseAriaLabel ?? defaultPauseAria,
   });
   return (
-    <button type={type} aria-label={b.ariaLabel} onClick={b.toggle} {...rest}>
+    <button
+      {...rest}
+      type={type}
+      aria-label={b.ariaLabel}
+      onClick={(e) => { b.toggle(); onClick?.(e); }}
+    >
       {b.isPaused ? playLabel : pauseLabel}
     </button>
   );
@@ -46,12 +52,12 @@ PlayPause.displayName = "Ginger.Control.PlayPause";
 
 export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function Repeat({ type = "button", ...rest }: RepeatProps) {
+export function Repeat({ type = "button", onClick, ...rest }: RepeatProps) {
   const { repeatMode, cycleRepeat } = useGingerPlayback();
   const locale = useGingerLocale();
   const label = locale.repeat[repeatMode];
   return (
-    <button type={type} aria-label={label} onClick={cycleRepeat} {...rest}>
+    <button {...rest} type={type} aria-label={label} onClick={(e) => { cycleRepeat(); onClick?.(e); }}>
       {label}
     </button>
   );
@@ -60,11 +66,11 @@ export function Repeat({ type = "button", ...rest }: RepeatProps) {
 Repeat.displayName = "Ginger.Control.Repeat";
 
 export type NextProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Next({ type = "button", children = "Next", ...rest }: NextProps) {
+export function Next({ type = "button", children = "Next", onClick, ...rest }: NextProps) {
   const { next } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
-    <button type={type} aria-label={locale.nextTrack} onClick={next} {...rest}>
+    <button {...rest} type={type} aria-label={locale.nextTrack} onClick={(e) => { next(); onClick?.(e); }}>
       {children}
     </button>
   );
@@ -72,11 +78,11 @@ export function Next({ type = "button", children = "Next", ...rest }: NextProps)
 Next.displayName = "Ginger.Control.Next";
 
 export type PreviousProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Previous({ type = "button", children = "Previous", ...rest }: PreviousProps) {
+export function Previous({ type = "button", children = "Previous", onClick, ...rest }: PreviousProps) {
   const { prev } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
-    <button type={type} aria-label={locale.previousTrack} onClick={prev} {...rest}>
+    <button {...rest} type={type} aria-label={locale.previousTrack} onClick={(e) => { prev(); onClick?.(e); }}>
       {children}
     </button>
   );
@@ -84,16 +90,16 @@ export function Previous({ type = "button", children = "Previous", ...rest }: Pr
 Previous.displayName = "Ginger.Control.Previous";
 
 export type ShuffleProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export function Shuffle({ type = "button", children = "Shuffle", ...rest }: ShuffleProps) {
+export function Shuffle({ type = "button", children = "Shuffle", onClick, ...rest }: ShuffleProps) {
   const { isShuffled, toggleShuffle } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
     <button
+      {...rest}
       type={type}
       aria-pressed={isShuffled}
       aria-label={locale.shuffle}
-      onClick={toggleShuffle}
-      {...rest}
+      onClick={(e) => { toggleShuffle(); onClick?.(e); }}
     >
       {children}
     </button>
@@ -172,6 +178,7 @@ export function Mute({
   muteLabel,
   unmuteLabel,
   type = "button",
+  onClick,
   ...rest
 }: MuteProps) {
   const { muted, toggleMute } = useGingerMedia();
@@ -180,11 +187,11 @@ export function Mute({
   const u = unmuteLabel ?? locale.unmute;
   return (
     <button
+      {...rest}
       type={type}
       aria-pressed={muted}
       aria-label={muted ? locale.unmute : locale.mute}
-      onClick={toggleMute}
-      {...rest}
+      onClick={(e) => { toggleMute(); onClick?.(e); }}
     >
       {muted ? u : m}
     </button>

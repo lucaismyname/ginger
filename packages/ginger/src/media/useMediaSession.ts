@@ -9,15 +9,9 @@ export type MediaSessionBridgeActions = {
   seek: (timeSeconds: number) => void;
 };
 
-function toMediaMetadata(state: GingerState): MediaMetadataInit {
-  const track = state.tracks[state.currentIndex];
-  if (!track) return { title: "Unknown track" };
-  return {
-    title: track.title,
-    artist: track.artist,
-    album: track.album,
-    artwork: track.artworkUrl ? [{ src: track.artworkUrl }] : undefined,
-  };
+function getMediaSession(): MediaSession | null {
+  if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return null;
+  return navigator.mediaSession;
 }
 
 export function useMediaSessionBridge(
@@ -25,18 +19,38 @@ export function useMediaSessionBridge(
   state: GingerState,
   actions: MediaSessionBridgeActions,
 ): void {
-  useEffect(() => {
-    if (!enabled || typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
-    const mediaSession = navigator.mediaSession;
-    mediaSession.metadata = new MediaMetadata(toMediaMetadata(state));
-    mediaSession.playbackState = state.isPaused ? "paused" : "playing";
+  const track = state.tracks[state.currentIndex];
+  const title = track?.title;
+  const artist = track?.artist;
+  const album = track?.album;
+  const artworkUrl = track?.artworkUrl;
 
+  useEffect(() => {
+    const ms = getMediaSession();
+    if (!enabled || !ms) return;
+    ms.metadata = new MediaMetadata({
+      title: title ?? "Unknown track",
+      artist,
+      album,
+      artwork: artworkUrl ? [{ src: artworkUrl }] : undefined,
+    });
+  }, [enabled, title, artist, album, artworkUrl]);
+
+  useEffect(() => {
+    const ms = getMediaSession();
+    if (!enabled || !ms) return;
+    ms.playbackState = state.isPaused ? "paused" : "playing";
+  }, [enabled, state.isPaused]);
+
+  useEffect(() => {
+    const ms = getMediaSession();
+    if (!enabled || !ms) return;
     try {
-      mediaSession.setActionHandler("play", actions.play);
-      mediaSession.setActionHandler("pause", actions.pause);
-      mediaSession.setActionHandler("nexttrack", actions.next);
-      mediaSession.setActionHandler("previoustrack", actions.prev);
-      mediaSession.setActionHandler("seekto", (details) => {
+      ms.setActionHandler("play", actions.play);
+      ms.setActionHandler("pause", actions.pause);
+      ms.setActionHandler("nexttrack", actions.next);
+      ms.setActionHandler("previoustrack", actions.prev);
+      ms.setActionHandler("seekto", (details) => {
         if (typeof details.seekTime === "number" && Number.isFinite(details.seekTime)) {
           actions.seek(details.seekTime);
         }
@@ -44,17 +58,16 @@ export function useMediaSessionBridge(
     } catch {
       // Best-effort API support differs across browsers.
     }
-
     return () => {
       try {
-        mediaSession.setActionHandler("play", null);
-        mediaSession.setActionHandler("pause", null);
-        mediaSession.setActionHandler("nexttrack", null);
-        mediaSession.setActionHandler("previoustrack", null);
-        mediaSession.setActionHandler("seekto", null);
+        ms.setActionHandler("play", null);
+        ms.setActionHandler("pause", null);
+        ms.setActionHandler("nexttrack", null);
+        ms.setActionHandler("previoustrack", null);
+        ms.setActionHandler("seekto", null);
       } catch {
         // Ignore platforms that do not support clearing handlers.
       }
     };
-  }, [enabled, state, actions]);
+  }, [enabled, actions]);
 }

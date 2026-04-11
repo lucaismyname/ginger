@@ -22,11 +22,11 @@ export function useGingerKeyboardShortcuts(
     const playPause = (bindings.playPause ?? " ").toLowerCase();
     const nextKey = (bindings.next ?? "ArrowRight").toLowerCase();
     const prevKey = (bindings.previous ?? "ArrowLeft").toLowerCase();
-    const muteKey = (bindings.mute ?? "m").toLowerCase();
+    const muteKey = muteBinding?.toLowerCase();
 
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
+      if (target && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       const key = event.key.toLowerCase();
       if (key === playPause) {
         event.preventDefault();
@@ -37,7 +37,7 @@ export function useGingerKeyboardShortcuts(
       } else if (key === prevKey) {
         event.preventDefault();
         prev();
-      } else if (key === muteKey && muteBinding !== undefined) {
+      } else if (muteKey && key === muteKey) {
         event.preventDefault();
         toggleMute();
       }

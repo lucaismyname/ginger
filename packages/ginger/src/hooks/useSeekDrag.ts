@@ -1,9 +1,13 @@
 import { useCallback, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { useGingerMedia } from "../context/GingerSplitContexts";
+import { useGingerMedia, useGingerPlayback, gingerStateFromContextValues } from "../context/GingerSplitContexts";
+import { progressFraction } from "../internal/selectors";
 
 export type SeekDragState = {
+  /** Raw drag fraction — only updated during an active drag gesture. */
   fraction: number;
+  /** Blended fraction: follows live playback when idle, drag position when dragging. */
+  displayFraction: number;
   isDragging: boolean;
   onPointerDown: (event: ReactPointerEvent<HTMLElement>) => void;
 };
@@ -13,9 +17,14 @@ function clamp01(value: number): number {
 }
 
 export function useSeekDrag(duration: number): SeekDragState {
-  const { seek } = useGingerMedia();
+  const media = useGingerMedia();
+  const playback = useGingerPlayback();
+  const { seek } = media;
   const [fraction, setFraction] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  const liveFraction = progressFraction(gingerStateFromContextValues(playback, media));
+  const displayFraction = isDragging ? fraction : liveFraction;
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
@@ -46,5 +55,5 @@ export function useSeekDrag(duration: number): SeekDragState {
     [duration, seek],
   );
 
-  return { fraction, isDragging, onPointerDown };
+  return { fraction, displayFraction, isDragging, onPointerDown };
 }

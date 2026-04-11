@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npm run build -w @lucaismyname/ginger",
     "dev": "npm run dev -w ginger-demo",
+    "dev:landing": "npm run dev -w ginger-landing",
     "publish:lib": "npm publish -w @lucaismyname/ginger --access public"
   }
 }

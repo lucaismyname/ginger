@@ -297,7 +297,10 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       if (v === state.volume && muted === state.muted) return state;
       return { ...state, volume: v, muted };
     }
-    default:
+    default: {
+      const _exhaustive: never = action;
+      void _exhaustive;
       return state;
+    }
   }
 }
