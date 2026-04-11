@@ -1,0 +1,702 @@
+# ginger
+
+**`@lucaismyname/ginger`** is a headless React audio player built on the native **`<audio>`** element. It gives you a provider, a hidden media element, a typed state/control hook, and composable React components for transport controls, track metadata, queue metadata, and playlists.
+
+## Install
+
+```bash
+npm install @lucaismyname/ginger
+```
+
+Peer dependencies:
+
+- `react >= 18`
+- `react-dom >= 18`
+
+## Quick Start
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+
+const tracks = [
+  {
+    id: "one",
+    title: "One",
+    artist: "Demo Artist",
+    fileUrl: "https://example.com/audio/one.mp3",
+    artworkUrl: "https://example.com/art/one.jpg",
+  },
+  {
+    id: "two",
+    title: "Two",
+    artist: "Demo Artist",
+    fileUrl: "https://example.com/audio/two.mp3",
+  },
+];
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks} initialPlaylistMeta={{ title: "My Playlist" }}>
+      <Ginger.Player />
+      <Ginger.Current.Title />
+      <Ginger.Current.Artist />
+      <Ginger.Control.PlayPause />
+      <Ginger.Control.Next />
+      <Ginger.Playlist />
+    </Ginger.Provider>
+  );
+}
+```
+
+Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden audio element exists. Everything else is optional and can be replaced with your own UI.
+
+## Copy/Paste Examples
+
+### Small Audio Player With Tailwind
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+
+const tracks = [
+  {
+    id: "midnight",
+    title: "Midnight Walk",
+    artist: "Luca",
+    album: "Night Notes",
+    fileUrl: "https://example.com/audio/midnight-walk.mp3",
+    artworkUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80",
+    durationSeconds: 192,
+  },
+];
+
+export function TailwindMiniPlayer() {
+  return (
+    <Ginger.Provider
+      initialTracks={tracks}
+      initialVolume={0.8}
+      className="mx-auto max-w-md"
+    >
+      <Ginger.Player />
+
+      <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Ginger.Current.Artwork
+            className="h-16 w-16 overflow-hidden rounded-xl bg-zinc-100"
+            imgStyle={{ width: "100%", height: "100%" }}
+          />
+
+          <div className="min-w-0 flex-1">
+            <Ginger.Current.Title className="block truncate text-sm font-semibold text-zinc-900" />
+            <Ginger.Current.Artist className="block truncate text-sm text-zinc-500" />
+            <div className="mt-2">
+              <Ginger.Control.SeekBar className="w-full accent-emerald-600" />
+            </div>
+            <div className="mt-1 flex justify-between text-xs text-zinc-500">
+              <Ginger.Current.Elapsed />
+              <Ginger.Current.Duration />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-2">
+          <Ginger.Control.Previous className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50" />
+          <Ginger.Control.PlayPause className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800" />
+          <Ginger.Control.Next className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50" />
+          <Ginger.Control.Mute className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50" />
+        </div>
+
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-xs text-zinc-500">Volume</span>
+          <Ginger.Control.Volume className="flex-1 accent-emerald-600" />
+          <Ginger.Control.PlaybackRate className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-700" />
+        </div>
+      </div>
+    </Ginger.Provider>
+  );
+}
+```
+
+### Small Audio Player With Vanilla CSS
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import "./mini-player.css";
+
+const tracks = [
+  {
+    id: "shoreline",
+    title: "Shoreline",
+    artist: "Sea Echo",
+    fileUrl: "https://example.com/audio/shoreline.mp3",
+    artworkUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+    durationSeconds: 214,
+  },
+];
+
+export function VanillaMiniPlayer() {
+  return (
+    <Ginger.Provider initialTracks={tracks} className="ginger-mini-theme">
+      <Ginger.Player />
+
+      <div className="mini-player">
+        <Ginger.Current.Artwork className="mini-player__artwork" />
+
+        <div className="mini-player__body">
+          <Ginger.Current.Title className="mini-player__title" />
+          <Ginger.Current.Artist className="mini-player__artist" />
+
+          <div className="mini-player__seek">
+            <Ginger.Control.SeekBar />
+          </div>
+
+          <div className="mini-player__times">
+            <Ginger.Current.Elapsed />
+            <Ginger.Current.Duration />
+          </div>
+
+          <div className="mini-player__controls">
+            <Ginger.Control.Previous className="mini-player__button mini-player__button--ghost" />
+            <Ginger.Control.PlayPause className="mini-player__button mini-player__button--primary" />
+            <Ginger.Control.Next className="mini-player__button mini-player__button--ghost" />
+            <Ginger.Control.Mute className="mini-player__button mini-player__button--ghost" />
+          </div>
+
+          <div className="mini-player__footer">
+            <label className="mini-player__volume">
+              <span>Volume</span>
+              <Ginger.Control.Volume />
+            </label>
+
+            <Ginger.Control.PlaybackRate className="mini-player__rate" />
+          </div>
+        </div>
+      </div>
+    </Ginger.Provider>
+  );
+}
+```
+
+```css
+.ginger-mini-theme {
+  --ginger-primary-color: #111827;
+  --ginger-muted-color: #6b7280;
+  --ginger-font-size: 14px;
+  --ginger-font-family: Inter, system-ui, sans-serif;
+  --ginger-artwork-radius: 14px;
+  --ginger-artwork-bg: #f3f4f6;
+}
+
+.mini-player {
+  display: flex;
+  gap: 16px;
+  max-width: 420px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.mini-player__artwork {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+}
+
+.mini-player__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-player__title {
+  display: block;
+  font-weight: 600;
+  color: #111827;
+}
+
+.mini-player__artist {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+}
+
+.mini-player__seek {
+  margin-top: 12px;
+}
+
+.mini-player__seek input {
+  width: 100%;
+}
+
+.mini-player__times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mini-player__controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.mini-player__button {
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mini-player__button--ghost {
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #111827;
+}
+
+.mini-player__button--primary {
+  border: 1px solid #111827;
+  background: #111827;
+  color: white;
+}
+
+.mini-player__footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.mini-player__volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mini-player__volume input {
+  flex: 1;
+}
+
+.mini-player__rate {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  padding: 6px 8px;
+  color: #111827;
+}
+```
+
+## Core Concepts
+
+### `Ginger.Provider` owns playback state
+
+The provider stores queue state, playback state, media state, and playlist metadata.
+
+- Props prefixed with **`initial*`** are mount-only defaults.
+- To replace the queue after mount, call **`useGinger().setQueue(...)`**.
+- If you want provider state to fully reset from parent props, remount the provider with a new `key`.
+
+### `Ginger.Player` creates and syncs the hidden audio element
+
+The player renders the actual **`<audio>`** element and mirrors reducer state into the browser media API.
+
+- You usually render it once near the root of the player subtree.
+- It can stay visually hidden; it exists to drive playback.
+- All transport and display components depend on it.
+
+### Use components, the hook, or both
+
+- Use **`Ginger.Control.*`**, **`Ginger.Current.*`**, **`Ginger.Queue.*`**, and **`Ginger.Playlist`** for fast composition.
+- Use **`useGinger()`** when you want total control over layout and styling.
+- Mix both approaches freely in the same provider tree.
+
+## API Reference
+
+### `Ginger.Provider`
+
+Wrap all Ginger UI in a single provider.
+
+```tsx
+<Ginger.Provider initialTracks={tracks}>
+  <Ginger.Player />
+  {/* your UI */}
+</Ginger.Provider>
+```
+
+Props:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | Player UI inside the provider |
+| `initialTracks` | `Track[]` | `[]` | Initial queue |
+| `initialIndex` | `number` | `0` | Initial current track index |
+| `initialPlaylistMeta` | `PlaylistMeta \| null` | `null` | Queue/playlist metadata |
+| `initialShuffle` | `boolean` | `false` | Start shuffled |
+| `initialRepeatMode` | `"off" \| "all" \| "one"` | `"off"` | Initial repeat mode |
+| `initialPaused` | `boolean` | `true` | Start paused or playing |
+| `initialVolume` | `number` | `1` | Initial volume, clamped `0..1` |
+| `initialMuted` | `boolean` | `false` | Initial muted state |
+| `initialPlaybackRate` | `number` | `1` | Initial playback rate, clamped `0.25..4` |
+| `className` | `string` | `undefined` | Class for the provider wrapper |
+| `style` | `CSSProperties` | `undefined` | Inline styles / CSS variables |
+| `onTrackChange` | `(track, index) => void` | `undefined` | Fires when current track changes |
+| `onPlay` | `() => void` | `undefined` | Fires when state changes to playing |
+| `onPause` | `() => void` | `undefined` | Fires when state changes to paused |
+| `onQueueEnd` | `() => void` | `undefined` | Fires when playback reaches the end with repeat off |
+| `onError` | `(message) => void` | `undefined` | Fires on media/playback errors |
+
+### `Ginger.Player`
+
+Renders the backing audio element.
+
+```tsx
+<Ginger.Player preload="metadata" crossOrigin="anonymous" />
+```
+
+Props:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Optional class on the `<audio>` element |
+| `style` | `CSSProperties` | `undefined` | Optional inline styles |
+| `preload` | `AudioHTMLAttributes["preload"]` | `"metadata"` | Native audio preload mode |
+| `crossOrigin` | `AudioHTMLAttributes["crossOrigin"]` | `undefined` | Native cross-origin mode |
+
+### `useGinger()`
+
+Low-level hook for building custom UIs.
+
+```tsx
+import { useGinger } from "@lucaismyname/ginger";
+
+function CustomPlayer() {
+  const {
+    state,
+    currentTrack,
+    playbackUi,
+    duration,
+    remaining,
+    progress,
+    play,
+    pause,
+    togglePlayPause,
+    seek,
+    next,
+    prev,
+    setVolume,
+  } = useGinger();
+
+  return <div>{currentTrack?.title}</div>;
+}
+```
+
+Returned values:
+
+| Key | Description |
+|-----|-------------|
+| `state` | Full `GingerState` object |
+| `currentTrack` | Current track or `null` |
+| `playbackUi` | Derived UI state: `idle`, `loading`, `playing`, `paused`, `ended`, `error` |
+| `duration` | Effective duration using media metadata or `durationSeconds` fallback |
+| `remaining` | Remaining seconds |
+| `progress` | Fraction from `0..1` |
+| `artworkUrl` | Resolved artwork URL |
+| `albumLine` | Resolved album/subtitle line |
+| `play`, `pause`, `togglePlayPause` | Transport actions |
+| `seek` | Seek to a time in seconds |
+| `setVolume`, `setMuted`, `toggleMute` | Volume/mute actions |
+| `setPlaybackRate` | Set playback speed |
+| `next`, `prev` | Queue navigation |
+| `setRepeatMode`, `cycleRepeat` | Repeat controls |
+| `toggleShuffle` | Toggle shuffle |
+| `setQueue` | Replace the queue after mount |
+| `playTrackAt`, `selectTrackAt` | Pick a track by index |
+| `setPlaylistMeta` | Replace playlist metadata |
+| `audioRef` | Ref to the underlying `HTMLAudioElement` |
+| `dispatch` | Raw reducer dispatch for advanced cases |
+
+## React Components
+
+### `Ginger.Control.*`
+
+Transport and media controls.
+
+| Component | Description | Important props |
+|-----------|-------------|-----------------|
+| `Ginger.Control.PlayPause` | Toggle play / pause | `playLabel`, `pauseLabel`, native button props |
+| `Ginger.Control.Previous` | Go to previous track | native button props |
+| `Ginger.Control.Next` | Go to next track | native button props |
+| `Ginger.Control.Repeat` | Cycle repeat mode | native button props |
+| `Ginger.Control.Shuffle` | Toggle shuffle on/off | native button props |
+| `Ginger.Control.SeekBar` | Controlled range input for time | `inputStyle`, native input props |
+| `Ginger.Control.Volume` | Controlled range input for volume `0..1` | `inputStyle`, native input props |
+| `Ginger.Control.Mute` | Toggle mute on/off | `muteLabel`, `unmuteLabel`, native button props |
+| `Ginger.Control.PlaybackRate` | Select input for playback speed | `rates`, native select props |
+
+Example:
+
+```tsx
+<div className="flex items-center gap-2">
+  <Ginger.Control.Previous />
+  <Ginger.Control.PlayPause />
+  <Ginger.Control.Next />
+  <Ginger.Control.Mute />
+  <Ginger.Control.Volume />
+  <Ginger.Control.PlaybackRate />
+</div>
+```
+
+### `Ginger.Current.*`
+
+Displays metadata for the current track and current playback state.
+
+Text displays:
+
+- `Title`
+- `Artist`
+- `Album`
+- `Description`
+- `Copyright`
+- `Genre`
+- `Label`
+- `Isrc`
+- `TrackNumber`
+- `Year`
+
+Shared text-display behavior:
+
+- Accept `className`, `style`, `fallback`, `empty`
+- Accept render-prop `children?: (value, state) => ReactNode`
+- Render `null` when no value exists unless `fallback` or `empty` is provided
+
+Other current-track components:
+
+| Component | Description | Important props |
+|-----------|-------------|-----------------|
+| `Ginger.Current.Artwork` | Current track artwork or playlist artwork fallback | `imgStyle`, `sizes`, `loading`, `decoding`, `onError`, display-base props |
+| `Ginger.Current.Lyrics` | Track lyrics | `preserveWhitespace`, render-prop `children` |
+| `Ginger.Current.FileUrl` | Track `fileUrl`, hidden unless explicitly enabled | `visible`, display-base props |
+| `Ginger.Current.QueueIndex` | Current queue index | `base`, render-prop `children` |
+| `Ginger.Current.QueueLength` | Queue length | render-prop `children` |
+| `Ginger.Current.QueuePosition` | Combined index/length label | `base`, `separator`, render-prop `children` |
+| `Ginger.Current.Elapsed` | Current time string | `format`, render-prop `children` |
+| `Ginger.Current.Duration` | Duration string | `format`, render-prop `children` |
+| `Ginger.Current.Remaining` | Remaining time string | `format`, render-prop `children` |
+| `Ginger.Current.Progress` | Progress as text or render-prop object | render-prop `children` |
+| `Ginger.Current.TimeRail` | Simple visual progress rail | `height`, display-base props |
+| `Ginger.Current.PlaybackState` | Derived state label | render-prop `children` |
+| `Ginger.Current.ErrorMessage` | Media error string | render-prop `children` |
+
+Example:
+
+```tsx
+<div>
+  <Ginger.Current.Title className="font-semibold" />
+  <Ginger.Current.Artist className="text-sm text-zinc-500" />
+  <Ginger.Current.Elapsed /> / <Ginger.Current.Duration />
+  <Ginger.Current.TimeRail className="mt-2" />
+</div>
+```
+
+### `Ginger.Queue.*`
+
+Displays queue or playlist metadata from `playlistMeta`.
+
+| Component | Description |
+|-----------|-------------|
+| `Ginger.Queue.Title` | Playlist title |
+| `Ginger.Queue.Subtitle` | Playlist subtitle |
+| `Ginger.Queue.Description` | Playlist description |
+| `Ginger.Queue.Copyright` | Playlist copyright |
+| `Ginger.Queue.Artwork` | Playlist artwork |
+
+These components follow the same fallback/empty behavior as other display components. `Ginger.Queue.Artwork` also accepts `imgStyle`.
+
+### `Ginger.Playlist`
+
+Renders the current queue as a clickable list.
+
+Props:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | `undefined` | Manual mode rows |
+| `rowStyle` | `CSSProperties` | `undefined` | Auto-mode button style override |
+| `renderTrack` | `(track, index, isActive) => ReactNode` | `undefined` | Auto-mode custom row content |
+| `playOnSelect` | `boolean` | `true` | Click plays immediately if true |
+| `...rest` | `HTMLAttributes<HTMLUListElement>` | - | Props passed to the root `<ul>` |
+
+Modes:
+
+- **Auto mode:** no `children`; Ginger maps `state.tracks` for you
+- **Manual mode:** pass your own rows; usually map `useGinger().state.tracks`
+
+Auto mode example:
+
+```tsx
+<Ginger.Playlist
+  className="space-y-1"
+  renderTrack={(track, index, active) => (
+    <span style={{ fontWeight: active ? 600 : 400 }}>
+      {index + 1}. {track.title}
+    </span>
+  )}
+/>
+```
+
+### `Ginger.Playlist.Track`
+
+Row helper for manual playlist rendering. Must be used inside `Ginger.Playlist`.
+
+Props:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `index` | `number` | Queue index for the row |
+| `liProps` | `LiHTMLAttributes<HTMLLIElement>` | Props for the wrapper `<li>` |
+| `children` | `ReactNode` | Optional custom content |
+| `...rest` | `ButtonHTMLAttributes<HTMLButtonElement>` | Props for the row button |
+
+Manual mode example:
+
+```tsx
+import { Ginger, useGinger } from "@lucaismyname/ginger";
+
+function PlaylistManual() {
+  const { state } = useGinger();
+
+  return (
+    <Ginger.Playlist playOnSelect={false}>
+      {state.tracks.map((track, i) => (
+        <Ginger.Playlist.Track
+          key={track.id ?? `${track.fileUrl}-${i}`}
+          index={i}
+          className="w-full rounded-lg px-3 py-2 text-left"
+        >
+          {track.title}
+        </Ginger.Playlist.Track>
+      ))}
+    </Ginger.Playlist>
+  );
+}
+```
+
+## Types
+
+### `Track`
+
+```ts
+type Track = {
+  id?: string;
+  title: string;
+  fileUrl: string;
+  artist?: string;
+  copyright?: string;
+  description?: string;
+  album?: string;
+  artworkUrl?: string;
+  genre?: string;
+  year?: number;
+  label?: string;
+  isrc?: string;
+  trackNumber?: number;
+  lyrics?: string;
+  durationSeconds?: number;
+};
+```
+
+Use `id` when possible for stable identity, especially if duplicate `fileUrl` values can appear in a queue.
+
+### `PlaylistMeta`
+
+```ts
+type PlaylistMeta = {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  artworkUrl?: string;
+  copyright?: string;
+  description?: string;
+};
+```
+
+## Styling
+
+Ginger is designed to work with your own CSS. Most components accept `className` and `style`, and the provider wrapper exposes a few CSS variables.
+
+CSS variables available on `Ginger.Provider`:
+
+- `--ginger-primary-color`
+- `--ginger-muted-color`
+- `--ginger-font-size`
+- `--ginger-font-family`
+- `--ginger-playlist-row-padding`
+- `--ginger-artwork-radius`
+- `--ginger-artwork-bg`
+
+Example:
+
+```tsx
+<Ginger.Provider
+  initialTracks={tracks}
+  style={{
+    ["--ginger-primary-color" as string]: "#0f172a",
+    ["--ginger-muted-color" as string]: "#64748b",
+    ["--ginger-artwork-radius" as string]: "16px",
+  }}
+>
+  <Ginger.Player />
+  {/* ... */}
+</Ginger.Provider>
+```
+
+## Notes
+
+### CORS
+
+`fileUrl` must be fetchable by the browser. Cross-origin media must be served with compatible CORS headers.
+
+### SSR
+
+There is no `window` at import time, but playback only starts when the audio element mounts on the client. In frameworks with server rendering, render the player in a client component or mount it after hydration.
+
+### Queue updates after mount
+
+`initialTracks`, `initialIndex`, and other `initial*` props are not controlled props. Use `setQueue`, `selectTrackAt`, or a remounted provider when external state should replace player state.
+
+## Monorepo Development
+
+| Path | Purpose |
+|------|---------|
+| [`packages/ginger`](packages/ginger) | Publishable library (`@lucaismyname/ginger`) |
+| [`apps/demo`](apps/demo) | Demo app with working examples |
+
+```bash
+npm install --include=dev
+npm run build -w @lucaismyname/ginger
+npm run dev -w ginger-demo
+```
+
+If your npm config sets `omit=dev`, devDependencies may not install. Use `--include=dev` once or adjust your npm config.
+
+## Publish
+
+Do **not** run `npm publish` at the repo root. The root package is **`private: true`**.
+
+Publish from the workspace:
+
+```bash
+npm run publish:lib
+```
+
+Or from `packages/ginger`:
+
+```bash
+npm publish --access public
+```
+
+`prepublishOnly` runs the library build automatically.
