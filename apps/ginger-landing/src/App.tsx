@@ -102,7 +102,11 @@ export function App() {
       <main className="w-full max-w-xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
           <h1 className="font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
-            &lt;<span className="font-bold text-orange-500 dark:text-orange-400">Ginger</span> /&gt;
+            &lt;
+            <span className="font-bold text-orange-500 dark:text-orange-400">
+              Ginger
+            </span>{" "}
+            /&gt;
           </h1>
 
           <p className="mt-4 max-w-md text-base leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
@@ -124,17 +128,31 @@ export function App() {
               <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
                 Install
               </p>
-              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
                 <pre className="min-w-0 flex-1 overflow-x-auto font-mono text-sm text-zinc-900 dark:text-zinc-100">
                   <code>{NPM_CMD}</code>
                 </pre>
                 <button
                   aria-live="polite"
-                  className="rounded-md border border-zinc-300/70 bg-zinc-50 px-2 py-1 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                  className="rounded-md border border-zinc-300/70 bg-zinc-50 p-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   onClick={handleCopyInstall}
                   type="button"
                 >
-                  {copyLabel}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="lucide lucide-copy-icon lucide-copy"
+                  >
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                  </svg>
                 </button>
               </div>
             </div>
