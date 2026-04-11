@@ -1,4 +1,5 @@
 import { Ginger, useGinger, useGingerMedia } from "@lucaismyname/ginger";
+import { useState } from "react";
 import { ThemeToggle } from "./components/ThemeToggle";
 
 const NPM_CMD = "npm install @lucaismyname/ginger";
@@ -18,7 +19,7 @@ function LandingPlayerControls() {
   const { muted } = useGingerMedia();
 
   return (
-    <div className="flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-100/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
+    <div className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-100/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
       <Ginger.Control.PlayPause
         aria-label={state.isPaused ? "Play" : "Pause"}
         className="rounded-full border border-zinc-300 p-1.5 text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500"
@@ -81,14 +82,27 @@ function LandingPlayerControls() {
 }
 
 export function App() {
+  const [copyLabel, setCopyLabel] = useState("Copy");
+
+  const handleCopyInstall = async () => {
+    try {
+      await navigator.clipboard.writeText(NPM_CMD);
+      setCopyLabel("Copied");
+      window.setTimeout(() => setCopyLabel("Copy"), 1400);
+    } catch {
+      setCopyLabel("Failed");
+      window.setTimeout(() => setCopyLabel("Copy"), 1400);
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col items-start justify-center px-6 py-16 sm:px-10 lg:px-16">
       <ThemeToggle />
 
       <main className="w-full max-w-xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
-          <h1 className="font-mono text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-            &lt;Ginger /&gt;
+          <h1 className="font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+            &lt;<span className="font-bold text-orange-500 dark:text-orange-400">Ginger</span> /&gt;
           </h1>
 
           <p className="mt-4 max-w-md text-base leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
@@ -110,9 +124,19 @@ export function App() {
               <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
                 Install
               </p>
-              <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-100/80 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100">
-                <code>{NPM_CMD}</code>
-              </pre>
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
+                <pre className="min-w-0 flex-1 overflow-x-auto font-mono text-sm text-zinc-900 dark:text-zinc-100">
+                  <code>{NPM_CMD}</code>
+                </pre>
+                <button
+                  aria-live="polite"
+                  className="rounded-md border border-zinc-300/70 bg-zinc-50 px-2 py-1 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                  onClick={handleCopyInstall}
+                  type="button"
+                >
+                  {copyLabel}
+                </button>
+              </div>
             </div>
 
             <p className="mt-8 text-zinc-600 dark:text-zinc-400">
@@ -122,7 +146,7 @@ export function App() {
               <section className="flex flex-row gap-4 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className="block border border-zinc-200 dark:border-zinc-700 rounded-md px-5 py-2.5 font-medium text-ginger decoration-ginger underline-offset-4 transition-colors hover:text-ginger-dark dark:text-orange-400 dark:decoration-orange-400 dark:hover:text-orange-300"
+                  className=" rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -130,7 +154,7 @@ export function App() {
                 </a>
                 <a
                   href={REPO_URL}
-                  className="block border border-zinc-200 dark:border-zinc-700 rounded-md px-5 py-2.5 font-medium text-ginger decoration-ginger underline-offset-4 transition-colors hover:text-ginger-dark dark:text-orange-400 dark:decoration-orange-400 dark:hover:text-orange-300"
+                  className=" rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono w-full text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
