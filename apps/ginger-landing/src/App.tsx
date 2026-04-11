@@ -114,7 +114,7 @@ export function App() {
         <section className="flex flex-col items-start justify-start">
           <h1 className="lg:-ml-8 font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
             &lt;
-            <span className=" font-bold text-orange-500 dark:text-orange-400">
+            <span className=" font-bold text-orange-600 dark:text-orange-500">
               Ginger
             </span>{" "}
             /&gt;
