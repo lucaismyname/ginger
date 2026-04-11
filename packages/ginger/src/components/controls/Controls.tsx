@@ -61,9 +61,10 @@ PlayPause.displayName = "Ginger.Control.PlayPause";
 
 export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   ariaLabel?: string;
+  children?: ReactNode;
 };
 
-export function Repeat({ type = "button", ariaLabel, onClick, ...rest }: RepeatProps) {
+export function Repeat({ type = "button", ariaLabel, onClick, children, ...rest }: RepeatProps) {
   const { repeatMode, cycleRepeat } = useGingerPlayback();
   const locale = useGingerLocale();
   const label = locale.repeat[repeatMode];
@@ -77,7 +78,7 @@ export function Repeat({ type = "button", ariaLabel, onClick, ...rest }: RepeatP
         onClick?.(e);
       }}
     >
-      {label}
+      {children ?? label}
     </button>
   );
 }
@@ -106,7 +107,7 @@ export function Next({
         onClick?.(e);
       }}
     >
-      {children}
+      {children ?? locale.previousTrack}
     </button>
   );
 }
@@ -163,7 +164,7 @@ export function Shuffle({
         onClick?.(e);
       }}
     >
-      {children}
+      {children ?? locale.shuffle}
     </button>
   );
 }
@@ -241,6 +242,7 @@ export type MuteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   ariaLabel?: string;
   muteLabel?: ReactNode;
   unmuteLabel?: ReactNode;
+  children?: ReactNode;
 };
 
 export function Mute({
@@ -249,6 +251,7 @@ export function Mute({
   unmuteLabel,
   type = "button",
   onClick,
+  children,
   ...rest
 }: MuteProps) {
   const { muted, toggleMute } = useGingerMedia();
@@ -266,7 +269,7 @@ export function Mute({
         onClick?.(e);
       }}
     >
-      {muted ? u : m}
+      {children ?? (muted ? u : m)}
     </button>
   );
 }
@@ -282,12 +285,14 @@ export type PlaybackRateProps = Omit<
   /** Playback speed options (default: 0.5 … 2) */
   rates?: readonly number[];
   ariaLabel?: string;
+  children?: ReactNode;
 };
 
 export function PlaybackRate({
   rates = defaultRates,
   style,
   ariaLabel,
+  children,
   ...rest
 }: PlaybackRateProps) {
   const { playbackRate, setPlaybackRate } = useGingerMedia();
@@ -304,6 +309,7 @@ export function PlaybackRate({
       style={style}
       onChange={(e) => setPlaybackRate(Number(e.currentTarget.value))}
     >
+      {children ?? locale.playbackSpeed}
       {options.map((r) => (
         <option key={r} value={String(r)}>
           {r === 1 ? locale.playbackRateNormal : locale.playbackRateTimes(r)}

@@ -20,22 +20,16 @@ export type NavigatorMediaSessionInstall = {
  * Call `restore()` in `afterEach`.
  */
 export function installNavigatorMediaSession(): NavigatorMediaSessionInstall {
-  const handlers: Partial<
-    Record<MediaSessionAction, MediaSessionActionHandler | null>
-  > = {};
+  const handlers: Partial<Record<MediaSessionAction, MediaSessionActionHandler | null>> = {};
   const mock = {
     metadata: null as MediaMetadata | null,
     playbackState: "none" as MediaSessionPlaybackState,
-    setActionHandler(
-      action: MediaSessionAction,
-      handler: MediaSessionActionHandler | null,
-    ) {
+    setActionHandler(action: MediaSessionAction, handler: MediaSessionActionHandler | null) {
       handlers[action] = handler ?? null;
     },
   } as MediaSession;
 
-  const prev =
-    typeof navigator !== "undefined" ? navigator.mediaSession : undefined;
+  const prev = typeof navigator !== "undefined" ? navigator.mediaSession : undefined;
   Object.defineProperty(navigator, "mediaSession", {
     value: mock,
     configurable: true,
@@ -89,11 +83,7 @@ export function emitLoadedMetadata(audio: HTMLAudioElement, duration: number) {
 }
 
 /** Dispatch `timeupdate` and optionally update duration before emitting. */
-export function emitTimeUpdate(
-  audio: HTMLAudioElement,
-  currentTime: number,
-  duration?: number,
-) {
+export function emitTimeUpdate(audio: HTMLAudioElement, currentTime: number, duration?: number) {
   Object.defineProperty(audio, "currentTime", {
     configurable: true,
     value: currentTime,
@@ -129,22 +119,13 @@ export type ExpectedQueueState = {
  * Lightweight queue assertion helper for test runners.
  * Throws a readable error when expected queue state does not match.
  */
-export function expectQueueState(
-  snapshot: QueueSnapshot,
-  expected: ExpectedQueueState,
-) {
-  if (
-    expected.currentIndex !== undefined &&
-    snapshot.currentIndex !== expected.currentIndex
-  ) {
+export function expectQueueState(snapshot: QueueSnapshot, expected: ExpectedQueueState) {
+  if (expected.currentIndex !== undefined && snapshot.currentIndex !== expected.currentIndex) {
     throw new Error(
       `Expected currentIndex ${expected.currentIndex}, received ${snapshot.currentIndex}.`,
     );
   }
-  if (
-    expected.length !== undefined &&
-    snapshot.tracks.length !== expected.length
-  ) {
+  if (expected.length !== undefined && snapshot.tracks.length !== expected.length) {
     throw new Error(
       `Expected queue length ${expected.length}, received ${snapshot.tracks.length}.`,
     );

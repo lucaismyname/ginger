@@ -14,7 +14,7 @@
     - tanstack table for data tables (when needed, not automatically installed)
     - React Helmet Async for SEO (when needed, not automatically installed)
 
-## Code style
+## Coding rules & style
 
 - TypeScript strict mode
 - Use functional patterns where possible
@@ -24,7 +24,9 @@
 - when suggesting code changes, always asses the rest risk of code breaking and how much effort the change is
 - `packages/*` should be coded with tree-shakeability in mind
 
-## Styling
+## Visual Styling & CSS
 
+- this projects primary color is `orange` (in tailwind ans css)
 - Avoid `purple`, `blue`and `violet`as default accent/primary colors u UI until otherwise specified by developer
 - Avoid gradients in UI elements like buttons, links, ... until otherwise specified by developer
+- make minimal and consistent UI and UX styling choices, re-use components instead re-inventing components
