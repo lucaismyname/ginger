@@ -10,7 +10,14 @@ import { computeEndedTransition } from "../core/transitions";
 import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
 import { trackIdentity } from "../core/queue";
 import { derivePlaybackUiState } from "../internal/selectors";
-import type { GingerInitPayload, GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
+import type {
+  GingerInitPayload,
+  GingerProviderProps,
+  PlaybackMode,
+  PlaylistMeta,
+  RepeatMode,
+  Track,
+} from "../types";
 import { useMediaSessionBridge } from "../media/useMediaSession";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
 import { GingerLocaleProvider } from "./GingerLocaleContext";
@@ -250,6 +257,10 @@ export function GingerProvider({
     dispatch({ type: "SET_PLAYLIST_META", payload: meta });
   }, []);
 
+  const setPlaybackMode = useCallback((mode: PlaybackMode) => {
+    dispatch({ type: "SET_PLAYBACK_MODE", payload: mode });
+  }, []);
+
   const init = useCallback((payload: GingerInitPayload) => {
     dispatch({ type: "INIT", payload });
   }, []);
@@ -407,6 +418,7 @@ export function GingerProvider({
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
+      setPlaybackMode,
     }),
     [
       cycleRepeat,
@@ -429,6 +441,7 @@ export function GingerProvider({
       setQueue,
       setRepeatMode,
       setPlaylistMeta,
+      setPlaybackMode,
       setVolume,
       state,
       toggleMute,
@@ -464,6 +477,7 @@ export function GingerProvider({
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
+      setPlaybackMode,
       dispatch,
     }),
     [
@@ -492,6 +506,7 @@ export function GingerProvider({
       playTrackAt,
       selectTrackAt,
       setPlaylistMeta,
+      setPlaybackMode,
       dispatch,
     ],
   );

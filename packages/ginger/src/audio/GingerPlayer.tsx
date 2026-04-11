@@ -29,6 +29,8 @@ export function GingerPlayer({
     duration: -1,
     bufferedFraction: -1,
   });
+  /** Avoid MEDIA_SOURCE_CLEARED on first paint with an empty queue (no prior media). */
+  const lastActiveUrlRef = useRef("");
 
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -75,6 +77,10 @@ export function GingerPlayer({
     if (!url) {
       el.removeAttribute("src");
       lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
+      if (lastActiveUrlRef.current !== "") {
+        dispatch({ type: "MEDIA_SOURCE_CLEARED" });
+      }
+      lastActiveUrlRef.current = "";
       return;
     }
     if (el.getAttribute("src") !== url) {
@@ -82,7 +88,8 @@ export function GingerPlayer({
       el.load();
       lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
     }
-  }, [audioRef, state.currentIndex, state.tracks, url]);
+    lastActiveUrlRef.current = url;
+  }, [audioRef, dispatch, state.currentIndex, state.tracks, url]);
 
   return (
     <audio

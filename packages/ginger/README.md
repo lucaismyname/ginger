@@ -337,7 +337,7 @@ Props:
 | `initialPlaylistMeta` | `PlaylistMeta \| null` | `null` | Queue/playlist metadata |
 | `initialShuffle` | `boolean` | `false` | Start shuffled |
 | `initialRepeatMode` | `"off" \| "all" \| "one"` | `"off"` | Initial repeat mode |
-| `initialPlaybackMode` | `"playlist" \| "single"` | `"playlist"` | Playlist wraps/advances vs single-track stop behavior |
+| `initialPlaybackMode` | `"playlist" \| "single"` | `"playlist"` | Playlist wraps/advances vs single-track stop behavior (change after mount with `useGinger().setPlaybackMode`) |
 | `initialPaused` | `boolean` | `true` | Start paused or playing |
 | `initialVolume` | `number` | `1` | Initial volume, clamped `0..1` |
 | `initialMuted` | `boolean` | `false` | Initial muted state |
@@ -427,6 +427,7 @@ Returned values:
 | `insertTrackAt`, `removeTrackAt`, `moveTrack`, `enqueueNext` | Queue mutation actions |
 | `playTrackAt`, `selectTrackAt` | Pick a track by index |
 | `setPlaylistMeta` | Replace playlist metadata |
+| `setPlaybackMode` | `"playlist"` or `"single"` (next/prev/end behavior and repeat-one) |
 | `audioRef` | Ref to the underlying `HTMLAudioElement` |
 | `dispatch` | Raw reducer dispatch for advanced cases |
 
@@ -740,6 +741,7 @@ Important:
 - **CORS** — For cross-origin `fileUrl` values, set **`crossOrigin`** on **`Ginger.Player`** (for example `"anonymous"`) so the media element is usable with **`AudioContext`**.
 - **One `MediaElementAudioSourceNode` per `<audio>`** — The library reuses a single Web Audio graph per underlying element. Multiple instances of **`useGingerLiveAnalyzer`** attach extra **`AnalyserNode`**s as taps; only one tap carries audio to **`destination`** so volume stays correct.
 - **Autoplay** — The **`AudioContext`** may start **`suspended`** until a user gesture; call **`resume()`** or start playback after interaction.
+- **Reading buffers** — `frequencyData` and `timeDomainData` are updated each animation frame while enabled; read them during render after **`frequencyBinCount > 0`** (they are backed by mutable buffers that the hook fills in a `requestAnimationFrame` loop).
 
 ### Whole file: `@lucaismyname/ginger/waveform`
 
@@ -876,7 +878,7 @@ This allows persisted volume/rate/repeat/index and optional per-track resume pos
 - `moveTrack(fromIndex, toIndex)`
 - `enqueueNext(track)`
 
-Provider supports `initialPlaybackMode?: "playlist" | "single"` (`"playlist"` default).
+Provider supports `initialPlaybackMode?: "playlist" | "single"` (`"playlist"` default). Use `setPlaybackMode("playlist" | "single")` from `useGinger()` or `useGingerPlayback()` to change mode without a full `init()`.
 
 ### Reduced motion and blocked-play policy
 

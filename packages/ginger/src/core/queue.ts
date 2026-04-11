@@ -23,10 +23,30 @@ export function trackIdentity(track: Track | null | undefined): string {
 }
 
 export function findIndexByTrackIdentity(tracks: Track[], target: Track | null | undefined): number {
+  if (!target) return 0;
+  const byRef = tracks.findIndex((t) => t === target);
+  if (byRef !== -1) return byRef;
+
   const identity = trackIdentity(target);
   if (!identity) return 0;
-  const i = tracks.findIndex((track) => trackIdentity(track) === identity);
-  return i === -1 ? 0 : i;
+
+  const matches: number[] = [];
+  for (let i = 0; i < tracks.length; i += 1) {
+    if (trackIdentity(tracks[i]) === identity) matches.push(i);
+  }
+  if (matches.length === 0) return 0;
+  if (matches.length === 1) return matches[0]!;
+
+  const nodeEnv =
+    typeof globalThis !== "undefined" && "process" in globalThis
+      ? (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV
+      : undefined;
+  if (nodeEnv != null && nodeEnv !== "production") {
+    console.warn(
+      "[@lucaismyname/ginger] Ambiguous track identity: multiple queue rows share the same fileUrl without a unique `id`. Resolving to the first match.",
+    );
+  }
+  return matches[0]!;
 }
 
 export function insertTrackAt(tracks: Track[], track: Track, index?: number): Track[] {

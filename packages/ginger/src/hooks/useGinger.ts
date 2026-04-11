@@ -47,6 +47,7 @@ export function useGinger() {
         playTrackAt: pb.playTrackAt,
         selectTrackAt: pb.selectTrackAt,
         setPlaylistMeta: pb.setPlaylistMeta,
+        setPlaybackMode: pb.setPlaybackMode,
         init: pb.init,
         audioRef: md.audioRef,
         dispatch: pb.dispatch,

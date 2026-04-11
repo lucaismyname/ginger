@@ -14,8 +14,8 @@ export function App() {
         <section className="flex flex-col items-start justify-start">
           <PlayLogo className="mb-8 h-[clamp(1rem,12vw,2rem)] w-auto aspect-[14/6]" />
 
-          <h1 className="font-sans text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-            Ginger
+          <h1 className="font-mono text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
+            &lt;Ginger /&gt;
           </h1>
 
           <p className="mt-4 max-w-md text-base leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
@@ -25,7 +25,7 @@ export function App() {
           </p>
 
           <div className="mt-8">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
+            <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
               Install
             </p>
             <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-100/80 px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100">

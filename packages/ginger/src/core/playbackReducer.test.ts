@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { findIndexByTrackIdentity, trackIdentity } from "./queue";
 import { createInitialState, gingerReducer } from "./playbackReducer";
 import type { Track } from "../types";
@@ -88,6 +88,32 @@ describe("NEXT and PREV at boundaries", () => {
   });
 });
 
+describe("SET_PLAYBACK_MODE and MEDIA_SOURCE_CLEARED", () => {
+  it("updates playbackMode without resetting queue", () => {
+    const s0 = createInitialState({ tracks, currentIndex: 0, playbackMode: "playlist" });
+    const s1 = gingerReducer(s0, { type: "SET_PLAYBACK_MODE", payload: "single" });
+    expect(s1.playbackMode).toBe("single");
+    expect(s1.tracks).toEqual(s0.tracks);
+  });
+
+  it("MEDIA_SOURCE_CLEARED resets timing and error like a fresh load", () => {
+    const s0 = {
+      ...createInitialState({ tracks, currentIndex: 0 }),
+      currentTime: 12,
+      duration: 120,
+      bufferedFraction: 0.4,
+      errorMessage: "MEDIA_ERR_NETWORK" as const,
+      isBuffering: true,
+    };
+    const s1 = gingerReducer(s0, { type: "MEDIA_SOURCE_CLEARED" });
+    expect(s1.currentTime).toBe(0);
+    expect(s1.duration).toBe(0);
+    expect(s1.bufferedFraction).toBe(0);
+    expect(s1.errorMessage).toBeNull();
+    expect(s1.isBuffering).toBe(false);
+  });
+});
+
 describe("INIT", () => {
   it("replaces state like createInitialState", () => {
     const s0 = createInitialState({ tracks, currentIndex: 1 });
@@ -117,7 +143,31 @@ describe("track identity helpers", () => {
     ];
 
     expect(trackIdentity(duplicateUrls[0])).toBe("file:/same.mp3");
-    expect(findIndexByTrackIdentity(duplicateUrls, duplicateUrls[1])).toBe(0);
+    expect(findIndexByTrackIdentity(duplicateUrls, duplicateUrls[1])).toBe(1);
+  });
+
+  it("resolves duplicate fileUrl rows by object reference when unshuffling", () => {
+    const duplicateUrls: Track[] = [
+      { title: "First", fileUrl: "/same.mp3" },
+      { title: "Second", fileUrl: "/same.mp3" },
+    ];
+    expect(findIndexByTrackIdentity(duplicateUrls, duplicateUrls[0])).toBe(0);
+  });
+
+  it("warns once when identity is ambiguous (no reference match, duplicate fileUrl)", () => {
+    const duplicateUrls: Track[] = [
+      { title: "First", fileUrl: "/same.mp3" },
+      { title: "Second", fileUrl: "/same.mp3" },
+    ];
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      expect(
+        findIndexByTrackIdentity(duplicateUrls, { title: "Clone", fileUrl: "/same.mp3" }),
+      ).toBe(0);
+      expect(warn).toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 });
 

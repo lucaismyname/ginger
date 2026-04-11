@@ -266,6 +266,8 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       };
     case "SET_PLAYLIST_META":
       return { ...state, playlistMeta: action.payload };
+    case "SET_PLAYBACK_MODE":
+      return { ...state, playbackMode: action.payload };
     case "MEDIA_ERROR":
       return {
         ...state,
@@ -283,6 +285,8 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       return { ...state, isPaused: true };
     case "RESET_MEDIA_TIMES":
       return { ...state, currentTime: 0, duration: 0, bufferedFraction: 0 };
+    case "MEDIA_SOURCE_CLEARED":
+      return { ...state, ...resetTimingOnly };
     case "SET_VOLUME":
       return { ...state, volume: clampVolume(action.payload) };
     case "SET_MUTED":

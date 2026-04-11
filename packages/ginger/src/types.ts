@@ -124,6 +124,8 @@ export type GingerAction =
   | { type: "MEDIA_TIME_UPDATE"; payload: { currentTime: number; duration: number; bufferedFraction: number } }
   | { type: "MEDIA_LOADED_METADATA"; payload: { duration: number; bufferedFraction: number } }
   | { type: "SET_PLAYLIST_META"; payload: PlaylistMeta | null }
+  | { type: "SET_PLAYBACK_MODE"; payload: PlaybackMode }
+  | { type: "MEDIA_SOURCE_CLEARED" }
   | { type: "MEDIA_ERROR"; payload: { message: string } }
   | { type: "MEDIA_WAITING" }
   | { type: "MEDIA_CANPLAY" }

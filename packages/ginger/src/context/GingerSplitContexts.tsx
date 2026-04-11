@@ -5,6 +5,7 @@ import type {
   GingerMediaSlice,
   GingerPlaybackSlice,
   GingerState,
+  PlaybackMode,
   PlaylistMeta,
   RepeatMode,
   Track,
@@ -28,6 +29,7 @@ export type GingerPlaybackActions = {
   playTrackAt: (index: number) => void;
   selectTrackAt: (index: number) => void;
   setPlaylistMeta: (meta: PlaylistMeta | null) => void;
+  setPlaybackMode: (mode: PlaybackMode) => void;
   dispatch: Dispatch<GingerAction>;
 };
 
@@ -99,6 +101,7 @@ export function gingerStateFromContextValues(
     playTrackAt: _pta,
     selectTrackAt: _sta,
     setPlaylistMeta: _spm,
+    setPlaybackMode: _spbm,
     dispatch: _d1,
     ...playbackRest
   } = pb;

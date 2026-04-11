@@ -1,5 +1,13 @@
 import { createContext, useContext, type Dispatch, type MutableRefObject } from "react";
-import type { GingerAction, GingerInitPayload, GingerState, PlaylistMeta, RepeatMode, Track } from "../types";
+import type {
+  GingerAction,
+  GingerInitPayload,
+  GingerState,
+  PlaybackMode,
+  PlaylistMeta,
+  RepeatMode,
+  Track,
+} from "../types";
 
 export type GingerContextValue = {
   state: GingerState;
@@ -29,6 +37,7 @@ export type GingerContextValue = {
   playTrackAt: (index: number) => void;
   selectTrackAt: (index: number) => void;
   setPlaylistMeta: (meta: PlaylistMeta | null) => void;
+  setPlaybackMode: (mode: PlaybackMode) => void;
 };
 
 const GingerContext = createContext<GingerContextValue | null>(null);

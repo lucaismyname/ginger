@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { resolveArtworkUrl } from "../core/transitions";
 import type { GingerState } from "../types";
 
 export type MediaSessionBridgeActions = {
@@ -23,7 +24,7 @@ export function useMediaSessionBridge(
   const title = track?.title;
   const artist = track?.artist;
   const album = track?.album;
-  const artworkUrl = track?.artworkUrl;
+  const artworkUrl = resolveArtworkUrl(track, state.playlistMeta?.artworkUrl);
 
   useEffect(() => {
     const ms = getMediaSession();
