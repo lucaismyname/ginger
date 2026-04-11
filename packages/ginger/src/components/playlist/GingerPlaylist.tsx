@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useGingerContext } from "../../context/GingerContext";
+import { trackIdentity } from "../../core/queue";
 import type { Track } from "../../types";
 
 export type GingerPlaylistConfig = {
@@ -79,7 +80,7 @@ export function GingerPlaylist({
         {state.tracks.map((track, index) => {
           const active = index === state.currentIndex;
           return (
-            <li key={`${track.fileUrl}-${index}`}>
+            <li key={`${index}-${trackIdentity(track)}`}>
               <button
                 type="button"
                 onClick={() => {

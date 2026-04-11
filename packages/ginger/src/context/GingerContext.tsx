@@ -1,11 +1,13 @@
 import { createContext, useContext, type Dispatch, type MutableRefObject } from "react";
-import type { GingerAction, GingerState, PlaylistMeta, RepeatMode, Track } from "../types";
+import type { GingerAction, GingerInitPayload, GingerState, PlaylistMeta, RepeatMode, Track } from "../types";
 
 export type GingerContextValue = {
   state: GingerState;
   dispatch: Dispatch<GingerAction>;
   audioRef: MutableRefObject<HTMLAudioElement | null>;
   notifyEnded: () => void;
+  /** Full reset to match `createInitialState` / provider `initial*` props. */
+  init: (payload: GingerInitPayload) => void;
   play: () => void;
   pause: () => void;
   togglePlayPause: () => void;

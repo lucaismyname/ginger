@@ -18,10 +18,9 @@ export function Artwork({ className, style, fallback, empty, sizes, loading, onE
   }
   const alt = [track?.title, track?.artist].filter(Boolean).join(" — ") || "Artwork";
   return (
-    <span
+    <div
       className={className}
       style={{
-        display: "inline-block",
         background: "var(--ginger-artwork-bg, transparent)",
         borderRadius: "var(--ginger-artwork-radius, 0)",
         overflow: "hidden",
@@ -43,7 +42,7 @@ export function Artwork({ className, style, fallback, empty, sizes, loading, onE
           ...imgStyle,
         }}
       />
-    </span>
+    </div>
   );
 }
 

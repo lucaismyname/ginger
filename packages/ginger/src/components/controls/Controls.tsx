@@ -2,23 +2,42 @@ import { useMemo } from "react";
 import type {
   ButtonHTMLAttributes,
   CSSProperties,
+  FormEvent,
   InputHTMLAttributes,
   ReactNode,
   SelectHTMLAttributes,
 } from "react";
 import { useGingerContext } from "../../context/GingerContext";
+import { effectiveDuration } from "../../internal/selectors";
+import { formatMmSs } from "../../internal/formatTime";
 import type { RepeatMode } from "../../types";
 
 export type PlayPauseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Optional labels; still headless—defaults are text for a11y */
   playLabel?: ReactNode;
   pauseLabel?: ReactNode;
+  /** Screen-reader label when paused (playing would start); defaults to match `playLabel` when it is a string */
+  playAriaLabel?: string;
+  /** Screen-reader label when playing (action would pause); defaults to match `pauseLabel` when it is a string */
+  pauseAriaLabel?: string;
 };
 
-export function PlayPause({ playLabel = "Play", pauseLabel = "Pause", type = "button", ...rest }: PlayPauseProps) {
+export function PlayPause({
+  playLabel = "Play",
+  pauseLabel = "Pause",
+  playAriaLabel,
+  pauseAriaLabel,
+  type = "button",
+  ...rest
+}: PlayPauseProps) {
   const { state, togglePlayPause } = useGingerContext();
+  const defaultPlayAria = typeof playLabel === "string" ? playLabel : "Play";
+  const defaultPauseAria = typeof pauseLabel === "string" ? pauseLabel : "Pause";
+  const ariaLabel = state.isPaused
+    ? (playAriaLabel ?? defaultPlayAria)
+    : (pauseAriaLabel ?? defaultPauseAria);
   return (
-    <button type={type} aria-label={state.isPaused ? "Play" : "Pause"} onClick={togglePlayPause} {...rest}>
+    <button type={type} aria-label={ariaLabel} onClick={togglePlayPause} {...rest}>
       {state.isPaused ? playLabel : pauseLabel}
     </button>
   );
@@ -78,48 +97,69 @@ export function Shuffle({ type = "button", children = "Shuffle", ...rest }: Shuf
 }
 Shuffle.displayName = "Ginger.Control.Shuffle";
 
-export type SeekBarProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange"> & {
+export type SeekBarProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type" | "value" | "onChange" | "onInput" | "min" | "max" | "step"
+> & {
   inputStyle?: CSSProperties;
 };
 
 export function SeekBar({ inputStyle, style, ...rest }: SeekBarProps) {
   const { state, seek } = useGingerContext();
-  const duration = Number.isFinite(state.duration) && state.duration > 0 ? state.duration : 0;
+  const duration = effectiveDuration(state);
   const value = duration > 0 ? state.currentTime : 0;
+  const numericValue = Number.isFinite(value) ? value : 0;
+  const ariaValueText =
+    duration > 0
+      ? `${formatMmSs(numericValue)} of ${formatMmSs(duration)}`
+      : formatMmSs(numericValue);
+  const applySeek = (e: FormEvent<HTMLInputElement>) => {
+    seek(Number(e.currentTarget.value));
+  };
   return (
     <input
+      {...rest}
       type="range"
       min={0}
       max={duration > 0 ? duration : 1}
       step="any"
-      value={Number.isFinite(value) ? value : 0}
+      value={numericValue}
       aria-label="Seek"
-      onChange={(e) => seek(Number(e.currentTarget.value))}
+      aria-valuetext={ariaValueText}
+      onInput={applySeek}
+      onChange={applySeek}
       style={{ width: "100%", ...style, ...inputStyle }}
-      {...rest}
     />
   );
 }
 
 SeekBar.displayName = "Ginger.Control.SeekBar";
 
-export type VolumeProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange"> & {
+export type VolumeProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type" | "value" | "onChange" | "onInput" | "min" | "max" | "step"
+> & {
   inputStyle?: CSSProperties;
 };
 
 export function Volume({ inputStyle, style, ...rest }: VolumeProps) {
   const { state, setVolume } = useGingerContext();
+  const applyVolume = (e: FormEvent<HTMLInputElement>) => {
+    setVolume(Number(e.currentTarget.value));
+  };
   return (
     <input
+      {...rest}
       type="range"
       min={0}
       max={1}
       step="any"
       value={state.volume}
       aria-label="Volume"
-      onChange={(e) => setVolume(Number(e.currentTarget.value))}
+      aria-valuetext={`${Math.round(state.volume * 100)}%`}
+      onInput={applyVolume}
+      onChange={applyVolume}
       style={{ width: "100%", ...style, ...inputStyle }}
-      {...rest}
     />
   );
 }

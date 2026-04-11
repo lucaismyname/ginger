@@ -106,6 +106,9 @@ export type GingerAction =
   | { type: "SET_PLAYBACK_RATE"; payload: number }
   | { type: "MEDIA_VOLUME_SYNC"; payload: { volume: number; muted: boolean } };
 
+/** Payload for `INIT` / `init()`; replaces queue and media timing like a fresh mount. */
+export type GingerInitPayload = Extract<GingerAction, { type: "INIT" }>["payload"];
+
 export type GingerProviderProps = {
   children: ReactNode;
   initialTracks?: Track[];
@@ -120,6 +123,11 @@ export type GingerProviderProps = {
   initialMuted?: boolean;
   /** Default 1; clamped ~0.25–4 on set */
   initialPlaybackRate?: number;
+  /**
+   * When set, changing this value dispatches `INIT` with the **current** `initialTracks`, `initialIndex`,
+   * and other `initial*` props (same as calling `init()`). First paint still uses the reducer initializer only.
+   */
+  initialStateKey?: string | number;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;

@@ -51,6 +51,60 @@ describe("gingerReducer queue behavior", () => {
   });
 });
 
+describe("NEXT and PREV at boundaries", () => {
+  it("NEXT at last track with repeat off keeps index and timing when same", () => {
+    const state = createInitialState({
+      tracks,
+      currentIndex: 2,
+      repeatMode: "off",
+      isPaused: false,
+    });
+    const next = gingerReducer(state, { type: "NEXT" });
+    expect(next.currentIndex).toBe(2);
+    expect(next.isPaused).toBe(false);
+  });
+
+  it("NEXT at last track with repeat all wraps to 0", () => {
+    const state = createInitialState({
+      tracks,
+      currentIndex: 2,
+      repeatMode: "all",
+    });
+    const next = gingerReducer(state, { type: "NEXT" });
+    expect(next.currentIndex).toBe(0);
+    expect(next.isPaused).toBe(false);
+  });
+
+  it("PREV at first track with repeat off stays at 0", () => {
+    const state = createInitialState({ tracks, currentIndex: 0, repeatMode: "off" });
+    const next = gingerReducer(state, { type: "PREV" });
+    expect(next.currentIndex).toBe(0);
+  });
+
+  it("PREV at first track with repeat all jumps to last", () => {
+    const state = createInitialState({ tracks, currentIndex: 0, repeatMode: "all" });
+    const next = gingerReducer(state, { type: "PREV" });
+    expect(next.currentIndex).toBe(2);
+  });
+});
+
+describe("INIT", () => {
+  it("replaces state like createInitialState", () => {
+    const s0 = createInitialState({ tracks, currentIndex: 1 });
+    const s1 = gingerReducer(s0, {
+      type: "INIT",
+      payload: {
+        tracks: [{ id: "x", title: "X", fileUrl: "/x.mp3" }],
+        currentIndex: 0,
+        isPaused: true,
+      },
+    });
+    expect(s1.tracks).toEqual([{ id: "x", title: "X", fileUrl: "/x.mp3" }]);
+    expect(s1.currentIndex).toBe(0);
+    expect(s1.isShuffled).toBe(false);
+  });
+});
+
 describe("track identity helpers", () => {
   it("prefers explicit ids over file URLs", () => {
     expect(trackIdentity({ id: "abc", title: "Track", fileUrl: "/same.mp3" })).toBe("id:abc");

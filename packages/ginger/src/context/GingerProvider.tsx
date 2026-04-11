@@ -8,7 +8,7 @@ import {
 } from "react";
 import { computeEndedTransition } from "../core/transitions";
 import { clampPlaybackRate, clampVolume, gingerReducer, createInitialState } from "../core/playbackReducer";
-import type { GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
+import type { GingerInitPayload, GingerProviderProps, PlaylistMeta, RepeatMode, Track } from "../types";
 import { GingerContext, type GingerContextValue } from "./GingerContext";
 
 const defaultProviderStyle: CSSProperties = {
@@ -32,6 +32,7 @@ export function GingerProvider({
   initialVolume = 1,
   initialMuted = false,
   initialPlaybackRate = 1,
+  initialStateKey,
   className,
   style,
   onTrackChange,
@@ -58,6 +59,59 @@ export function GingerProvider({
       }),
   );
   const stateRef = useRef(state);
+
+  const latestInitRef = useRef({
+    tracks: initialTracks,
+    currentIndex: initialIndex,
+    playlistMeta: initialPlaylistMeta,
+    isPaused: initialPaused,
+    isShuffled: initialShuffle,
+    repeatMode: initialRepeatMode,
+    volume: initialVolume,
+    muted: initialMuted,
+    playbackRate: initialPlaybackRate,
+  });
+  latestInitRef.current = {
+    tracks: initialTracks,
+    currentIndex: initialIndex,
+    playlistMeta: initialPlaylistMeta,
+    isPaused: initialPaused,
+    isShuffled: initialShuffle,
+    repeatMode: initialRepeatMode,
+    volume: initialVolume,
+    muted: initialMuted,
+    playbackRate: initialPlaybackRate,
+  };
+
+  const prevInitialStateKeyRef = useRef<typeof initialStateKey>(undefined);
+
+  useEffect(() => {
+    if (initialStateKey === undefined) {
+      prevInitialStateKeyRef.current = undefined;
+      return;
+    }
+    if (prevInitialStateKeyRef.current === undefined) {
+      prevInitialStateKeyRef.current = initialStateKey;
+      return;
+    }
+    if (prevInitialStateKeyRef.current === initialStateKey) return;
+    prevInitialStateKeyRef.current = initialStateKey;
+    const p = latestInitRef.current;
+    dispatch({
+      type: "INIT",
+      payload: {
+        tracks: p.tracks,
+        currentIndex: p.currentIndex,
+        playlistMeta: p.playlistMeta,
+        isPaused: p.isPaused,
+        isShuffled: p.isShuffled,
+        repeatMode: p.repeatMode,
+        volume: p.volume,
+        muted: p.muted,
+        playbackRate: p.playbackRate,
+      },
+    });
+  }, [initialStateKey]);
 
   useEffect(() => {
     stateRef.current = state;
@@ -159,6 +213,10 @@ export function GingerProvider({
     dispatch({ type: "SET_PLAYLIST_META", payload: meta });
   }, []);
 
+  const init = useCallback((payload: GingerInitPayload) => {
+    dispatch({ type: "INIT", payload });
+  }, []);
+
   const currentUrl = state.tracks[state.currentIndex]?.fileUrl;
 
   useEffect(() => {
@@ -167,11 +225,15 @@ export function GingerProvider({
     if (state.isPaused) el.pause();
     else
       void el.play().catch((e: unknown) => {
-        dispatch({ type: "PAUSE" });
-        const msg = e instanceof Error ? e.message : "Playback failed";
-        onError?.(msg);
+        const msg =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : "Playback failed (e.g. autoplay blocked or unavailable source)";
+        dispatch({ type: "MEDIA_ERROR", payload: { message: msg } });
       });
-  }, [state.isPaused, currentUrl, onError]);
+  }, [state.isPaused, currentUrl]);
 
   const notifyEnded = useCallback(() => {
     const transition = computeEndedTransition(stateRef.current);
@@ -198,6 +260,7 @@ export function GingerProvider({
       dispatch,
       audioRef,
       notifyEnded,
+      init,
       play,
       pause,
       togglePlayPause,
@@ -219,6 +282,7 @@ export function GingerProvider({
     [
       cycleRepeat,
       dispatch,
+      init,
       next,
       notifyEnded,
       pause,

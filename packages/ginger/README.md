@@ -654,6 +654,26 @@ Example:
 </Ginger.Provider>
 ```
 
+## Recipes
+
+### Updating the queue after mount
+
+`initialTracks`, `initialIndex`, and other `initial*` props apply **only on the first mount** of `Ginger.Provider`. To replace the queue from app state, use `setQueue` / `playTrackAt` / `selectTrackAt` from `useGinger()`, or call `init({ tracks, ... })` for a full reset (same as `INIT`).
+
+To re-run initialization when a parent identifier changes (for example switching albums), pass **`initialStateKey`** (e.g. `initialStateKey={albumId}`). When that key changes, Ginger dispatches `INIT` using the **current** `initialTracks`, `initialIndex`, and other `initial*` props.
+
+### Duplicate URLs and stable `id`s
+
+If two tracks share the same `fileUrl`, set a unique **`id`** on each `Track` so shuffle/unshuffle and queue identity resolve the correct row.
+
+### CORS and `<Ginger.Player />`
+
+Cross-origin audio must be served with compatible CORS headers. If you need the browser to treat the response as CORS-enabled (for example when reading certain metadata), pass **`crossOrigin`** on `Ginger.Player` (e.g. `"anonymous"`).
+
+### Autoplay and `play()` failures
+
+If the browser blocks playback (autoplay policy) or `HTMLMediaElement.play()` rejects for another reason, the player dispatches a media error with a short message. **`onError`** still runs (from `errorMessage` in state), and **`Ginger.Current.ErrorMessage`** shows the same string. Associate controls with a visible label using the `id` on `Ginger.Control.SeekBar` and a `<label htmlFor="…">` in your UI.
+
 ## Notes
 
 ### CORS
@@ -666,7 +686,7 @@ There is no `window` at import time, but playback only starts when the audio ele
 
 ### Queue updates after mount
 
-`initialTracks`, `initialIndex`, and other `initial*` props are not controlled props. Use `setQueue`, `selectTrackAt`, or a remounted provider when external state should replace player state.
+See [Recipes — Updating the queue after mount](#updating-the-queue-after-mount).
 
 ## Monorepo Development
 

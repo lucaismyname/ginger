@@ -3,6 +3,7 @@ export { useGinger } from "./hooks/useGinger";
 export type {
   DisplayBaseProps,
   GingerAction,
+  GingerInitPayload,
   GingerMediaSlice,
   GingerPlaybackSlice,
   GingerProviderProps,
@@ -12,6 +13,8 @@ export type {
   RepeatMode,
   Track,
 } from "./types";
+export { clampPlaybackRate, clampVolume } from "./core/playbackReducer";
+export { derivePlaybackUiState } from "./internal/selectors";
 export type { GingerPlayerProps } from "./audio/GingerPlayer";
 export type {
   GingerPlaylistProps,
