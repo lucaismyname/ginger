@@ -1,6 +1,10 @@
 export * from "./texts";
 export { Year } from "./Year";
 export { Lyrics } from "./Lyrics";
+export { LyricsSynced } from "./LyricsSynced";
+export type { LyricsSyncedProps } from "./LyricsSynced";
+export { Chapters } from "./Chapters";
+export type { ChaptersProps } from "./Chapters";
 export { FileUrl } from "./FileUrl";
 export { Artwork } from "./Artwork";
 export { QueueIndex, QueueLength, QueuePosition } from "./QueueMeta";

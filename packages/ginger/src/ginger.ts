@@ -20,6 +20,8 @@ export const Ginger = {
     TrackNumber: Current.TrackNumber,
     Year: Current.Year,
     Lyrics: Current.Lyrics,
+    LyricsSynced: Current.LyricsSynced,
+    Chapters: Current.Chapters,
     FileUrl: Current.FileUrl,
     Artwork: Current.Artwork,
     QueueIndex: Current.QueueIndex,

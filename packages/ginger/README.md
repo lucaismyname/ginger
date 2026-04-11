@@ -491,6 +491,8 @@ Other current-track components:
 |-----------|-------------|-----------------|
 | `Ginger.Current.Artwork` | Current track artwork or playlist artwork fallback | `unstyled`, `imgStyle`, `sizes`, `loading`, `decoding`, `onError`, display-base props |
 | `Ginger.Current.Lyrics` | Track lyrics | `preserveWhitespace`, render-prop `children` |
+| `Ginger.Current.LyricsSynced` | Timed / LRC lyrics with active line | `activeClassName`, `lineClassName`, `unstyled`, render-prop `children` |
+| `Ginger.Current.Chapters` | Chapter list; click seeks to `startSeconds` | `formatStart`, `unstyled`, render-prop `children` |
 | `Ginger.Current.FileUrl` | Track `fileUrl`, hidden unless explicitly enabled | `visible`, display-base props |
 | `Ginger.Current.QueueIndex` | Current queue index | `base`, render-prop `children` |
 | `Ginger.Current.QueueLength` | Queue length | render-prop `children` |
@@ -688,7 +690,7 @@ Example:
 
 - **Headless control bindings** (bind to your own components): **`useSeekBarBinding()`**, **`useVolumeSlider()`**, **`usePlayPauseBinding({ playAriaLabel?, pauseAriaLabel? })`**. Each returns props such as `value`, `min`, `max`, handlers, and `ariaLabel` / `ariaValueText` where relevant.
 
-- **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useGingerChapters()`**, **`useGingerLyricsSync()`**, and **`useGingerDebugLog()`** are available for custom UX and diagnostics.
+- **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useNextTrackPrefetch()`**, **`useGingerChapters()`**, **`useGingerLyricsSync()`**, and **`useGingerDebugLog()`** are available for custom UX and diagnostics.
 
 - **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
 
@@ -847,6 +849,31 @@ function ChapterAndLyrics() {
 
 `Track` now supports optional `chapters` and `lyricsTimed` fields. For LRC parsing, use `parseLrc()`.
 
+For ready-made UI, use **`Ginger.Current.Chapters`** and **`Ginger.Current.LyricsSynced`** (same data as the hooks above).
+
+### Next-track prefetch
+
+```tsx
+import { Ginger, useNextTrackPrefetch } from "@lucaismyname/ginger";
+
+function PrefetchNext() {
+  useNextTrackPrefetch({ crossOrigin: "anonymous" });
+  return null;
+}
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player crossOrigin="anonymous" />
+      <PrefetchNext />
+      {/* ... */}
+    </Ginger.Provider>
+  );
+}
+```
+
+The hook preloads the **logical** next track (same rules as the Next button) using a detached `HTMLAudioElement` with `preload="auto"`. Pass **`crossOrigin`** when it matches **`Ginger.Player`** for cross-origin URLs.
+
 ### Sleep timer and drag seek
 
 ```tsx
@@ -896,6 +923,7 @@ Use `useGingerDebugLog(true)` during development to log core state transitions i
 - `Ginger.Control.SeekBar` and `Ginger.Control.Volume` accept `unstyled`.
 - `Ginger.Current.Artwork`, `Ginger.Queue.Artwork`, `Ginger.Current.TimeRail`, and `Ginger.Current.BufferRail` accept `unstyled`.
 - `Ginger.Playlist` and `Ginger.Playlist.Track` accept `unstyled`.
+- `Ginger.Current.Chapters` and `Ginger.Current.LyricsSynced` accept `unstyled`.
 
 This gives you a pure state+behavior layer while keeping convenience components available.
 
@@ -923,6 +951,14 @@ There is no `window` at import time, but playback only starts when the audio ele
 ### Queue updates after mount
 
 See [Recipes — Updating the queue after mount](#updating-the-queue-after-mount).
+
+## Development priorities
+
+These priorities guide new work in the library; they are not a guarantee of shipping order.
+
+1. **Music libraries and continuous listening** — Features that make track-to-track playback feel better come first: **next-track prefetch** (`useNextTrackPrefetch`), future gapless or crossfade (see `@lucaismyname/ginger/experimental-gapless`), and first-class **chapter** / **synced lyrics** UI (`Ginger.Current.Chapters`, `Ginger.Current.LyricsSynced`).
+2. **Podcasts and live-style streams** — **HLS / DASH** integration is emphasized when a concrete app needs it; the core package stays on native `<audio>` with optional adapters or documentation rather than hard dependencies.
+3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations (Cast, remote playback modules) unless there is a dedicated use case.
 
 ## Monorepo Development
 

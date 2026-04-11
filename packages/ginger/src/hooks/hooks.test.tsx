@@ -1,8 +1,9 @@
-import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, afterEach, vi } from "vitest";
 import { cleanup, fireEvent, act, renderHook, screen } from "@testing-library/react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Ginger } from "../ginger";
 import { renderGinger, queryAudio } from "../testing";
+import { useNextTrackPrefetch } from "./useNextTrackPrefetch";
 import { useSeekDrag } from "./useSeekDrag";
 import { useGingerChapters } from "./useGingerChapters";
 import { useGingerLyricsSync } from "./useGingerLyricsSync";
@@ -36,6 +37,11 @@ const tracksLyrics: Track[] = [
       { time: 10, text: "Line1" },
     ],
   },
+];
+
+const tracksTwo: Track[] = [
+  { id: "x", title: "X", fileUrl: "/x.mp3" },
+  { id: "y", title: "Y", fileUrl: "/y.mp3" },
 ];
 
 function Provider({ children }: { children: React.ReactNode }) {
@@ -143,6 +149,27 @@ describe("useGingerLyricsSync", () => {
       fireEvent.click(screen.getByText("bump-lyrics"));
     });
     expect(screen.getByTestId("lyric").textContent).toBe("Line1");
+  });
+});
+
+function PrefetchProbe() {
+  useNextTrackPrefetch();
+  return null;
+}
+
+describe("useNextTrackPrefetch", () => {
+  it("creates a detached audio element for the next track", () => {
+    const spy = vi.spyOn(document, "createElement");
+    renderGinger(
+      <>
+        <Ginger.Player />
+        <PrefetchProbe />
+      </>,
+      { tracks: tracksTwo },
+    );
+    const audioCreates = spy.mock.calls.filter((c) => c[0] === "audio");
+    expect(audioCreates.length).toBeGreaterThanOrEqual(2);
+    spy.mockRestore();
   });
 });
 

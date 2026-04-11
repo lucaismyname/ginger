@@ -1,13 +1,19 @@
 import type { GingerState, RepeatMode, Track } from "../types";
 import { clampIndex } from "./queue";
 
+/** Fields used by next/prev/ended navigation; avoids coupling helpers to full `GingerState`. */
+export type GingerPlaybackNavigationSlice = Pick<
+  GingerState,
+  "tracks" | "currentIndex" | "repeatMode" | "playbackMode"
+>;
+
 export type EndedTransition =
   | { kind: "replay_same" }
   | { kind: "advance"; nextIndex: number }
   | { kind: "wrap"; nextIndex: number }
   | { kind: "stop"; nextIndex: number };
 
-export function computeEndedTransition(state: GingerState): EndedTransition {
+export function computeEndedTransition(state: GingerPlaybackNavigationSlice): EndedTransition {
   const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return { kind: "stop", nextIndex: 0 };
@@ -18,7 +24,7 @@ export function computeEndedTransition(state: GingerState): EndedTransition {
   return { kind: "stop", nextIndex: clampIndex(currentIndex, len) };
 }
 
-export function computeNextIndex(state: GingerState): number {
+export function computeNextIndex(state: GingerPlaybackNavigationSlice): number {
   const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return 0;
@@ -28,7 +34,7 @@ export function computeNextIndex(state: GingerState): number {
   return clampIndex(currentIndex, len);
 }
 
-export function computePrevIndex(state: GingerState): number {
+export function computePrevIndex(state: GingerPlaybackNavigationSlice): number {
   const { tracks, currentIndex, repeatMode, playbackMode } = state;
   const len = tracks.length;
   if (len === 0) return 0;
