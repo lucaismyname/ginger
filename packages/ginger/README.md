@@ -342,6 +342,7 @@ Props:
 | `initialVolume` | `number` | `1` | Initial volume, clamped `0..1` |
 | `initialMuted` | `boolean` | `false` | Initial muted state |
 | `initialPlaybackRate` | `number` | `1` | Initial playback rate, clamped `0.25..4` |
+| `initialStateKey` | `string \| number` | `undefined` | Re-dispatches `INIT` when this key changes |
 | `mediaSession` | `boolean` | `false` | Enables Media Session lock-screen/OS controls |
 | `beforePlay` | `() => boolean \| Promise<boolean>` | `undefined` | Policy hook run before playback starts |
 | `onPlayBlocked` | `() => void` | `undefined` | Called when `beforePlay` returns `false` |
@@ -497,7 +498,8 @@ Other current-track components:
 | `Ginger.Current.Duration` | Duration string | `format`, render-prop `children` |
 | `Ginger.Current.Remaining` | Remaining time string | `format`, render-prop `children` |
 | `Ginger.Current.Progress` | Progress as text or render-prop object | render-prop `children` |
-| `Ginger.Current.TimeRail` | Simple visual progress rail | `unstyled`, `height`, display-base props |
+| `Ginger.Current.TimeRail` | Simple visual progress rail | `unstyled`, `height`, `showBuffered`, display-base props |
+| `Ginger.Current.BufferRail` | Buffered-only rail | `unstyled`, `height`, display-base props |
 | `Ginger.Current.PlaybackState` | Derived state label | render-prop `children` |
 | `Ginger.Current.ErrorMessage` | Media error string | `live`, render-prop `children` |
 
@@ -685,6 +687,8 @@ Example:
 
 - **Headless control bindings** (bind to your own components): **`useSeekBarBinding()`**, **`useVolumeSlider()`**, **`usePlayPauseBinding({ playAriaLabel?, pauseAriaLabel? })`**. Each returns props such as `value`, `min`, `max`, handlers, and `ariaLabel` / `ariaValueText` where relevant.
 
+- **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useGingerChapters()`**, **`useGingerLyricsSync()`**, and **`useGingerDebugLog()`** are available for custom UX and diagnostics.
+
 - **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
 
 - **Track extras** — Optional **`metadata?: Record<string, unknown>`** on **`Track`** (and on **`PlaylistMeta`**) is ignored by core logic; use it for badges, flags, or UI-only fields.
@@ -744,6 +748,8 @@ function Hotkeys() {
 }
 ```
 
+`mute` is optional; if omitted, no mute key binding is installed.
+
 ### Chapters and synced lyrics
 
 ```tsx
@@ -800,6 +806,11 @@ Provider supports `initialPlaybackMode?: "playlist" | "single"` (`"playlist"` de
 
 - `Ginger.Player` supports `respectReducedMotion` to reduce time sync update frequency.
 - `Ginger.Provider` supports `beforePlay?: () => boolean | Promise<boolean>` and `onPlayBlocked`.
+- If `beforePlay` throws/rejects, Ginger sets `errorMessage` and triggers `onError`.
+
+### Debug logging
+
+Use `useGingerDebugLog(true)` during development to log core state transitions in the console.
 
 ### Fully unstyled mode
 
