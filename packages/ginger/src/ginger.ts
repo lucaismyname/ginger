@@ -1,7 +1,7 @@
 import { GingerPlayer } from "./audio/GingerPlayer";
 import * as Current from "./components/current";
 import * as Control from "./components/controls/Controls";
-import { GingerPlaylist } from "./components/playlist/GingerPlaylist";
+import { GingerPlaylistCompound } from "./components/playlist/GingerPlaylist";
 import * as Queue from "./components/queue/QueueDisplay";
 import { GingerProvider } from "./context/GingerProvider";
 
@@ -48,5 +48,5 @@ export const Ginger = {
     Shuffle: Control.Shuffle,
     SeekBar: Control.SeekBar,
   },
-  Playlist: GingerPlaylist,
-} as const;
+  Playlist: GingerPlaylistCompound,
+};

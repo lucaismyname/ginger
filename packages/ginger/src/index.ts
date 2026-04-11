@@ -12,7 +12,10 @@ export type {
   Track,
 } from "./types";
 export type { GingerPlayerProps } from "./audio/GingerPlayer";
-export type { GingerPlaylistProps } from "./components/playlist/GingerPlaylist";
+export type {
+  GingerPlaylistProps,
+  GingerPlaylistTrackProps,
+} from "./components/playlist/GingerPlaylist";
 export type {
   ErrorMessageProps,
   PlaybackStateProps,

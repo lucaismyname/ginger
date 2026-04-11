@@ -47,6 +47,23 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden `
 
 Anything rendered by `Ginger.Current.*` / `Ginger.Queue.*` can also be read from **`useGinger()`** for fully custom UIs.
 
+### Playlist: default vs manual rows
+
+- **Default (auto):** `<Ginger.Playlist />` with no children maps the queue from context. Optional **`renderTrack`** customizes each row’s inner content (same wrapper styles as before).
+- **Manual:** pass **`children`** and build the list yourself—typically **`useGinger().state.tracks.map(...)`** so indices match the provider queue—and use **`Ginger.Playlist.Track`** for each row (`index` is required; add `className` / `children` as needed). Rows inherit **`playOnSelect`** from the parent `<Ginger.Playlist>`. If both **`children`** and **`renderTrack`** are set, **`children`** wins (`renderTrack` is ignored).
+
+```tsx
+const { state } = useGinger();
+
+<Ginger.Playlist>
+  {state.tracks.map((track, i) => (
+    <Ginger.Playlist.Track key={track.fileUrl} index={i} className="my-row">
+      {track.title}
+    </Ginger.Playlist.Track>
+  ))}
+</Ginger.Playlist>
+```
+
 ## CSS variables (optional theming)
 
 Applied on **`Ginger.Provider`** (overridable via `style` / `className`):
