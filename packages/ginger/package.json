@@ -1,10 +1,13 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Headless React audio player with compound components",
   "type": "module",
   "sideEffects": false,
-  "files": ["dist", "LICENSE"],
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +20,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "test": "vitest run",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
@@ -24,7 +28,9 @@
     "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
-    "react-dom": { "optional": true }
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
@@ -34,9 +40,16 @@
     "react-dom": "^18.3.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
-    "vite-plugin-dts": "^4.3.0"
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^4.1.4"
   },
-  "keywords": ["react", "audio", "player", "headless", "playlist"],
+  "keywords": [
+    "react",
+    "audio",
+    "player",
+    "headless",
+    "playlist"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

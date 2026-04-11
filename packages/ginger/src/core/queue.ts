@@ -17,7 +17,14 @@ export function shuffleWithAnchor(tracks: Track[], anchorIndex: number): Track[]
   return [anchor, ...rest];
 }
 
-export function findIndexByFileUrl(tracks: Track[], fileUrl: string): number {
-  const i = tracks.findIndex((t) => t.fileUrl === fileUrl);
+export function trackIdentity(track: Track | null | undefined): string {
+  if (!track) return "";
+  return track.id != null && track.id !== "" ? `id:${track.id}` : `file:${track.fileUrl}`;
+}
+
+export function findIndexByTrackIdentity(tracks: Track[], target: Track | null | undefined): number {
+  const identity = trackIdentity(target);
+  if (!identity) return 0;
+  const i = tracks.findIndex((track) => trackIdentity(track) === identity);
   return i === -1 ? 0 : i;
 }

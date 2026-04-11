@@ -22,8 +22,8 @@ export function Artwork({ className, style, fallback, empty, sizes, loading, onE
       className={className}
       style={{
         display: "inline-block",
-        background: "var(--ginger-artwork-bg, #f3f4f6)",
-        borderRadius: "var(--ginger-artwork-radius, 6px)",
+        background: "var(--ginger-artwork-bg, transparent)",
+        borderRadius: "var(--ginger-artwork-radius, 0)",
         overflow: "hidden",
         ...style,
       }}

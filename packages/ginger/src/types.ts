@@ -3,6 +3,8 @@ import type { CSSProperties, ReactNode } from "react";
 export type RepeatMode = "off" | "all" | "one";
 
 export type Track = {
+  /** Optional stable identity for duplicate URLs / queue mutations */
+  id?: string;
   title: string;
   fileUrl: string;
   artist?: string;

@@ -41,9 +41,11 @@ export function useGinger() {
       playTrackAt: ctx.playTrackAt,
       selectTrackAt: ctx.selectTrackAt,
       setPlaylistMeta: ctx.setPlaylistMeta,
+      audioRef: ctx.audioRef,
       dispatch: ctx.dispatch,
     }),
     [
+      ctx.audioRef,
       ctx.cycleRepeat,
       ctx.dispatch,
       ctx.next,

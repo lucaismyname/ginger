@@ -57,6 +57,11 @@ export function GingerProvider({
         playbackRate: initialPlaybackRate,
       }),
   );
+  const stateRef = useRef(state);
+
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   const currentTrack = state.tracks[state.currentIndex] ?? null;
 
@@ -83,12 +88,7 @@ export function GingerProvider({
 
   const play = useCallback(() => {
     dispatch({ type: "PLAY" });
-    void audioRef.current?.play().catch((e: unknown) => {
-      dispatch({ type: "PAUSE" });
-      const msg = e instanceof Error ? e.message : "Playback failed";
-      onError?.(msg);
-    });
-  }, [onError]);
+  }, []);
 
   const pause = useCallback(() => {
     dispatch({ type: "PAUSE" });
@@ -149,9 +149,6 @@ export function GingerProvider({
 
   const playTrackAt = useCallback((index: number) => {
     dispatch({ type: "SET_INDEX", payload: { index, autoPlay: true } });
-    queueMicrotask(() => {
-      void audioRef.current?.play().catch(() => {});
-    });
   }, []);
 
   const selectTrackAt = useCallback((index: number) => {
@@ -177,12 +174,11 @@ export function GingerProvider({
   }, [state.isPaused, currentUrl, onError]);
 
   const notifyEnded = useCallback(() => {
-    const transition = computeEndedTransition(state);
+    const transition = computeEndedTransition(stateRef.current);
     if (transition.kind === "replay_same") {
       const el = audioRef.current;
       if (el) {
         el.currentTime = 0;
-        void el.play().catch(() => {});
       }
       dispatch({ type: "PLAY" });
       return;
@@ -194,10 +190,7 @@ export function GingerProvider({
     }
     const nextIndex = transition.nextIndex;
     dispatch({ type: "SET_INDEX", payload: { index: nextIndex, autoPlay: true } });
-    queueMicrotask(() => {
-      void audioRef.current?.play().catch(() => {});
-    });
-  }, [onQueueEnd, state]);
+  }, [onQueueEnd]);
 
   const value = useMemo<GingerContextValue>(
     () => ({

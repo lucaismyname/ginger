@@ -1,4 +1,4 @@
-import { useEffect, type AudioHTMLAttributes, type CSSProperties } from "react";
+import { useEffect, useRef, type AudioHTMLAttributes, type CSSProperties } from "react";
 import { useGingerContext } from "../context/GingerContext";
 
 export type GingerPlayerProps = {
@@ -17,6 +17,30 @@ function readBufferedFraction(el: HTMLAudioElement): number {
 export function GingerPlayer({ className, style, preload = "metadata", crossOrigin }: GingerPlayerProps) {
   const { audioRef, dispatch, state, notifyEnded } = useGingerContext();
   const url = state.tracks[state.currentIndex]?.fileUrl ?? "";
+  const lastTimeSnapshotRef = useRef({
+    currentTime: -1,
+    duration: -1,
+    bufferedFraction: -1,
+  });
+
+  const syncTime = (el: HTMLAudioElement, force = false) => {
+    const next = {
+      currentTime: el.currentTime,
+      duration: el.duration,
+      bufferedFraction: readBufferedFraction(el),
+    };
+    const prev = lastTimeSnapshotRef.current;
+    const changedEnough =
+      Math.abs(next.currentTime - prev.currentTime) >= 0.25 ||
+      Math.abs(next.duration - prev.duration) >= 0.01 ||
+      Math.abs(next.bufferedFraction - prev.bufferedFraction) >= 0.01;
+    if (!force && !changedEnough) return;
+    lastTimeSnapshotRef.current = next;
+    dispatch({
+      type: "MEDIA_TIME_UPDATE",
+      payload: next,
+    });
+  };
 
   useEffect(() => {
     const el = audioRef.current;
@@ -31,11 +55,13 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
     if (!el) return;
     if (!url) {
       el.removeAttribute("src");
+      lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
       return;
     }
     if (el.getAttribute("src") !== url) {
       el.src = url;
       el.load();
+      lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
     }
   }, [audioRef, state.currentIndex, state.tracks, url]);
 
@@ -47,19 +73,13 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
       preload={preload}
       crossOrigin={crossOrigin}
       controls={false}
+      playsInline
       onTimeUpdate={(e) => {
-        const el = e.currentTarget;
-        dispatch({
-          type: "MEDIA_TIME_UPDATE",
-          payload: {
-            currentTime: el.currentTime,
-            duration: el.duration,
-            bufferedFraction: readBufferedFraction(el),
-          },
-        });
+        syncTime(e.currentTarget);
       }}
       onLoadedMetadata={(e) => {
         const el = e.currentTarget;
+        lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
         dispatch({
           type: "MEDIA_LOADED_METADATA",
           payload: {
@@ -68,11 +88,14 @@ export function GingerPlayer({ className, style, preload = "metadata", crossOrig
           },
         });
       }}
+      onSeeking={(e) => syncTime(e.currentTarget, true)}
+      onSeeked={(e) => syncTime(e.currentTarget, true)}
       onEnded={() => notifyEnded()}
       onPlay={() => dispatch({ type: "MEDIA_PLAY" })}
       onPause={() => dispatch({ type: "MEDIA_PAUSE" })}
       onWaiting={() => dispatch({ type: "MEDIA_WAITING" })}
       onCanPlay={() => dispatch({ type: "MEDIA_CANPLAY" })}
+      onProgress={(e) => syncTime(e.currentTarget, true)}
       onVolumeChange={(e) => {
         const el = e.currentTarget;
         dispatch({

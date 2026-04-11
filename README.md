@@ -45,9 +45,11 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden `
 
 **Volume / mute / speed:** **`Ginger.Control.Volume`** (range 0–1), **`Ginger.Control.Mute`**, **`Ginger.Control.PlaybackRate`** (select; optional `rates` prop). Optional **`initialVolume`**, **`initialMuted`**, **`initialPlaybackRate`** on **`Ginger.Provider`**. Read **`state.volume`**, **`state.muted`**, **`state.playbackRate`** from **`useGinger()`**.
 
+**Provider state ownership:** props prefixed with **`initial*`** are mount-only defaults. To replace the queue after mount, call **`useGinger().setQueue(...)`** or remount **`Ginger.Provider`** with a new `key`.
+
 ### Headless hook
 
-Anything rendered by `Ginger.Current.*` / `Ginger.Queue.*` can also be read from **`useGinger()`** for fully custom UIs.
+Anything rendered by `Ginger.Current.*` / `Ginger.Queue.*` can also be read from **`useGinger()`** for fully custom UIs. The hook also exposes **`audioRef`** for low-level `HTMLAudioElement` integrations and **`dispatch`** if you need reducer-level control.
 
 ### Playlist: default vs manual rows
 
@@ -59,7 +61,7 @@ const { state } = useGinger();
 
 <Ginger.Playlist>
   {state.tracks.map((track, i) => (
-    <Ginger.Playlist.Track key={track.fileUrl} index={i} className="my-row">
+    <Ginger.Playlist.Track key={track.id ?? `${track.fileUrl}-${i}`} index={i} className="my-row">
       {track.title}
     </Ginger.Playlist.Track>
   ))}

@@ -1,5 +1,5 @@
 import type { GingerAction, GingerState, RepeatMode, Track } from "../types";
-import { clampIndex, findIndexByFileUrl, shuffleWithAnchor } from "./queue";
+import { clampIndex, findIndexByTrackIdentity, shuffleWithAnchor } from "./queue";
 import { computeNextIndex, computePrevIndex, cycleRepeatMode } from "./transitions";
 
 export function clampVolume(v: number): number {
@@ -99,6 +99,8 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
         ...state,
         tracks: next,
         currentIndex: idx,
+        isShuffled: false,
+        originalTracks: null,
         ...resetTimingOnly,
       };
     }
@@ -139,8 +141,7 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       }
       const restored = state.originalTracks ? [...state.originalTracks] : [...state.tracks];
       const current = state.tracks[state.currentIndex];
-      const fileUrl = current?.fileUrl ?? "";
-      const newIndex = findIndexByFileUrl(restored, fileUrl);
+      const newIndex = findIndexByTrackIdentity(restored, current);
       return {
         ...state,
         isShuffled: false,
