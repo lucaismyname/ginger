@@ -66,6 +66,7 @@ The default entry is server-safe where hooks are not called on the server. For *
 
 ## Next steps
 
+- **Changelog** (release history): [`CHANGELOG.md`](../CHANGELOG.md)
 - **Recipes** (queue updates, autoplay, persistence): [`guides/recipes.md`](./guides/recipes.md)
 - **Testing**: [`guides/testing.md`](./guides/testing.md)
 - **Accessibility**: [`guides/accessibility.md`](./guides/accessibility.md)

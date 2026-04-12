@@ -2,6 +2,12 @@
 
 All notable changes to `@lucaismyname/ginger` are documented here.
 
+## 0.0.48
+
+- **Documentation:** Refreshed the root monorepo [`README.md`](https://github.com/lucaismyname/ginger/blob/main/README.md), this package [`README.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/README.md), and [`docs/README.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/README.md) (tooling, apps, publishing, docs map).
+- **Publishing:** From the monorepo, use `npm run publish:lib` (runs `npm publish` inside `packages/ginger`) so the [npmjs.com package page](https://www.npmjs.com/package/@lucaismyname/ginger) shows **this** `README.md`. Publishing with `npm publish -w @lucaismyname/ginger` from the repo root can attach the **root** readme to registry metadata instead.
+- **Repository (not shipped in the npm tarball):** [`CHANGELOG.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/CHANGELOG.md) is included in the published package; the landing app uses bundled audio samples, Prism-based Quick Start highlighting, and refactored components; the demo app aligns on orange accents and includes Playwright smoke tests; Husky + lint-staged and shared Biome formatting apply across workspaces.
+
 ## 0.0.45
 
 - Add crossfade module (`@lucaismyname/ginger/crossfade`)

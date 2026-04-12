@@ -2,8 +2,9 @@
 
 ## Links
 
-- `packages/ginger`: [README.md](./packages/ginger/README.md)
-- Changelog: [CHANGELOG.md](./packages/ginger/CHANGELOG.md)
+- **Library package** (`@lucaismyname/ginger`): [packages/ginger/README.md](./packages/ginger/README.md)
+- **Changelog** (published with the package): [packages/ginger/CHANGELOG.md](./packages/ginger/CHANGELOG.md)
+- **Narrative + API docs map**: [packages/ginger/docs/README.md](./packages/ginger/docs/README.md)
 
 ## Common Commands
 
@@ -11,16 +12,27 @@
 - Demo app: `npm run dev`
 - Landing app: `npm run dev:landing`
 - E2E tests (demo): `npm run e2e -w ginger-demo`
+- Publish the library: `npm run publish:lib` (see **Publishing** below)
 
 ## Apps
 
-- `apps/ginger-landing`: Landing page with a live Ginger player, bundled audio samples, and install/links sections. Components are split into `components/` and data into `data/`.
-- `apps/demo`: Demo players showcasing all Ginger features (including stable queue-end playback behavior in playlist demos). Includes Playwright E2E tests under `e2e/`.
+- **`apps/ginger-landing`**: Marketing page with a live Ginger player, **same-origin MP3 samples** under `public/samples/`, Quick Start snippet with **syntax highlighting** (Prism), and install/links. UI is split across `src/components/` and `src/data/`.
+- **`apps/demo`**: Feature matrix for the library (queue, waveform, EQ, spatial, transcript, …). Examples use **orange** as the primary accent. **Playwright** smoke tests live under `e2e/`.
 
 ## Quality
 
-- **Linting & formatting**: [Biome](https://biomejs.dev) (consistent config for both library and apps)
-- **Pre-commit hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/lint-staged/lint-staged) run Biome on staged files
-- **Unit tests**: Vitest (library)
-- **E2E tests**: Playwright (demo app)
-- **CI**: GitHub Actions on PRs and pushes to main (Node 20 + 22)
+- **Linting & formatting**: [Biome](https://biomejs.dev) (library + apps share formatter/import organization where enabled)
+- **Pre-commit hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/lint-staged/lint-staged) run Biome on staged `*.ts` / `*.tsx` in `packages/ginger` and `apps/**`
+- **Unit tests**: Vitest (`packages/ginger`)
+- **E2E tests**: Playwright (`ginger-demo`)
+- **CI**: GitHub Actions on PRs and pushes to `main` (Node 20 + 22)
+
+## Publishing `@lucaismyname/ginger`
+
+From the **repository root**, run:
+
+```bash
+npm run publish:lib
+```
+
+This runs `npm publish` **inside** [`packages/ginger`](./packages/ginger) so the npm registry shows **that folder’s** [`README.md`](./packages/ginger/README.md) on the package page. Using `npm publish -w @lucaismyname/ginger` from the root can associate the **monorepo root** `README.md` with the package metadata instead.

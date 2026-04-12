@@ -24,6 +24,7 @@ The TypeDoc build includes the **main** package entry ([`src/index.ts`](../src/i
 
 ## Narrative reference
 
+- Release history: [`CHANGELOG.md`](../CHANGELOG.md)
 - Subpath behavior and when to use each: [`reference/subpaths.md`](./reference/subpaths.md)
 - Package overview and install: root [`README.md`](../README.md)
 - Docs folder map: [`README.md`](./README.md)
