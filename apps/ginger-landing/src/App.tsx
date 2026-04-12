@@ -386,10 +386,10 @@ export function App() {
           </div>
 
           <p className="mt-4 text-base md:-mr-0 md:ml-0 text-pretty leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
-            A headless React audio player primitive. Build your own UI with playlists,
-            keyboard shortcuts, remote-control, spatial support, audio
-            analyzers, media session support, and more — without fighting the DOM inside
-            the library.
+            A headless React audio player primitive. Build your own UI with
+            playlists, keyboard shortcuts, remote-control, spatial support,
+            audio analyzers, media session support, and more — without fighting
+            the DOM inside the library.
           </p>
           <div className="mt-8 w-full max-w-full">
             <SectionLabel icon={EyeIcon}>Example</SectionLabel>
@@ -398,7 +398,7 @@ export function App() {
               <LandingPlayerControls />
             </Ginger.Provider>
           </div>
-          <div className="mt-8 w-full max-w-full">
+          {/* <div className="sr-only hidden mt-8 w-full max-w-full">
             <SectionLabel icon={Link2}>Guides</SectionLabel>
             <Accordion.Root
               type="single"
@@ -484,7 +484,7 @@ export function App() {
               </AccordionSection>
 
               <AccordionSection value="trust-cta" title="Developer Trust + CTA">
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 ">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {TRUST_POINTS.map((point) => (
                       <p
@@ -524,7 +524,7 @@ export function App() {
                 </div>
               </AccordionSection>
             </Accordion.Root>
-          </div>
+          </div> */}
           <section className="md:flex flex-col w-full md:flex-row gap-6 items-start justify-start">
             <div className="mt-8 w-full max-w-full flex-1 grow-1">
               <SectionLabel icon={Package}>Install</SectionLabel>
