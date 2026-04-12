@@ -6,7 +6,7 @@ import {
 } from "@lucaismyname/ginger";
 import type { Track, TrackChapter } from "@lucaismyname/ginger";
 import type { LucideIcon } from "lucide-react";
-import { Globe, Link2, EyeIcon, Package } from "lucide-react";
+import { Globe, Link2, EyeIcon, Code, Package, List, Shell, MoreHorizontal, MoreVertical, Hammer, Activity, MonitorUp, Star } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { PlaybackRateSelect } from "./components/PlaybackRateSelect";
@@ -463,10 +463,62 @@ export function App() {
           </div>
 
           <p className="mt-4 text-base md:-mr-0 md:ml-0 text-pretty leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
-            A headless React audio player primitive. Build your own UI with
-            playlists, keyboard shortcuts, remote-control, spatial support,
-            audio analyzers, media session support, and more — without fighting
-            the DOM inside the library.
+            A headless React audio player primitive{" "}
+            <Code
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            . Build your own UI with playlists{" "}
+            <List
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , keyboard shortcuts{" "}
+            <Star
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , remote-control{" "}
+            <MonitorUp
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , spatial support{" "}
+            <Activity
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , audio analyzers{" "}
+            <EyeIcon
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , media session support{" "}
+            <Shell
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            , and more{" "}
+            <MoreVertical
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />{" "}
+            — without fighting{" "}
+            <Hammer
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />{" "}
+            the DOM{" "}
+            <Globe
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />{" "}
+            inside the library{" "}
+            <Package
+              aria-hidden
+              className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
+            />
+            .
           </p>
           <div className="mt-8 w-full max-w-full">
             <SectionLabel icon={EyeIcon}>Example</SectionLabel>
