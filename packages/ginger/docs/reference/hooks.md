@@ -22,6 +22,15 @@
 - `useGingerDebugLog()`
 - `useGingerLiveAnalyzer()`
 
+## Subpath-only hooks
+
+See [`subpaths.md`](./subpaths.md) for import paths and usage.
+
+- `@lucaismyname/ginger/equalizer` — `useGingerEqualizer()`
+- `@lucaismyname/ginger/spatial` — `useGingerSpatialAudio()`
+- `@lucaismyname/ginger/transcript` — `useGingerTranscriptSync()` (plus `parseSrt` / `parseVtt` / `parseTranscriptAuto`)
+- `@lucaismyname/ginger/remote` — `useGingerRemote()`
+
 ## Utilities exported from root
 
 - `clampPlaybackRate()`

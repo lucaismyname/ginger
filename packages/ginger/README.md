@@ -56,7 +56,7 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 - Streaming adapters: [`docs/guides/streaming-adapters.md`](./docs/guides/streaming-adapters.md)
 - Components reference: [`docs/reference/components.md`](./docs/reference/components.md)
 - Hooks reference: [`docs/reference/hooks.md`](./docs/reference/hooks.md)
-- Subpath exports: [`docs/reference/subpaths.md`](./docs/reference/subpaths.md)
+- Subpath exports (waveform, EQ, spatial, transcript, remote, …): [`docs/reference/subpaths.md`](./docs/reference/subpaths.md)
 - Generated API docs: [`docs/api/index.html`](./docs/api/index.html)
 
 ## Subpath Exports
@@ -65,6 +65,9 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 - `@lucaismyname/ginger/testing`
 - `@lucaismyname/ginger/waveform`
 - `@lucaismyname/ginger/equalizer`
+- `@lucaismyname/ginger/spatial`
+- `@lucaismyname/ginger/transcript`
+- `@lucaismyname/ginger/remote`
 - `@lucaismyname/ginger/experimental-gapless`
 
 ### Equalizer
@@ -104,6 +107,96 @@ function MyPlayer() {
 ```
 
 The EQ and `useGingerLiveAnalyzer` share the same `AudioContext` and can be used together. EQ filters are inserted before the analyser in the Web Audio graph.
+
+### Spatial audio (`@lucaismyname/ginger/spatial`)
+
+Inserts an HRTF **`PannerNode`** into the same Web Audio graph as the EQ and live analyser (one `MediaElementAudioSourceNode` per `<audio>`).
+
+```tsx
+import { useGingerSpatialAudio } from "@lucaismyname/ginger/spatial";
+
+function Spatialized() {
+  const { setSourcePosition, error } = useGingerSpatialAudio({
+    panningModel: "HRTF",
+    position: [2, 0, 0],
+    listenerPosition: [0, 0, 0],
+  });
+
+  return (
+    <div>
+      <button type="button" onClick={() => setSourcePosition(0, 0, -2)}>
+        Move source
+      </button>
+      {error && <p>{error}</p>}
+    </div>
+  );
+}
+```
+
+Use **`setListenerPosition`** and **`setPanningModel`** for runtime updates without rebuilding the graph.
+
+### Transcript (`@lucaismyname/ginger/transcript`)
+
+Parse **SRT** and **WebVTT** captions and sync cues to playback time (podcasts, video-style transcripts). HTML tags in cue text are stripped.
+
+```tsx
+import {
+  parseSrt,
+  parseVtt,
+  useGingerTranscriptSync,
+} from "@lucaismyname/ginger/transcript";
+
+const vtt = `WEBVTT
+
+00:00:01.000 --> 00:00:04.000
+Hello from VTT
+`;
+
+function TranscriptPanel() {
+  const { cues, activeCue, activeCues } = useGingerTranscriptSync({
+    transcript: vtt,
+    format: "auto",
+  });
+
+  return (
+    <div>
+      <p>Now: {activeCue?.text ?? "—"}</p>
+      <p>Overlapping: {activeCues.map((c) => c.text).join(" · ")}</p>
+    </div>
+  );
+}
+
+// Or parse ahead of time:
+const cuesFromSrt = parseSrt(srtString);
+const cuesFromVtt = parseVtt(vttString);
+```
+
+**`useGingerTranscriptSync`** mirrors **`useGingerLyricsSync`** but uses cue **start/end** ranges and exposes **`activeCues`** for overlapping captions. **`parseTranscriptAuto`** chooses VTT when the string starts with `WEBVTT`, otherwise SRT.
+
+### Multi-tab sync (`@lucaismyname/ginger/remote`)
+
+Elects a **leader** tab via **`BroadcastChannel`** and pushes **`INIT`** snapshots to followers so queue and transport settings stay aligned. Mount **`Ginger.Player`** only on the leader so a single `<audio>` element plays.
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import { useGingerRemote } from "@lucaismyname/ginger/remote";
+
+function RemoteAwarePlayer() {
+  const { isLeader, isPending, error } = useGingerRemote({
+    channelName: "my-app-ginger",
+  });
+
+  return (
+    <>
+      {error && <p role="alert">{error}</p>}
+      {isLeader && <Ginger.Player />}
+      {isPending && <p>Connecting to other tabs…</p>}
+    </>
+  );
+}
+```
+
+Snapshots send the current queue order with **`isShuffled: false`** so followers do not re-randomize; the visible order matches the leader. **`claimLeadership()`** requests leadership (lexicographically smaller tab IDs win conflicts).
 
 ### Experimental Notice
 
@@ -781,7 +874,11 @@ Example:
 
 - **Buffered UI** — **`Ginger.Current.BufferRail`** shows load progress; **`Ginger.Current.TimeRail`** supports **`showBuffered`** to stack a buffered layer behind the played segment.
 
-- **Audio analyzers** — Live Web Audio data for real-time visuals (**`useGingerLiveAnalyzer`**, main package), parametric EQ (**`useGingerEqualizer`**, `@lucaismyname/ginger/equalizer`), and whole-file grids for waveforms or spectrograms (**`useAudioFileAnalysis`** / **`analyzeAudioFile`**, `@lucaismyname/ginger/waveform`). See [Audio analyzers (visualizations)](#audio-analyzers-visualizations).
+- **Audio analyzers** — Live Web Audio data for real-time visuals (**`useGingerLiveAnalyzer`**, main package), parametric EQ (**`useGingerEqualizer`**, `@lucaismyname/ginger/equalizer`), **spatial / HRTF panning** (**`useGingerSpatialAudio`**, `@lucaismyname/ginger/spatial`), and whole-file grids for waveforms or spectrograms (**`useAudioFileAnalysis`** / **`analyzeAudioFile`**, `@lucaismyname/ginger/waveform`). See [Audio analyzers (visualizations)](#audio-analyzers-visualizations).
+
+- **Transcripts** — **SRT / WebVTT** parsing and sync (**`parseSrt`**, **`parseVtt`**, **`useGingerTranscriptSync`**, `@lucaismyname/ginger/transcript`); LRC / in-track lyrics remain **`useGingerLyricsSync`** and **`parseLrc()`** on the main package.
+
+- **Multi-tab** — **`useGingerRemote`** (`@lucaismyname/ginger/remote`) coordinates playback state across browser tabs; see [Subpath exports](#subpath-exports).
 
 Recipes below cover queue lifecycle and media edge cases.
 
@@ -1114,9 +1211,12 @@ Additional entrypoints:
 - `@lucaismyname/ginger/client`
 - `@lucaismyname/ginger/testing`
 - `@lucaismyname/ginger/waveform`
+- `@lucaismyname/ginger/spatial`
+- `@lucaismyname/ginger/transcript`
+- `@lucaismyname/ginger/remote`
 - `@lucaismyname/ginger/experimental-gapless`
 
-`experimental-gapless` is explicitly non-production and does not alter core playback.
+See [Subpath Exports](#subpath-exports) for **`spatial`**, **`transcript`**, and **`remote`** usage. `experimental-gapless` is explicitly non-production and does not alter core playback.
 
 ## Notes
 
@@ -1137,8 +1237,8 @@ See [Recipes — Updating the queue after mount](#updating-the-queue-after-mount
 These priorities guide new work in the library; they are not a guarantee of shipping order.
 
 1. **Music libraries and continuous listening** — Features that make track-to-track playback feel better come first: **next-track prefetch** (`useNextTrackPrefetch`), future gapless or crossfade (see `@lucaismyname/ginger/experimental-gapless`), and first-class **chapter** / **synced lyrics** UI (`Ginger.Current.Chapters`, `Ginger.Current.LyricsSynced`).
-2. **Podcasts and live-style streams** — **HLS / DASH** integration is emphasized when a concrete app needs it; the core package stays on native `<audio>` with optional adapters or documentation rather than hard dependencies.
-3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations (Cast, remote playback modules) unless there is a dedicated use case.
+2. **Podcasts and live-style streams** — **HLS / DASH** integration is emphasized when a concrete app needs it; the core package stays on native `<audio>` with optional adapters or documentation rather than hard dependencies. **SRT / WebVTT** transcripts are supported via `@lucaismyname/ginger/transcript`.
+3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations (Cast, proprietary cast SDKs) unless there is a dedicated use case. **Multi-tab** web apps can use `@lucaismyname/ginger/remote` (BroadcastChannel) before reaching for OS-level remote playback.
 
 ## Monorepo Development
 

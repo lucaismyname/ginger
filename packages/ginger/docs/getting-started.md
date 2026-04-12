@@ -41,4 +41,5 @@ export function BasicPlayer() {
 - Recipes: [`guides/recipes.md`](./guides/recipes.md)
 - Testing: [`guides/testing.md`](./guides/testing.md)
 - Accessibility: [`guides/accessibility.md`](./guides/accessibility.md)
+- Optional subpath packages (waveform, EQ, spatial, transcript, remote): [`reference/subpaths.md`](./reference/subpaths.md)
 - API Reference: [`reference/components.md`](./reference/components.md), [`reference/hooks.md`](./reference/hooks.md)
