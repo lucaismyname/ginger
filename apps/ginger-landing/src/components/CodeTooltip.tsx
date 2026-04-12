@@ -1,5 +1,29 @@
 import { Rocket } from "lucide-react";
+import { Highlight, themes } from "prism-react-renderer";
+import Prism from "prismjs";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-typescript";
+import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { TOOLTIP_EXAMPLE_SNIPPET } from "../data/constants";
+
+function useDocumentDarkClass() {
+  const [isDark, setIsDark] = useState(() =>
+    typeof document !== "undefined" ? document.documentElement.classList.contains("dark") : false,
+  );
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => setIsDark(root.classList.contains("dark"));
+    sync();
+    const obs = new MutationObserver(sync);
+    obs.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+
+  return isDark;
+}
 
 export function CodeTooltip({
   tooltipCopyLabel,
@@ -8,6 +32,9 @@ export function CodeTooltip({
   tooltipCopyLabel: string;
   onCopy: () => void;
 }) {
+  const isDark = useDocumentDarkClass();
+  const theme = isDark ? themes.vsDark : themes.github;
+
   return (
     <div
       className="pointer-events-none invisible absolute left-0 top-full z-20 w-[min(90vw,28rem)] pt-2.5 opacity-0 transition duration-150 ease-out group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100"
@@ -31,9 +58,48 @@ export function CodeTooltip({
             <CopyIcon />
           </button>
         </div>
-        <pre className="shadow-sm overflow-x-auto rounded-md border border-zinc-300 bg-zinc-50 px-3 py-2 font-mono text-xs leading-relaxed text-zinc-800 dark:border-zinc-700/80 dark:bg-zinc-950 dark:text-zinc-100">
-          <code className="text-zinc-500 dark:text-zinc-400">{TOOLTIP_EXAMPLE_SNIPPET}</code>
-        </pre>
+        <div className="overflow-x-auto rounded-md border border-zinc-300/80 bg-transparent px-3 py-2 text-left text-xs leading-relaxed dark:border-zinc-600/60">
+          <Highlight code={TOOLTIP_EXAMPLE_SNIPPET} language="tsx" prism={Prism} theme={theme}>
+            {({ className, style, tokens, getLineProps, getTokenProps }) => {
+              const preStyle: CSSProperties = {
+                ...style,
+                backgroundColor: "transparent",
+                backgroundImage: "none",
+              };
+              return (
+                <pre
+                  className={`${className} m-0 select-text bg-transparent p-0 font-mono`}
+                  style={preStyle}
+                >
+                  {tokens.map((line, i) => {
+                    const lineProps = getLineProps({ line });
+                    const lineStyle: CSSProperties = {
+                      ...(lineProps.style as CSSProperties | undefined),
+                      backgroundColor: "transparent",
+                    };
+                    return (
+                      <div key={String(i)} {...lineProps} style={lineStyle}>
+                        {line.map((token, key) => {
+                          const tp = getTokenProps({ token });
+                          const tokenStyle: CSSProperties = {
+                            ...(tp.style as CSSProperties | undefined),
+                            backgroundColor: "transparent",
+                            backgroundImage: "none",
+                          };
+                          return (
+                            <span key={String(key)} {...tp} style={tokenStyle}>
+                              {tp.children}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </pre>
+              );
+            }}
+          </Highlight>
+        </div>
       </div>
     </div>
   );

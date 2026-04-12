@@ -162,7 +162,7 @@ export function App() {
           <section className="md:flex flex-col w-full md:flex-row gap-6 items-start justify-start">
             <div className="mt-8 w-full max-w-full flex-1 grow-1">
               <SectionLabel icon={Package}>Install</SectionLabel>
-              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-600/60 dark:bg-transparent">
                 <pre className="min-w-0 flex-1 overflow-x-hidden w-full whitespace-nowrap font-mono text-base text-zinc-900 dark:text-zinc-100">
                   <code className="font-mono whitespace-nowrap">{NPM_CMD}</code>
                 </pre>
