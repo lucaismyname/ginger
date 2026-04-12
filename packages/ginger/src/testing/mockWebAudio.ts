@@ -55,11 +55,32 @@ export class MockBiquadFilterNode extends MockAudioNode {
   readonly Q = { value: 1 };
 }
 
+class MockAudioParam {
+  value = 0;
+}
+
+class MockAudioListener {
+  readonly positionX = new MockAudioParam();
+  readonly positionY = new MockAudioParam();
+  readonly positionZ = new MockAudioParam();
+}
+
+export class MockPannerNode extends MockAudioNode {
+  panningModel: PanningModelType = "HRTF";
+  distanceModel: DistanceModelType = "inverse";
+  refDistance = 1;
+  readonly positionX = new MockAudioParam();
+  readonly positionY = new MockAudioParam();
+  readonly positionZ = new MockAudioParam();
+}
+
 export class MockAudioContext extends EventTarget {
   readonly destination = new MockAudioDestinationNode();
+  readonly listener = new MockAudioListener() as unknown as AudioListener;
   readonly sources: MockMediaElementAudioSourceNode[] = [];
   readonly analysers: MockAnalyserNode[] = [];
   readonly biquadFilters: MockBiquadFilterNode[] = [];
+  readonly panners: MockPannerNode[] = [];
 
   sampleRate = 44_100;
   state: MockAudioContextState = "running";
@@ -82,6 +103,12 @@ export class MockAudioContext extends EventTarget {
     const filter = new MockBiquadFilterNode();
     this.biquadFilters.push(filter);
     return filter as unknown as BiquadFilterNode;
+  }
+
+  createPanner() {
+    const panner = new MockPannerNode();
+    this.panners.push(panner);
+    return panner as unknown as PannerNode;
   }
 
   async resume() {
