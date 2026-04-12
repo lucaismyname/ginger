@@ -7,7 +7,7 @@ import "@fontsource/geist-mono/400.css";
 import "@fontsource/geist-mono/500.css";
 import "@fontsource/geist-mono/600.css";
 import "@fontsource/geist-mono/700.css";
-import "@fontsource/fusion-pixel-12px-monospaced-sc/400.css";
+import "@fontsource-variable/pixelify-sans";
 
 import "./index.css";
 import { App } from "./App";

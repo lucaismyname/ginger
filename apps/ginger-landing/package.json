@@ -20,7 +20,7 @@
     "format": "biome format --write ../../apps/ginger-landing/src --config-path ../../biome.json"
   },
   "dependencies": {
-    "@fontsource/fusion-pixel-12px-monospaced-sc": "^5.2.5",
+    "@fontsource-variable/pixelify-sans": "^5.2.7",
     "@fontsource/geist-mono": "^5.2.5",
     "@fontsource/geist-sans": "^5.2.5",
     "@lucaismyname/ginger": "file:../../packages/ginger",

@@ -18,9 +18,10 @@ export default {
           "sans-serif",
         ],
         pixel: [
-          '"Fusion Pixel 12px Monospaced SC"',
-          "ui-monospace",
-          "monospace",
+          '"Pixelify Sans Variable"',
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
         ],
         mono: [
           "Geist Mono",
