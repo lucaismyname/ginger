@@ -19,7 +19,9 @@ export function CurrentAndQueueGallery() {
       <Ginger.Player className="hidden" />
       <div className="grid gap-4 text-sm md:grid-cols-2">
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Ginger.Queue.*</h3>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            Ginger.Queue.*
+          </h3>
           <ul className="space-y-2 leading-relaxed text-zinc-800">
             <li>
               <span className="text-zinc-500">Title:</span> <Ginger.Queue.Title />
@@ -40,27 +42,30 @@ export function CurrentAndQueueGallery() {
           </ul>
         </section>
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Ginger.Current.*</h3>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            Ginger.Current.*
+          </h3>
           <ul className="space-y-2 leading-relaxed text-zinc-800">
             <li>
-              <span className="text-zinc-500">Title / Artist / Album:</span> <Ginger.Current.Title /> —{" "}
-              <Ginger.Current.Artist /> — <Ginger.Current.Album />
+              <span className="text-zinc-500">Title / Artist / Album:</span>{" "}
+              <Ginger.Current.Title /> — <Ginger.Current.Artist /> — <Ginger.Current.Album />
             </li>
             <li>
-              <span className="text-zinc-500">Genre / Year / # / ISRC / Label:</span> <Ginger.Current.Genre /> ·{" "}
-              <Ginger.Current.Year /> · #<Ginger.Current.TrackNumber /> · <Ginger.Current.Isrc /> ·{" "}
-              <Ginger.Current.Label />
+              <span className="text-zinc-500">Genre / Year / # / ISRC / Label:</span>{" "}
+              <Ginger.Current.Genre /> · <Ginger.Current.Year /> · #<Ginger.Current.TrackNumber /> ·{" "}
+              <Ginger.Current.Isrc /> · <Ginger.Current.Label />
             </li>
             <li>
-              <span className="text-zinc-500">Position:</span> <Ginger.Current.QueuePosition base={1} /> (1-based)
+              <span className="text-zinc-500">Position:</span>{" "}
+              <Ginger.Current.QueuePosition base={1} /> (1-based)
             </li>
             <li>
-              <span className="text-zinc-500">Playback:</span> <Ginger.Current.PlaybackState /> · err:{" "}
-              <Ginger.Current.ErrorMessage empty="—" />
+              <span className="text-zinc-500">Playback:</span> <Ginger.Current.PlaybackState /> ·
+              err: <Ginger.Current.ErrorMessage empty="—" />
             </li>
             <li>
-              <span className="text-zinc-500">Times:</span> <Ginger.Current.Elapsed /> / <Ginger.Current.Duration /> /
-              rem <Ginger.Current.Remaining />
+              <span className="text-zinc-500">Times:</span> <Ginger.Current.Elapsed /> /{" "}
+              <Ginger.Current.Duration /> / rem <Ginger.Current.Remaining />
             </li>
             <li>
               <span className="text-zinc-500">Progress:</span> <Ginger.Current.Progress />
@@ -72,7 +77,8 @@ export function CurrentAndQueueGallery() {
               <span className="text-zinc-500">Copyright:</span> <Ginger.Current.Copyright />
             </li>
             <li>
-              <span className="text-zinc-500">File (hidden):</span> <Ginger.Current.FileUrl visible={false} />
+              <span className="text-zinc-500">File (hidden):</span>{" "}
+              <Ginger.Current.FileUrl visible={false} />
             </li>
             <li className="whitespace-pre-wrap text-xs leading-relaxed text-zinc-700">
               <span className="font-medium text-zinc-500">Lyrics:</span>

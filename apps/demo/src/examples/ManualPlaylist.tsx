@@ -11,7 +11,7 @@ function ManualPlaylistBody() {
           index={index}
           className={`rounded-xl px-3 py-2.5 text-left text-sm transition ${
             state.currentIndex === index
-              ? "bg-emerald-50 font-medium text-emerald-950 ring-1 ring-emerald-200"
+              ? "bg-orange-50 font-medium text-orange-950 ring-1 ring-orange-200"
               : "text-zinc-800 hover:bg-zinc-50"
           }`}
         >
@@ -30,9 +30,14 @@ export function ManualPlaylist() {
       <div className="space-y-4">
         <p className="text-sm leading-relaxed text-zinc-600">
           Manual mode: map{" "}
-          <code className="rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-800">state.tracks</code> and
-          style each{" "}
-          <code className="rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-800">Ginger.Playlist.Track</code>.
+          <code className="rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-800">
+            state.tracks
+          </code>{" "}
+          and style each{" "}
+          <code className="rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-800">
+            Ginger.Playlist.Track
+          </code>
+          .
         </p>
         <ManualPlaylistBody />
       </div>

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/index.ts",
+    "src/client.ts",
+    "src/testing/index.tsx",
+    "src/waveform/index.ts",
+    "src/equalizer/index.ts",
+    "src/spatial/index.ts",
+    "src/transcript/index.ts",
+    "src/remote/index.ts",
+    "src/experimental-gapless/index.ts",
+    "src/crossfade/index.ts"
+  ],
+  "entryPointStrategy": "resolve",
+  "out": "docs/api",
+  "tsconfig": "tsconfig.json",
+  "plugin": [],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "readme": "docs/api-overview.md",
+  "sort": ["source-order"]
+}

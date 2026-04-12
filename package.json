@@ -21,6 +21,19 @@
     "verify": "npm run build && npm run test && npm run typecheck && npm run typecheck:apps && npm run lint && npm run lint:apps && npm run docs:api && npm run build -w ginger-demo && npm run build -w ginger-landing",
     "dev": "npm run dev -w ginger-demo",
     "dev:landing": "npm run dev -w ginger-landing",
-    "publish:lib": "npm publish -w @lucaismyname/ginger --access public"
+    "publish:lib": "cd packages/ginger && npm publish --access public",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "packages/ginger/src/**/*.{ts,tsx}": [
+      "biome check --write --config-path packages/ginger/biome.json"
+    ],
+    "apps/**/src/**/*.{ts,tsx}": [
+      "biome check --write --config-path biome.json"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
   }
 }

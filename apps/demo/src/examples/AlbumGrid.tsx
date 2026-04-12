@@ -18,7 +18,7 @@ function AlbumGridBody() {
             onClick={() => playTrackAt(index)}
             className={`rounded-xl border p-3 text-left transition ${
               state.currentIndex === index
-                ? "border-fuchsia-300 bg-fuchsia-50 shadow-sm"
+                ? "border-orange-300 bg-orange-50 shadow-sm"
                 : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm"
             }`}
           >

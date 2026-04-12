@@ -46,9 +46,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       className="fixed right-4 bottom-4 z-10 rounded-md border border-zinc-300 bg-white/90 p-2 text-sm text-zinc-800 shadow-sm transition-colors hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-ginger focus:ring-offset-2 focus:ring-offset-zinc-50 dark:border-zinc-600 dark:bg-zinc-900/90 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus:ring-offset-zinc-950"
-      aria-label={
-        theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-      }
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
     >
       {theme === "dark" ? (
         <svg

@@ -14,7 +14,9 @@ function TranscriptPanel() {
       <div className="text-xs font-semibold uppercase tracking-wide text-amber-800">Transcript</div>
       <p className="mt-2 text-sm leading-relaxed text-amber-950">
         SRT cues synced to playback time (
-        <code className="rounded bg-white/80 px-1 font-mono text-[11px]">@lucaismyname/ginger/transcript</code>
+        <code className="rounded bg-white/80 px-1 font-mono text-[11px]">
+          @lucaismyname/ginger/transcript
+        </code>
         ).
       </p>
 
@@ -27,7 +29,9 @@ function TranscriptPanel() {
             {activeCue.text}
           </p>
         ) : (
-          <p className="text-amber-600/90">Play the track — transcript lines appear as time crosses each cue.</p>
+          <p className="text-amber-600/90">
+            Play the track — transcript lines appear as time crosses each cue.
+          </p>
         )}
       </div>
 
@@ -40,8 +44,7 @@ function TranscriptPanel() {
             }`}
           >
             <span className="text-amber-600">
-              {Math.floor(c.startTime / 60)}:
-              {String(Math.floor(c.startTime % 60)).padStart(2, "0")}
+              {Math.floor(c.startTime / 60)}:{String(Math.floor(c.startTime % 60)).padStart(2, "0")}
             </span>{" "}
             {c.text.replace(/\n/g, " ")}
           </li>

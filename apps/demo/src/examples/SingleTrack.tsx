@@ -13,14 +13,14 @@ export function SingleTrack() {
           <Ginger.Current.Title /> — <Ginger.Current.Artist />
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Ginger.Control.PlayPause className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700" />
-          <Ginger.Control.SeekBar className="max-w-xs accent-emerald-600" />
+          <Ginger.Control.PlayPause className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700" />
+          <Ginger.Control.SeekBar className="max-w-xs accent-orange-600" />
         </div>
         <div className="flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-4">
           <Ginger.Control.Mute className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-white" />
           <label className="flex max-w-[200px] flex-1 items-center gap-2 text-sm text-zinc-600">
             Volume
-            <Ginger.Control.Volume className="accent-emerald-600" />
+            <Ginger.Control.Volume className="accent-orange-600" />
           </label>
           <label className="flex items-center gap-2 text-sm text-zinc-600">
             Speed
