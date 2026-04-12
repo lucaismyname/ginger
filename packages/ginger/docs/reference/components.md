@@ -1,32 +1,84 @@
-# Components Reference
+# Components reference
+
+The **`Ginger`** namespace groups the provider, the hidden `<audio>` implementation, controls, current-track displays, queue metadata, playlist building blocks, and optional inline icons. All components assume a **`Ginger.Provider`** ancestor unless noted.
+
+For hook-level APIs and headless patterns, see [`hooks.md`](./hooks.md). For per-prop TypeDoc, open the generated [`../api/index.html`](../api/index.html).
+
+---
 
 ## Provider and player
 
-- `Ginger.Provider`: owns queue + media state and lifecycle callbacks.
-- `Ginger.Player`: renders/synchronizes the underlying `<audio>` element.
+| Export | Description |
+|--------|-------------|
+| **`Ginger.Provider`** | React context provider: queue, playback (`isPaused`), volume, mute, playback rate, reducer-driven media fields, and lifecycle props (`onPlay`, `onPause`, `mediaSession`, `persistence`, …). |
+| **`Ginger.Player`** | Renders `<audio>` with `ref` wiring, time/buffer sync, and `src` updates from the active track. Mount **once** per provider. |
 
-## Control components
+---
 
-- `Ginger.Control.PlayPause`
-- `Ginger.Control.Repeat`
-- `Ginger.Control.Next`
-- `Ginger.Control.Previous`
-- `Ginger.Control.Shuffle`
-- `Ginger.Control.SeekBar`
-- `Ginger.Control.Volume`
-- `Ginger.Control.Mute`
-- `Ginger.Control.PlaybackRate`
+## `Ginger.Control.*`
 
-## Current track components
+Headless (or minimally styled) transport and mixing controls. Pass **`className`**, **`style`**, and native element props through like any button or range input.
 
-- Metadata labels (`Title`, `Artist`, `Album`, `Genre`, etc.)
-- Time displays (`Elapsed`, `Duration`, `Remaining`, `TimeRail`, `BufferRail`)
-- Rich content (`Artwork`, `Lyrics`, `LyricsSynced`, `Chapters`)
-- Playback status (`PlaybackState`, `ErrorMessage`)
+| Export | Description |
+|--------|-------------|
+| **`PlayPause`** | Toggles play/pause; icon defaults when `children` omitted. |
+| **`Repeat`** | Cycles repeat mode (`off` → `all` → `one`). |
+| **`Next` / `Previous`** | Queue navigation; previous may seek to start when far into the track (see provider `prevRestartThresholdSeconds`). |
+| **`Shuffle`** | Toggles shuffle; `aria-pressed` when on. |
+| **`SeekBar`** | Range input bound to position + seek. |
+| **`Volume`** | Volume slider (`input[type=range]`). |
+| **`Mute`** | Mute toggle. |
+| **`PlaybackRate`** | Playback speed `<select>` using locale strings. |
 
-## Queue and playlist components
+---
 
-- `Ginger.Queue.*` for active queue metadata display.
-- `Ginger.Playlist` and `Ginger.Playlist.Track` for queue rendering and interaction.
+## `Ginger.Current.*`
 
-For hook-level APIs, see [`hooks.md`](./hooks.md).
+Read-only views of the **active** track and playback state. Most accept **`fallback`** / **`empty`** text when data is missing.
+
+### Metadata
+
+| Export | Description |
+|--------|-------------|
+| **`Title`**, **`Artist`**, **`Album`**, **`Description`**, **`Copyright`**, **`Genre`**, **`Label`**, **`Isrc`**, **`TrackNumber`**, **`Year`** | Plain text from `Track` metadata. |
+| **`Lyrics`**, **`LyricsSynced`**, **`Chapters`** | Richer blocks; **`Chapters`** / **`LyricsSynced`** are also available as root exports for bundlers that prefer named imports. |
+| **`FileUrl`** | Displays the resolved file URL when useful for debugging or power users. |
+| **`Artwork`** | `<img>` for `artworkUrl` with sensible loading/decoding defaults. |
+
+### Queue position (current track in queue)
+
+| Export | Description |
+|--------|-------------|
+| **`QueueIndex`**, **`QueueLength`**, **`QueuePosition`** | Human-readable indices / counts (1-based vs length depends on component; see types). |
+
+### Time and progress
+
+| Export | Description |
+|--------|-------------|
+| **`Elapsed`**, **`Duration`**, **`Remaining`** | Formatted time strings. |
+| **`Progress`** | Fraction or percentage of progress (see props). |
+| **`TimeRail`**, **`BufferRail`** | Thin progress / buffer indicators for custom skins. |
+
+### Status
+
+| Export | Description |
+|--------|-------------|
+| **`PlaybackState`**, **`ErrorMessage`** | High-level playing/buffering/error copy from state. |
+
+---
+
+## `Ginger.Queue.*`
+
+Metadata for the **queue as a whole** (not only the current row): titles, subtitles, artwork, etc. Use for chrome around the playlist.
+
+---
+
+## `Ginger.Playlist` and `Ginger.Playlist.Track`
+
+Composable list UI: render the queue with **`Ginger.Playlist`** and one row per track via **`Ginger.Playlist.Track`**, passing render props / class names as documented in the generated API.
+
+---
+
+## `Ginger.Icon.*`
+
+Lucide-style SVG building blocks (**`Play`**, **`Pause`**, **`SkipForward`**, **`SkipBack`**, **`Shuffle`**, **`Volume2`**, **`VolumeX`**, **`RepeatGlyph`**, **`Wrapper`**) — same visuals as default control icons when you build fully custom buttons.

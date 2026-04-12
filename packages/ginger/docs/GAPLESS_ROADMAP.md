@@ -1,5 +1,7 @@
 # Gapless playback roadmap (experimental)
 
+**User docs:** [`reference/subpaths.md`](./reference/subpaths.md) (`@lucaismyname/ginger/experimental-gapless`) · **Docs index:** [`README.md`](./README.md)
+
 Gapless transitions between adjacent tracks require coordinated buffering and scheduling beyond what a single `<audio>` element provides. The current `useExperimentalGapless` export only reports capability; playback remains unchanged.
 
 ## Milestone 1 — Capability and constraints

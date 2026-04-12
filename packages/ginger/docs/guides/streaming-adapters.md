@@ -27,6 +27,11 @@ export type GingerStreamingAdapter = {
 - Supports app-specific transport requirements.
 - Keeps SSR/client split and browser support decisions in the host app.
 
+## Lifecycle notes
+
+- Call **`detach`** when the track changes to a non-stream URL, **before** Ginger (or your code) assigns a new `src`, so the streaming library tears down MSE / segment loaders cleanly.
+- Keep **CORS** and **credentials** policy aligned with your CDN: Ginger does not set `crossOrigin` on `<audio>` unless you pass it through **`Ginger.Player`** props.
+
 ## Future package path
 
 If demand is high, publish an optional adapter package

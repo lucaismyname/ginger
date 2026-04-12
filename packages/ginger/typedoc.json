@@ -9,7 +9,8 @@
     "src/spatial/index.ts",
     "src/transcript/index.ts",
     "src/remote/index.ts",
-    "src/experimental-gapless/index.ts"
+    "src/experimental-gapless/index.ts",
+    "src/crossfade/index.ts"
   ],
   "entryPointStrategy": "resolve",
   "out": "docs/api",

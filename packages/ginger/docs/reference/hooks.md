@@ -1,44 +1,113 @@
-# Hooks Reference
+# Hooks reference
 
-## Core hooks
+Hooks must run under **`Ginger.Provider`** unless documented otherwise (e.g. `createGingerStore` for non-React use).
 
-- `useGinger()`: combined playback/media state plus high-level actions.
-- `useGingerState()`, `useGingerPlayback()`, `useGingerMedia()`: split context hooks.
+For **import paths** of EQ, spatial, transcript, remote, crossfade, see [`subpaths.md`](./subpaths.md). For generated signatures, open [`../api/index.html`](../api/index.html).
 
-## Control bindings
+---
 
-- `usePlayPauseBinding()`
-- `useSeekBarBinding()`
-- `useVolumeSlider()`
+## Core state and actions
 
-## Optional feature hooks
+| Hook | When to use |
+|------|-------------|
+| **`useGinger()`** | Default choice: merged **playback + media** state, dispatch-free actions (`play`, `next`, `seek`, …), and `state` for full `GingerState`. |
+| **`useGingerState()`** | Same merged snapshot as `useGinger().state`, without actions — recomputes when **either** playback or media context changes. |
+| **`useGingerPlayback()`** | Only queue, pause, repeat, shuffle, navigation — **fewer re-renders** than full state when the subtree does not need `currentTime` / volume. |
+| **`useGingerMedia()`** | Only time, duration, buffer, volume, mute, rate, seek — **fewer re-renders** when the subtree does not need queue/repeat. |
 
-- `useGingerKeyboardShortcuts()`
-- `useGingerChapters()`
-- `useGingerChapterProgress()`
-- `useGingerLyricsSync()`
-- `useGingerSleepTimer()`
-- `useSeekDrag()`
-- `useNextTrackPrefetch()`
-- `useGingerDebugLog()`
-- `useGingerLiveAnalyzer()`
-- `useGingerPlaybackHistory()`
-- `useGingerVolumeFade()`
+Use **`gingerStateFromContexts(playback, media)`** or **`gingerStateFromContextValues(...)`** when composing tests or non-React code that already has both slices.
+
+---
+
+## Locale
+
+| Hook | Purpose |
+|------|---------|
+| **`useGingerLocale()`** | Localized strings for controls (play/pause, seek, playback rate labels, …). Override via **`Ginger.Provider`** `locale` prop. |
+
+---
+
+## Control bindings (headless UI)
+
+| Hook | Returns (conceptually) |
+|------|-------------------------|
+| **`usePlayPauseBinding()`** | `toggle`, `isPaused`, `ariaLabel` for custom play/pause buttons. |
+| **`useSeekBarBinding()`** | Range props + `aria` for custom seek sliders. |
+| **`useVolumeSlider()`** | Volume range props + mute-related wiring. |
+
+Pair these with your own components to avoid re-rendering prebuilt **`Ginger.Control.*`** trees.
+
+---
+
+## Keyboard and input helpers
+
+| Hook | Purpose |
+|------|---------|
+| **`useGingerKeyboardShortcuts()`** | Opt-in global key handlers (play/pause, seek, volume, …) driven by a bindings map. |
+| **`useSeekDrag()`** | Pointer-driven seek drag state for custom scrubbers (coordinates + commit). |
+
+---
+
+## Chapters and lyrics
+
+| Hook | Purpose |
+|------|---------|
+| **`useGingerChapters()`** | Parses `Track.chapters`, exposes active chapter by `currentTime`. |
+| **`useGingerChapterProgress()`** | Per-chapter progress fractions for UI segments. |
+| **`useGingerLyricsSync()`** | Active LRC line from `Track` lyrics + `currentTime`. |
+
+Root also exports **`parseLrc()`** for manual parsing.
+
+---
+
+## Analyzer (Web Audio)
+
+| Hook / helper | Purpose |
+|---------------|---------|
+| **`useGingerLiveAnalyzer()`** | Frequency/time-domain byte arrays updated on `requestAnimationFrame` (mutated buffers; use `frame` counter to re-render). |
+| **`attachLiveAnalyser` / `detachLiveAnalyser` / `setProcessingChain`** | Low-level graph wiring shared with EQ and spatial (see subpaths). |
+
+---
+
+## Optional product features
+
+| Hook | Purpose |
+|------|---------|
+| **`useGingerSleepTimer()`** | Schedule stop or pause after a delay. |
+| **`useGingerDebugLog()`** | Structured console logging of state transitions (dev tooling). |
+| **`useNextTrackPrefetch()`** | Hint next resource load for faster track changes. |
+| **`useGingerPlaybackHistory()`** | Append-only history of played tracks for “recently played” UIs. |
+| **`useGingerVolumeFade()`** | Smooth volume ramps with `requestAnimationFrame`. |
+
+---
+
+## Framework-agnostic store
+
+| Export | Purpose |
+|--------|---------|
+| **`createGingerStore()`** | **`GingerStore`**: same reducer as React, usable in workers or tests without `Ginger.Provider`. See [`store.test.ts`](../../src/store.test.ts). |
+
+---
 
 ## Subpath-only hooks
 
-See [`subpaths.md`](./subpaths.md) for import paths and usage.
+Imported from **`@lucaismyname/ginger/<subpath>`** — see [`subpaths.md`](./subpaths.md).
 
-- `@lucaismyname/ginger/equalizer` — `useGingerEqualizer()`
-- `@lucaismyname/ginger/spatial` — `useGingerSpatialAudio()`
-- `@lucaismyname/ginger/transcript` — `useGingerTranscriptSync()` (plus `parseSrt` / `parseVtt` / `parseTranscriptAuto`)
-- `@lucaismyname/ginger/remote` — `useGingerRemote()`
+| Module | Hook |
+|--------|------|
+| `equalizer` | **`useGingerEqualizer()`** |
+| `spatial` | **`useGingerSpatialAudio()`** |
+| `transcript` | **`useGingerTranscriptSync()`** (+ parsers) |
+| `remote` | **`useGingerRemote()`** |
+| `crossfade` | **`useGingerCrossfade()`** (+ graph helpers) |
+| `experimental-gapless` | **`useExperimentalGapless()`** (capability only) |
 
-## Utilities exported from root
+---
 
-- `clampPlaybackRate()`
-- `clampVolume()`
-- `derivePlaybackUiState()`
-- `parseLrc()`
+## Utilities (root package)
 
-For generated per-symbol API documentation, open [`../api/index.html`](../api/index.html).
+| Export | Purpose |
+|--------|---------|
+| **`clampPlaybackRate()` / `clampVolume()`** | Same clamps as the provider. |
+| **`derivePlaybackUiState()`** | Maps `GingerState` to a compact UI enum for `data-ginger-playback` and styling. |
+| **`parseLrc()`** | LRC → timed lines. |

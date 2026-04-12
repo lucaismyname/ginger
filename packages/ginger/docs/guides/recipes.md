@@ -1,43 +1,79 @@
 # Recipes
 
-## Update queue after mount
+Short patterns that come up often when integrating Ginger beyond the minimal example in [`getting-started.md`](../getting-started.md).
 
-Use `useGinger().setQueue()` to replace tracks and optionally reset index.
+---
+
+## Update the queue after mount
+
+Use **`useGinger().setQueue()`** (or `useGingerPlayback()` which exposes the same action) to replace tracks and optionally reset the current index.
 
 ```tsx
 const ginger = useGinger();
 ginger.setQueue([{ id: "next", title: "Next", fileUrl: "/next.mp3" }], 0);
 ```
 
+The second argument is **`currentIndex`** (optional). Omit it to keep the current index when the new list is compatible.
+
+---
+
 ## Duplicate URLs safely
 
-When multiple tracks share the same file URL, set stable `id` values.
-Queue mutation and hydration helpers rely on stable identity.
+When multiple **`Track`** rows share the same **`fileUrl`**, assign **distinct `id`** values (or stable unique keys your app uses). Queue mutation, identity helpers, and persistence resume keys all rely on stable per-track identity; duplicate URLs without IDs can make “which row is active” ambiguous.
+
+---
 
 ## Handle blocked autoplay
 
-Provide `beforePlay` or `onPlayBlocked` in `Ginger.Provider` to gate playback.
+Browsers often block **`audio.play()`** until a user gesture. Ginger surfaces this through:
+
+- **`beforePlay`** — async gate: return `false` to keep paused (e.g. paywall or consent).
+- **`onPlayBlocked`** — called when `play()` rejects after the user pressed play.
+
+Configure both on **`Ginger.Provider`** so UI can show a “Tap to enable audio” state without throwing unhandled promise rejections.
+
+---
 
 ## Persist and hydrate playback state
 
-Use the `persistence` adapter on `Ginger.Provider` with optional `hydrateOnMount`.
+Pass a **`persistence`** adapter (get/set for volume, mute, rate, repeat, index, …) and set **`hydrateOnMount`** when you want the provider to **`INIT`** from storage on first paint. Pair with **`resumeOnTrackChange`** if you want per-track resume positions.
 
-## Optional features
+---
 
-- Media Session integration
-- Keyboard shortcuts
-- Chapters and synced lyrics
-- Next-track prefetch
-- Sleep timer and drag seek
-- Playback history and volume fade
+## Media Session (lock screen / OS controls)
 
-These are exposed through dedicated hooks and component namespaces listed in
-[`../reference/hooks.md`](../reference/hooks.md).
+Enable **`mediaSession`** on **`Ginger.Provider`** (boolean or options object). Ginger updates metadata and action handlers when the active track and transport state change. Test with the helpers in [`testing.md`](./testing.md) (`installNavigatorMediaSession`).
+
+---
+
+## Keyboard shortcuts
+
+Call **`useGingerKeyboardShortcuts()`** with a **`bindings`** map and optional **`enabled`** flag. Keeps hotkeys out of control components so you can match your app’s shortcut scheme.
+
+---
+
+## Chapters, lyrics, prefetch, sleep timer, drag seek
+
+| Feature | Entry points |
+|---------|----------------|
+| Chapters on `Track` | **`useGingerChapters()`**, **`Ginger.Current.Chapters`**, **`useGingerChapterProgress()`** |
+| LRC lyrics | **`useGingerLyricsSync()`**, **`parseLrc()`** |
+| Prefetch next resource | **`useNextTrackPrefetch()`** |
+| Sleep timer | **`useGingerSleepTimer()`** |
+| Custom scrubber | **`useSeekDrag()`** |
+| Playback history | **`useGingerPlaybackHistory()`** |
+| Volume fade | **`useGingerVolumeFade()`** |
+
+Full lists: [`../reference/hooks.md`](../reference/hooks.md).
+
+---
 
 ## Queue-end behavior and `onQueueEnd`
 
-`onQueueEnd` runs whenever playback reaches an `ended` transition that resolves to **stop**.
+**`onQueueEnd`** runs when playback reaches an `ended` transition that resolves to **stop** (not replay-next).
 
-- In `playbackMode="playlist"`, that is typically the last track when repeat is `off`.
-- In `playbackMode="single"`, that is any track end unless `repeatMode` is `one`.
-- In `repeatMode="one"`, playback replays the same track and `onQueueEnd` does not run.
+- In **`playbackMode="playlist"`**, that is typically the **last** track when repeat is **`off`**.
+- In **`playbackMode="single"`**, that is typically **any** track end unless **`repeatMode`** is **`one`**.
+- In **`repeatMode="one"`**, the same track replays and **`onQueueEnd`** does **not** run for that replay.
+
+Use it for “end of album” UX, analytics, or returning to a browse screen.

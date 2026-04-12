@@ -1,71 +1,7 @@
-# Subpath exports
+# Subpath exports (stub)
 
-Optional entrypoints keep the default bundle focused while advanced features opt in via dedicated imports.
+The **canonical** narrative for optional `@lucaismyname/ginger/*` imports is maintained in **[`reference/subpaths.md`](../../reference/subpaths.md)** (single source of truth).
 
-## `@lucaismyname/ginger/client`
+This file sits under `docs/api/` for paths relative to generated TypeDoc output. **Edit `reference/subpaths.md`**, not this stub.
 
-Client-compatible entrypoint with `"use client"` for SSR frameworks (for example Next.js App Router).
-
-## `@lucaismyname/ginger/testing`
-
-Testing utilities for rendering providers, querying media elements, simulating audio events, and asserting queue state.
-
-See [`guides/testing.md`](../guides/testing.md).
-
-## `@lucaismyname/ginger/waveform`
-
-Waveform and analysis utilities for visualizations and offline audio analysis:
-
-- `useAudioFileAnalysis`, `analyzeAudioFile`, `analyzeAudioBuffer`
-- `useAudioPeaks` for a lightweight single row of peaks (supports `maxBuckets` and `maxSamplesPerBucket` guardrails for large files)
-
-## `@lucaismyname/ginger/equalizer`
-
-Parametric EQ via `useGingerEqualizer`: inserts `BiquadFilterNode`s into the Web Audio graph for the active `Ginger` media element. Shares the same `AudioContext` as `useGingerLiveAnalyzer` and `useGingerSpatialAudio`.
-
-## `@lucaismyname/ginger/spatial`
-
-3D / HRTF spatial audio via `useGingerSpatialAudio`:
-
-- Inserts a `PannerNode` between the media element source and the output (same graph as EQ and live analyser).
-- Options include `panningModel` (default `"HRTF"`), `distanceModel`, `refDistance`, `position`, and `listenerPosition`.
-- Imperative updates: `setSourcePosition`, `setListenerPosition`, `setPanningModel`.
-
-Useful for games, immersive players, or any UI that needs directional audio without leaving the native `<audio>` pipeline.
-
-## `@lucaismyname/ginger/transcript`
-
-Podcast- and caption-oriented timed text:
-
-| Export | Purpose |
-|--------|---------|
-| `parseSrt` | Parse SubRip (`.srt`) strings into `TranscriptCue[]` |
-| `parseVtt` | Parse WebVTT (`.vtt`) strings into `TranscriptCue[]` |
-| `parseTranscriptAuto` | Detect VTT (`WEBVTT` header) vs SRT |
-| `parseTimestampToSeconds` | Low-level timestamp helper |
-| `useGingerTranscriptSync` | React hook: `activeCue`, `activeCues` (overlaps), `activeIndex`, synced to `currentTime` |
-
-Cue text has HTML tags stripped (typical WebVTT markup). For in-track **LRC** lyrics on `Track`, the main package still provides `useGingerLyricsSync` and `parseLrc()`.
-
-## `@lucaismyname/ginger/remote`
-
-Multi-tab coordination with `BroadcastChannel` and `useGingerRemote`:
-
-- **Leader election** — PING / PONG, `LEADER_ANNOUNCE` with deterministic tie-break (lexicographic `tabId`).
-- **State sync** — Leader broadcasts `STATE_SNAPSHOT` payloads applied on followers with `init()` (same shape as `INIT`).
-- **Single audio element** — Mount `Ginger.Player` only when `isLeader` is true so one tab owns playback.
-
-Options: `channelName` (default `"ginger-remote"`), `heartbeatMs`, `electionTimeoutMs`. Snapshots use `isShuffled: false` with the leader’s current `tracks` array so follower queue order matches without re-shuffling.
-
-Requires `BroadcastChannel` (not available in some SSR environments); the hook sets `error` when unsupported.
-
-## `@lucaismyname/ginger/experimental-gapless`
-
-Gapless **environment** probe (Milestone 1); Ginger playback is still a single `<audio>` via `Ginger.Player`.
-
-- `probeGaplessCapability()` — pure function, safe on SSR (returns unsupported when `window` is missing).
-- `useExperimentalGapless()` — React hook combining the probe with `preloadedTrackIds` from the current queue.
-
-## Generated API
-
-The TypeDoc build includes the main [`src/index.ts`](../../src/index.ts) entry **and** subpath entry files (see [`typedoc.json`](../../typedoc.json)). The docs landing page is [`docs/api-overview.md`](../api-overview.md). This file and the package [`README.md`](../../README.md) remain the narrative reference; import paths match `package.json` `exports`.
+→ **[Full subpath reference](../../reference/subpaths.md)**

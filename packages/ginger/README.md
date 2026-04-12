@@ -51,6 +51,7 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 
 For docs beyond this README, use the repository links below:
 
+- **Docs folder map** (Markdown vs generated API): [`docs/README.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/README.md)
 - Getting started: [`docs/getting-started.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/getting-started.md)
 - Testing guide: [`docs/guides/testing.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/testing.md)
 - Recipes: [`docs/guides/recipes.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/recipes.md)
@@ -58,7 +59,7 @@ For docs beyond this README, use the repository links below:
 - Streaming adapters: [`docs/guides/streaming-adapters.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/streaming-adapters.md)
 - Components reference: [`docs/reference/components.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/components.md)
 - Hooks reference: [`docs/reference/hooks.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/hooks.md)
-- Subpath exports (waveform, EQ, spatial, transcript, remote, …): [`docs/reference/subpaths.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/subpaths.md)
+- Subpath exports (waveform, EQ, spatial, transcript, remote, crossfade, …): [`docs/reference/subpaths.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/subpaths.md)
 - Generated API docs: [`docs/api/index.html`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/api/index.html)
 
 ## Subpath Exports
@@ -70,6 +71,7 @@ For docs beyond this README, use the repository links below:
 - `@lucaismyname/ginger/spatial`
 - `@lucaismyname/ginger/transcript`
 - `@lucaismyname/ginger/remote`
+- `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
 
 ### Equalizer
@@ -1219,6 +1221,7 @@ Additional entrypoints:
 - `@lucaismyname/ginger/spatial`
 - `@lucaismyname/ginger/transcript`
 - `@lucaismyname/ginger/remote`
+- `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
 
 See [Subpath Exports](#subpath-exports) for **`spatial`**, **`transcript`**, and **`remote`** usage. `experimental-gapless` is explicitly non-production and does not alter core playback.
