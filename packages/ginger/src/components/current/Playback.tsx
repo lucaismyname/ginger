@@ -1,41 +1,23 @@
 import type { ReactNode } from "react";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { derivePlaybackUiState } from "../../internal/selectors";
-import type {
-  DisplayBaseProps,
-  GingerState,
-  PlaybackUiState,
-} from "../../types";
+import type { DisplayBaseProps, GingerState, PlaybackUiState } from "../../types";
 
 export type PlaybackStateProps = DisplayBaseProps & {
   children?: (value: PlaybackUiState, state: GingerState) => ReactNode;
 };
 
-export function PlaybackState({
-  className,
-  style,
-  fallback,
-  empty,
-  children,
-}: PlaybackStateProps) {
+export function PlaybackState({ className, style, fallback, empty, children }: PlaybackStateProps) {
   const state = useGingerState();
   const value = derivePlaybackUiState(state);
   if (children)
     return (
-      <span
-        data-ginger-component="PlaybackState"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="PlaybackState" className={className} style={style}>
         {children(value, state)}
       </span>
     );
   return (
-    <span
-      data-ginger-component="PlaybackState"
-      className={className}
-      style={style}
-    >
+    <span data-ginger-component="PlaybackState" className={className} style={style}>
       {value}
     </span>
   );
@@ -61,11 +43,7 @@ export function ErrorMessage({
   if (!value) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-        data-ginger-component="ErrorMessage"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="ErrorMessage" className={className} style={style}>
         {node}
       </span>
     ) : null;
@@ -83,12 +61,7 @@ export function ErrorMessage({
     );
   }
   return (
-    <span
-      data-ginger-component="ErrorMessage"
-      className={className}
-      style={style}
-      aria-live={live}
-    >
+    <span data-ginger-component="ErrorMessage" className={className} style={style} aria-live={live}>
       {value}
     </span>
   );

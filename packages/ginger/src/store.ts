@@ -1,5 +1,17 @@
-import { clampPlaybackRate, clampVolume, createInitialState, gingerReducer } from "./core/playbackReducer";
-import type { GingerAction, GingerInitPayload, GingerState, PlaylistMeta, RepeatMode, Track } from "./types";
+import {
+  clampPlaybackRate,
+  clampVolume,
+  createInitialState,
+  gingerReducer,
+} from "./core/playbackReducer";
+import type {
+  GingerAction,
+  GingerInitPayload,
+  GingerState,
+  PlaylistMeta,
+  RepeatMode,
+  Track,
+} from "./types";
 
 export type GingerStoreOptions = {
   tracks?: Track[];

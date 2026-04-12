@@ -1,11 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { formatMmSs } from "../../internal/formatTime";
-import {
-  effectiveDuration,
-  effectiveRemaining,
-  progressFraction,
-} from "../../internal/selectors";
+import { effectiveDuration, effectiveRemaining, progressFraction } from "../../internal/selectors";
 import type { DisplayBaseProps, GingerState } from "../../types";
 
 export type TimeTextProps = DisplayBaseProps & {
@@ -18,22 +14,11 @@ function renderTime(
   state: GingerState,
   props: TimeTextProps,
 ): ReactElement | null {
-  const {
-    className,
-    style,
-    fallback,
-    empty,
-    children,
-    format = formatMmSs,
-  } = props;
+  const { className, style, fallback, empty, children, format = formatMmSs } = props;
   if (!(valueSeconds >= 0) || !Number.isFinite(valueSeconds)) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-        data-ginger-component="TimeText"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="TimeText" className={className} style={style}>
         {node}
       </span>
     ) : null;
@@ -41,11 +26,7 @@ function renderTime(
   const text = format(valueSeconds);
   if (children)
     return (
-      <span
-        data-ginger-component="TimeText"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="TimeText" className={className} style={style}>
         {children(text, state)}
       </span>
     );
@@ -84,39 +65,22 @@ export type ProgressProps = DisplayBaseProps & {
   ) => ReactNode;
 };
 
-export function Progress({
-  className,
-  style,
-  fallback,
-  empty,
-  children,
-}: ProgressProps) {
+export function Progress({ className, style, fallback, empty, children }: ProgressProps) {
   const state = useGingerState();
   const duration = effectiveDuration(state);
   const fraction = progressFraction(state);
   if (!(duration > 0)) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-        data-ginger-component="Progress"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="Progress" className={className} style={style}>
         {node}
       </span>
     ) : null;
   }
   if (children)
     return (
-      <span
-        data-ginger-component="Progress"
-        className={className}
-        style={style}
-      >
-        {children(
-          { fraction, currentTime: state.currentTime, duration },
-          state,
-        )}
+      <span data-ginger-component="Progress" className={className} style={style}>
+        {children({ fraction, currentTime: state.currentTime, duration }, state)}
       </span>
     );
   return (
@@ -187,9 +151,7 @@ export function TimeRail({
           position: unstyled ? undefined : "relative",
           width: progressPct,
           height: unstyled ? undefined : "100%",
-          background: unstyled
-            ? undefined
-            : "var(--ginger-primary-color, #111827)",
+          background: unstyled ? undefined : "var(--ginger-primary-color, #111827)",
         }}
       />
     </div>
@@ -205,12 +167,7 @@ export type BufferRailProps = DisplayBaseProps & {
 };
 
 /** Buffered portion of the timeline (0…`bufferedFraction`); pair with `TimeRail` or use alone. */
-export function BufferRail({
-  className,
-  style,
-  height = 4,
-  unstyled = false,
-}: BufferRailProps) {
+export function BufferRail({ className, style, height = 4, unstyled = false }: BufferRailProps) {
   const state = useGingerState();
   const bufPct = `${Math.round(Math.min(1, Math.max(0, state.bufferedFraction)) * 100)}%`;
   return (

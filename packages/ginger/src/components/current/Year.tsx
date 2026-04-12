@@ -6,14 +6,7 @@ export type YearProps = TextDisplayProps & {
   format?: (year: number) => string;
 };
 
-export function Year({
-  className,
-  style,
-  fallback,
-  empty,
-  children,
-  format,
-}: YearProps) {
+export function Year({ className, style, fallback, empty, children, format }: YearProps) {
   const state = useGingerState();
   const y = getCurrentTrack(state)?.year;
   if (typeof y !== "number" || !Number.isFinite(y)) {

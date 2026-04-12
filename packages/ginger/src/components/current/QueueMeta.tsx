@@ -20,11 +20,7 @@ export function QueueIndex({
   if (len === 0) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-        data-ginger-component="QueueIndex"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="QueueIndex" className={className} style={style}>
         {node}
       </span>
     ) : null;
@@ -32,20 +28,12 @@ export function QueueIndex({
   const value = String(state.currentIndex + base);
   if (children)
     return (
-      <span
-        data-ginger-component="QueueIndex"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="QueueIndex" className={className} style={style}>
         {children(value, state)}
       </span>
     );
   return (
-    <span
-      data-ginger-component="QueueIndex"
-      className={className}
-      style={style}
-    >
+    <span data-ginger-component="QueueIndex" className={className} style={style}>
       {value}
     </span>
   );
@@ -57,13 +45,7 @@ export type QueueLengthProps = DisplayBaseProps & {
   children?: (value: string, state: GingerState) => ReactNode;
 };
 
-export function QueueLength({
-  className,
-  style,
-  fallback,
-  empty,
-  children,
-}: QueueLengthProps) {
+export function QueueLength({ className, style, fallback, empty, children }: QueueLengthProps) {
   const state = useGingerState();
   const value = String(state.tracks.length);
   if (state.tracks.length === 0) {
@@ -76,20 +58,12 @@ export function QueueLength({
   }
   if (children)
     return (
-      <span
-        data-ginger-component="QueueLength"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="QueueLength" className={className} style={style}>
         {children(value, state)}
       </span>
     );
   return (
-    <span
-      data-ginger-component="QueueLength"
-      className={className}
-      style={style}
-    >
+    <span data-ginger-component="QueueLength" className={className} style={style}>
       {value}
     </span>
   );
@@ -130,20 +104,12 @@ export function QueuePosition({
   const label = `${index}${separator}${length}`;
   if (children)
     return (
-      <span
-        data-ginger-component="QueuePosition"
-        className={className}
-        style={style}
-      >
+      <span data-ginger-component="QueuePosition" className={className} style={style}>
         {children({ index, length, label }, state)}
       </span>
     );
   return (
-    <span
-      data-ginger-component="QueuePosition"
-      className={className}
-      style={style}
-    >
+    <span data-ginger-component="QueuePosition" className={className} style={style}>
       {label}
     </span>
   );

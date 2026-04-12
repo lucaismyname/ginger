@@ -26,9 +26,7 @@ export function Lyrics({
   if (!value) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-      data-ginger-component="Lyrics"
-      className={className} style={style}>
+      <span data-ginger-component="Lyrics" className={className} style={style}>
         {node}
       </span>
     ) : null;

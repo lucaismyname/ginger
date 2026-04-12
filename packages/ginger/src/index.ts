@@ -23,7 +23,11 @@ export type {
   UseGingerLiveAnalyzerResult,
 } from "./analyzer/useGingerLiveAnalyzer";
 /** Low-level attach/detach helpers for custom analyzer graph wiring. */
-export { attachLiveAnalyser, detachLiveAnalyser, setProcessingChain } from "./analyzer/liveAudioGraph";
+export {
+  attachLiveAnalyser,
+  detachLiveAnalyser,
+  setProcessingChain,
+} from "./analyzer/liveAudioGraph";
 /** Low-level analyzer graph option type. */
 export type { LiveAnalyserOptions } from "./analyzer/liveAudioGraph";
 

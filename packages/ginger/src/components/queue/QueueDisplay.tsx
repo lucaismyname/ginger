@@ -3,14 +3,8 @@ import { useGingerState } from "../../context/GingerSplitContexts";
 import type { DisplayBaseProps } from "../../types";
 import { createTextDisplay } from "../current/createTextDisplay";
 
-export const Title = createTextDisplay(
-  "Ginger.Queue.Title",
-  (s) => s.playlistMeta?.title,
-);
-export const Subtitle = createTextDisplay(
-  "Ginger.Queue.Subtitle",
-  (s) => s.playlistMeta?.subtitle,
-);
+export const Title = createTextDisplay("Ginger.Queue.Title", (s) => s.playlistMeta?.title);
+export const Subtitle = createTextDisplay("Ginger.Queue.Subtitle", (s) => s.playlistMeta?.subtitle);
 export const Description = createTextDisplay(
   "Ginger.Queue.Description",
   (s) => s.playlistMeta?.description,

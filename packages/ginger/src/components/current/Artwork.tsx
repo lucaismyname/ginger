@@ -28,8 +28,7 @@ export function Artwork({
   if (!src) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span
-      className={className} style={style}>
+      <span className={className} style={style}>
         {node}
       </span>
     ) : null;
