@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   attachLiveAnalyser,
   detachLiveAnalyser,
@@ -67,6 +67,12 @@ export function useGingerEqualizer(
 
   const filterNodesRef = useRef<BiquadFilterNode[]>([]);
 
+  /** Rebuild the chain when band frequencies/types change — not on every gain tweak (see setBandGain). */
+  const bandStructureKey = useMemo(
+    () => bands.map((b) => `${b.frequency}:${b.type ?? "peaking"}:${b.q ?? 1}`).join("|"),
+    [bands],
+  );
+
   useEffect(() => {
     const el = audioRef.current;
     if (!el || typeof window === "undefined") {
@@ -120,7 +126,7 @@ export function useGingerEqualizer(
       }
       filterNodesRef.current = [];
     };
-  }, [enabled, bands, audioRef, state.currentIndex]);
+  }, [enabled, bandStructureKey, audioRef, state.currentIndex]);
 
   const setBandGain = useCallback((bandIndex: number, gainDb: number) => {
     const node = filterNodesRef.current[bandIndex];

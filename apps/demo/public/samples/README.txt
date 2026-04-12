@@ -1,3 +1,10 @@
-Place short royalty-free audio files here (e.g. track1.mp3) and reference them in your Track.fileUrl as "/samples/track1.mp3".
+Bundled demo audio
+------------------
+`demo.mp3` is a short CC0 clip from MDN interactive-examples (t-rex-roar), used so the playground
+can use Web Audio (equalizer, spatial) and `fetch` + `decodeAudioData` (file waveform peaks) without
+cross-origin CORS issues.
 
-The bundled demo uses remote SoundHelix URLs by default so it runs without local files.
+Remote URLs without `Access-Control-Allow-Origin` break those APIs when `crossOrigin` is set or when
+fetching for decode.
+
+Replace with your own files and point `Track.fileUrl` at `/samples/your-track.mp3`.

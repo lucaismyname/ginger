@@ -11,6 +11,10 @@ import { SpotifyMini } from "./examples/SpotifyMini";
 import { ThemedCssVars } from "./examples/ThemedCssVars";
 import { UnstyledShowcase } from "./examples/UnstyledShowcase";
 import { AlbumGrid } from "./examples/AlbumGrid";
+import { EqualizerDemo } from "./examples/EqualizerDemo";
+import { FilePeaksWaveform } from "./examples/FilePeaksWaveform";
+import { SpatialAudioDemo } from "./examples/SpatialAudioDemo";
+import { TranscriptDemo } from "./examples/TranscriptDemo";
 import { WaveformPlayer } from "./examples/WaveformPlayer";
 import { scan } from "react-scan";
 if (import.meta.env.DEV) {
@@ -26,7 +30,11 @@ const examples = [
   { id: "headless", label: "useGinger headless", Component: HeadlessCustomUI },
   { id: "theme", label: "CSS variables", Component: ThemedCssVars },
   { id: "spotify", label: "Spotify mini", Component: SpotifyMini },
-  { id: "waveform", label: "Waveform player", Component: WaveformPlayer },
+  { id: "waveform", label: "Waveform (live analyzer)", Component: WaveformPlayer },
+  { id: "waveform-file", label: "Waveform (file peaks)", Component: FilePeaksWaveform },
+  { id: "spatial", label: "Spatial audio", Component: SpatialAudioDemo },
+  { id: "equalizer", label: "Equalizer", Component: EqualizerDemo },
+  { id: "transcript", label: "Transcript (SRT)", Component: TranscriptDemo },
   { id: "podcast", label: "Podcast timeline", Component: PodcastTimeline },
   { id: "glass", label: "Glassmorphism deck", Component: GlassmorphismDeck },
   { id: "neon", label: "Neon console", Component: NeonConsole },
