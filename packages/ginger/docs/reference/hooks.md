@@ -15,12 +15,15 @@
 
 - `useGingerKeyboardShortcuts()`
 - `useGingerChapters()`
+- `useGingerChapterProgress()`
 - `useGingerLyricsSync()`
 - `useGingerSleepTimer()`
 - `useSeekDrag()`
 - `useNextTrackPrefetch()`
 - `useGingerDebugLog()`
 - `useGingerLiveAnalyzer()`
+- `useGingerPlaybackHistory()`
+- `useGingerVolumeFade()`
 
 ## Subpath-only hooks
 

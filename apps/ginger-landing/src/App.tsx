@@ -266,7 +266,7 @@ function LandingPlayerControls() {
                   <span className="ml-3 font-pixel shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
                     {active ? (
                       <>
-                        <span className="text-orange-700 dark:text-orange-400 px-1 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/50 border border-orange-500/50 dark:border-orange-700/50">
+                        <span className="text-[9px] uppercase text-orange-700 dark:text-orange-400 px-1 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/50 border border-orange-500/50 dark:border-orange-700/50">
                           playing
                         </span>{" "}
                         {track.artist}
@@ -637,30 +637,36 @@ export function App() {
 
             <div className="mt-8 text-zinc-600 dark:text-zinc-400">
               <SectionLabel icon={Globe}>Links</SectionLabel>
-              <section className="flex flex-row gap-4 items-center justify-start">
+              <section className="flex flex-row gap-0 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  aria-label="Open NPM package"
+                  title="NPM"
+                  className="inline-flex rounded-tr-none rounded-br-none h-11 w-11 items-center justify-center rounded-lg border border-orange-300/70 bg-orange-50/90 text-orange-950 transition-colors hover:border-orange-500 hover:bg-orange-100/80 dark:border-orange-700/80 dark:bg-orange-950/50 dark:text-orange-200 dark:hover:border-orange-600 dark:hover:bg-orange-900/60"
                   rel="noreferrer"
                   target="_blank"
                 >
-                  NPM
+                  <Package className="h-4 w-4" aria-hidden />
                 </a>
                 <a
                   href={REPO_URL}
-                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  aria-label="Open GitHub repository"
+                  title="GitHub"
+                  className="inline-flex  h-11 w-11 items-center justify-center border border-sky-300/70 bg-sky-50/90 text-sky-950 border-r-none border-l-none transition-colors hover:border-sky-500 hover:bg-sky-100/80 dark:border-sky-700/80 dark:bg-sky-950/50 dark:text-sky-200 dark:hover:border-sky-600 dark:hover:bg-sky-900/60"
                   rel="noreferrer"
                   target="_blank"
                 >
-                  GH
+                  <Link2 className="h-4 w-4" aria-hidden />
                 </a>
                 <a
                   href={"https://lucamack.com"}
-                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  aria-label="Open personal website"
+                  title="Website"
+                  className="inline-flex h-11 w-11 rounded-tl-none rounded-bl-none items-center justify-center rounded-lg border border-teal-300/70 bg-teal-50/90 text-teal-950 transition-colors hover:border-teal-500 hover:bg-teal-100/80 dark:border-teal-700/80 dark:bg-teal-950/50 dark:text-teal-200 dark:hover:border-teal-600 dark:hover:bg-teal-900/60"
                   rel="noreferrer"
                   target="_blank"
                 >
-                  WWW
+                  <Globe className="h-4 w-4" aria-hidden />
                 </a>
               </section>
             </div>

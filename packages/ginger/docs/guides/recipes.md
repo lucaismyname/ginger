@@ -29,6 +29,15 @@ Use the `persistence` adapter on `Ginger.Provider` with optional `hydrateOnMount
 - Chapters and synced lyrics
 - Next-track prefetch
 - Sleep timer and drag seek
+- Playback history and volume fade
 
 These are exposed through dedicated hooks and component namespaces listed in
 [`../reference/hooks.md`](../reference/hooks.md).
+
+## Queue-end behavior and `onQueueEnd`
+
+`onQueueEnd` runs whenever playback reaches an `ended` transition that resolves to **stop**.
+
+- In `playbackMode="playlist"`, that is typically the last track when repeat is `off`.
+- In `playbackMode="single"`, that is any track end unless `repeatMode` is `one`.
+- In `repeatMode="one"`, playback replays the same track and `onQueueEnd` does not run.

@@ -524,8 +524,13 @@ Props:
 | `onTrackChange` | `(track, index) => void` | `undefined` | Fires when current track changes |
 | `onPlay` | `() => void` | `undefined` | Fires when state changes to playing |
 | `onPause` | `() => void` | `undefined` | Fires when state changes to paused |
-| `onQueueEnd` | `() => void` | `undefined` | Fires when playback reaches the end with repeat off |
+| `onQueueEnd` | `() => void` | `undefined` | Fires when playback end resolves to a stop transition (e.g. end of playlist in `playlist` mode, or any track end in `single` mode unless repeat is `one`) |
 | `onError` | `(message) => void` | `undefined` | Fires on media/playback errors |
+| `onVolumeChange` | `(volume: number, muted: boolean) => void` | `undefined` | Fires when volume or muted state changes |
+| `onPlaybackRateChange` | `(rate: number) => void` | `undefined` | Fires when playback speed changes |
+| `onSeek` | `(timeSeconds: number) => void` | `undefined` | Fires whenever `seek()` is invoked |
+| `dir` | `"ltr" \| "rtl" \| "auto"` | locale-derived | Explicit provider layout direction |
+| `prevRestartThresholdSeconds` | `number` | `3` | Previous restarts current track when `currentTime > threshold`; set `0` to always skip |
 
 ### `Ginger.Player`
 
@@ -1210,6 +1215,7 @@ Additional entrypoints:
 - `@lucaismyname/ginger/client`
 - `@lucaismyname/ginger/testing`
 - `@lucaismyname/ginger/waveform`
+- `@lucaismyname/ginger/equalizer`
 - `@lucaismyname/ginger/spatial`
 - `@lucaismyname/ginger/transcript`
 - `@lucaismyname/ginger/remote`
