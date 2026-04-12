@@ -6,13 +6,20 @@ export type YearProps = TextDisplayProps & {
   format?: (year: number) => string;
 };
 
-export function Year({ className, style, fallback, empty, children, format }: YearProps) {
+export function Year({
+  className,
+  style,
+  fallback,
+  empty,
+  children,
+  format,
+}: YearProps) {
   const state = useGingerState();
   const y = getCurrentTrack(state)?.year;
   if (typeof y !== "number" || !Number.isFinite(y)) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span className={className} style={style}>
+      <span data-ginger-component="Year" className={className} style={style}>
         {node}
       </span>
     ) : null;
@@ -20,12 +27,12 @@ export function Year({ className, style, fallback, empty, children, format }: Ye
   const text = format ? format(y) : String(y);
   if (children)
     return (
-      <span className={className} style={style}>
+      <span data-ginger-component="Year" className={className} style={style}>
         {children(text, state)}
       </span>
     );
   return (
-    <span className={className} style={style}>
+    <span data-ginger-component="Year" className={className} style={style}>
       {text}
     </span>
   );

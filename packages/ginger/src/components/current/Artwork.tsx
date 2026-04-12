@@ -28,7 +28,8 @@ export function Artwork({
   if (!src) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span className={className} style={style}>
+      <span
+      className={className} style={style}>
         {node}
       </span>
     ) : null;
@@ -36,6 +37,7 @@ export function Artwork({
   const alt = [track?.title, track?.artist].filter(Boolean).join(" — ") || "Artwork";
   return (
     <div
+      data-ginger-component="Artwork"
       className={className}
       style={
         unstyled

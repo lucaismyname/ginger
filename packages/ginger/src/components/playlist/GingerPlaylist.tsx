@@ -81,7 +81,7 @@ export function GingerPlaylist({
 
   return (
     <GingerPlaylistConfigContext.Provider value={{ playOnSelect }}>
-      <ul style={listStyle} {...rest}>
+      <ul data-ginger-component="Playlist" style={listStyle} {...rest}>
         {tracks.map((track, index) => {
           const active = index === currentIndex;
           return (

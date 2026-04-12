@@ -7,7 +7,10 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 import { useGingerLocale } from "../../context/GingerLocaleContext";
-import { useGingerMedia, useGingerPlayback } from "../../context/GingerSplitContexts";
+import {
+  useGingerMedia,
+  useGingerPlayback,
+} from "../../context/GingerSplitContexts";
 import {
   usePlayPauseBinding,
   useSeekBarBinding,
@@ -36,14 +39,17 @@ export function PlayPause({
   ...rest
 }: PlayPauseProps) {
   const locale = useGingerLocale();
-  const defaultPlayAria = typeof playLabel === "string" ? playLabel : locale.play;
-  const defaultPauseAria = typeof pauseLabel === "string" ? pauseLabel : locale.pause;
+  const defaultPlayAria =
+    typeof playLabel === "string" ? playLabel : locale.play;
+  const defaultPauseAria =
+    typeof pauseLabel === "string" ? pauseLabel : locale.pause;
   const b = usePlayPauseBinding({
     playAriaLabel: playAriaLabel ?? defaultPlayAria,
     pauseAriaLabel: pauseAriaLabel ?? defaultPauseAria,
   });
   return (
     <button
+      data-ginger-component="PlayPause"
       {...rest}
       type={type}
       aria-label={b.ariaLabel}
@@ -64,12 +70,19 @@ export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
 };
 
-export function Repeat({ type = "button", ariaLabel, onClick, children, ...rest }: RepeatProps) {
+export function Repeat({
+  type = "button",
+  ariaLabel,
+  onClick,
+  children,
+  ...rest
+}: RepeatProps) {
   const { repeatMode, cycleRepeat } = useGingerPlayback();
   const locale = useGingerLocale();
   const label = locale.repeat[repeatMode];
   return (
     <button
+      data-ginger-component="Repeat"
       {...rest}
       type={type}
       aria-label={ariaLabel ?? label}
@@ -99,6 +112,7 @@ export function Next({
   const locale = useGingerLocale();
   return (
     <button
+      data-ginger-component="Next"
       {...rest}
       type={type}
       aria-label={ariaLabel ?? locale.nextTrack}
@@ -127,6 +141,7 @@ export function Previous({
   const locale = useGingerLocale();
   return (
     <button
+      data-ginger-component="Previous"
       {...rest}
       type={type}
       aria-label={ariaLabel ?? locale.previousTrack}
@@ -155,6 +170,7 @@ export function Shuffle({
   const locale = useGingerLocale();
   return (
     <button
+      data-ginger-component="Shuffle"
       {...rest}
       type={type}
       aria-pressed={isShuffled}
@@ -180,13 +196,20 @@ export type SeekBarProps = Omit<
   inputStyle?: CSSProperties;
 };
 
-export function SeekBar({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: SeekBarProps) {
+export function SeekBar({
+  inputStyle,
+  style,
+  unstyled = false,
+  ariaLabel,
+  ...rest
+}: SeekBarProps) {
   const b = useSeekBarBinding();
   const mergedStyle = unstyled
     ? { ...style, ...inputStyle }
     : { width: "100%", ...style, ...inputStyle };
   return (
     <input
+      data-ginger-component="SeekBar"
       {...rest}
       type="range"
       min={b.min}
@@ -214,13 +237,20 @@ export type VolumeProps = Omit<
   inputStyle?: CSSProperties;
 };
 
-export function Volume({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: VolumeProps) {
+export function Volume({
+  inputStyle,
+  style,
+  unstyled = false,
+  ariaLabel,
+  ...rest
+}: VolumeProps) {
   const b = useVolumeSlider();
   const mergedStyle = unstyled
     ? { ...style, ...inputStyle }
     : { width: "100%", ...style, ...inputStyle };
   return (
     <input
+      data-ginger-component="Volume"
       {...rest}
       type="range"
       min={b.min}
@@ -260,6 +290,7 @@ export function Mute({
   const u = unmuteLabel ?? locale.unmute;
   return (
     <button
+      data-ginger-component="Mute"
       {...rest}
       type={type}
       aria-pressed={muted}
@@ -303,6 +334,7 @@ export function PlaybackRate({
   );
   return (
     <select
+      data-ginger-component="PlaybackRate"
       {...rest}
       aria-label={ariaLabel ?? locale.playbackSpeed}
       value={String(playbackRate)}

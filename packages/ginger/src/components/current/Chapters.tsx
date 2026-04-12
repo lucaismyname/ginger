@@ -1,7 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useGingerLocale } from "../../context/GingerLocaleContext";
 import { useGingerState } from "../../context/GingerSplitContexts";
-import { type GingerChapter, useGingerChapters } from "../../hooks/useGingerChapters";
+import {
+  type GingerChapter,
+  useGingerChapters,
+} from "../../hooks/useGingerChapters";
 import { formatMmSs } from "../../internal/formatTime";
 import type { DisplayBaseProps, GingerState } from "../../types";
 
@@ -34,7 +37,11 @@ export function Chapters({
   if (list.length === 0) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span className={className} style={style}>
+      <span
+        data-ginger-component="Chapters"
+        className={className}
+        style={style}
+      >
         {node}
       </span>
     ) : null;
@@ -52,7 +59,11 @@ export function Chapters({
       };
 
   return (
-    <ul className={className} style={{ ...listStyle, ...style }} aria-label={locale.chaptersList}>
+    <ul
+      className={className}
+      style={{ ...listStyle, ...style }}
+      aria-label={locale.chaptersList}
+    >
       {list.map((chapter, index) => {
         const active = index === activeIndex;
         return (
@@ -74,7 +85,9 @@ export function Chapters({
                 color: unstyled ? undefined : "inherit",
                 font: unstyled ? undefined : "inherit",
                 cursor: unstyled ? undefined : "pointer",
-                padding: unstyled ? undefined : "var(--ginger-playlist-row-padding, 6px 8px)",
+                padding: unstyled
+                  ? undefined
+                  : "var(--ginger-playlist-row-padding, 6px 8px)",
               }}
             >
               {children ? (

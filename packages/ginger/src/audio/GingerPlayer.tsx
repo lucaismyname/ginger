@@ -99,6 +99,7 @@ export function GingerPlayer({
 
   return (
     <audio
+      data-ginger-component="Player"
       ref={audioRef}
       className={className}
       style={style}

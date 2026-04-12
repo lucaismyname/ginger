@@ -36,7 +36,9 @@ export function LyricsSynced({
   if (lines.length === 0) {
     const node = empty ?? fallback ?? null;
     return node ? (
-      <span className={className} style={style}>
+      <span 
+      data-ginger-component="LyricsSynced"
+      className={className} style={style}>
         {node}
       </span>
     ) : null;

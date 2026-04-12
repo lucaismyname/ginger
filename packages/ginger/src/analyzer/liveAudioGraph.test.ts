@@ -1,0 +1,134 @@
+import { afterEach, describe, expect, it } from "vitest";
+import { attachLiveAnalyser, detachLiveAnalyser } from "./liveAudioGraph";
+import { installMockWebAudio } from "../testing/mockWebAudio";
+
+const options = {
+  fftSize: 1024,
+  smoothingTimeConstant: 0.72,
+  minDecibels: -90,
+  maxDecibels: -20,
+};
+
+describe("liveAudioGraph", () => {
+  let restoreWebAudio: (() => void) | null = null;
+
+  afterEach(() => {
+    restoreWebAudio?.();
+    restoreWebAudio = null;
+  });
+
+  it("creates one source per element and makes the first analyser audible", () => {
+    const webAudio = installMockWebAudio();
+    restoreWebAudio = webAudio.restore;
+
+    const element = document.createElement("audio");
+    const attached = attachLiveAnalyser(element, options);
+    const context = webAudio.contexts[0]!;
+    const analyser = context.analysers[0]!;
+
+    expect(webAudio.contexts).toHaveLength(1);
+    expect(attached.id).toBe(0);
+    expect(attached.context).toBe(context);
+    expect(attached.analyser).toBe(analyser);
+    expect(context.sources).toHaveLength(1);
+    expect(context.analysers).toHaveLength(1);
+    expect(analyser.fftSize).toBe(1024);
+    expect(analyser.smoothingTimeConstant).toBe(0.72);
+    expect(analyser.minDecibels).toBe(-90);
+    expect(analyser.maxDecibels).toBe(-20);
+    expect(context.sources[0]?.connections).toEqual([analyser]);
+    expect(analyser.connections).toEqual([context.destination]);
+  });
+
+  it("shares the source for multiple consumers without duplicating playback wiring", () => {
+    const webAudio = installMockWebAudio();
+    restoreWebAudio = webAudio.restore;
+
+    const element = document.createElement("audio");
+    const first = attachLiveAnalyser(element, options);
+    const second = attachLiveAnalyser(element, { ...options, fftSize: 2048 });
+    const context = webAudio.contexts[0]!;
+
+    expect(webAudio.contexts).toHaveLength(1);
+    expect(first.id).toBe(0);
+    expect(second.id).toBe(1);
+    expect(context.sources).toHaveLength(1);
+    expect(context.analysers).toHaveLength(2);
+    expect(context.sources[0]?.connections).toEqual(context.analysers);
+    expect(context.analysers[0]?.connections).toEqual([context.destination]);
+    expect(context.analysers[1]?.connections).toEqual([]);
+  });
+
+  it("promotes another consumer to playback sink when the active sink detaches", () => {
+    const webAudio = installMockWebAudio();
+    restoreWebAudio = webAudio.restore;
+
+    const element = document.createElement("audio");
+    const first = attachLiveAnalyser(element, options);
+    const second = attachLiveAnalyser(element, options);
+    const context = webAudio.contexts[0]!;
+    const firstAnalyser = context.analysers[0]!;
+    const secondAnalyser = context.analysers[1]!;
+
+    detachLiveAnalyser(element, first.id);
+
+    expect(firstAnalyser.disconnectCalls).toBe(1);
+    expect(firstAnalyser.connections).toEqual([]);
+    expect(secondAnalyser.connections).toEqual([context.destination]);
+    expect(secondAnalyser.connectCalls).toEqual([context.destination]);
+    expect(context.state).toBe("running");
+  });
+
+  it("disconnects the graph and closes the context when the last consumer detaches", () => {
+    const webAudio = installMockWebAudio();
+    restoreWebAudio = webAudio.restore;
+
+    const element = document.createElement("audio");
+    const attached = attachLiveAnalyser(element, options);
+    const context = webAudio.contexts[0]!;
+
+    detachLiveAnalyser(element, attached.id);
+
+    expect(context.sources[0]?.disconnectCalls).toBe(1);
+    expect(context.closeCalls).toBe(1);
+    expect(context.state).toBe("closed");
+
+    attachLiveAnalyser(element, options);
+    expect(webAudio.contexts).toHaveLength(2);
+  });
+
+  it("throws a clear error when Web Audio is unavailable", () => {
+    const previousAudioContext = window.AudioContext;
+    const previousWebkitAudioContext = (
+      window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext }
+    ).webkitAudioContext;
+
+    Object.defineProperty(window, "AudioContext", {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+    Object.defineProperty(window, "webkitAudioContext", {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+
+    try {
+      expect(() => attachLiveAnalyser(document.createElement("audio"), options)).toThrow(
+        "Web Audio API is not available",
+      );
+    } finally {
+      Object.defineProperty(window, "AudioContext", {
+        configurable: true,
+        writable: true,
+        value: previousAudioContext,
+      });
+      Object.defineProperty(window, "webkitAudioContext", {
+        configurable: true,
+        writable: true,
+        value: previousWebkitAudioContext,
+      });
+    }
+  });
+});

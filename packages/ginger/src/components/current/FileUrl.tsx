@@ -28,7 +28,7 @@ export function FileUrl({
   }
   if (children)
     return (
-      <span className={className} style={style}>
+      <span data-ginger-component="FileUrl" className={className} style={style}>
         {children(value, state)}
       </span>
     );
