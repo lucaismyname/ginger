@@ -44,6 +44,7 @@ export function useGingerLiveAnalyzer(
   } = options;
 
   const { audioRef, state } = useGinger();
+  const activeUrl = state.tracks[state.currentIndex]?.fileUrl ?? "";
   const opts = useMemo<LiveAnalyserOptions>(
     () => ({
       fftSize,
@@ -72,6 +73,7 @@ export function useGingerLiveAnalyzer(
   const contextHolderRef = useRef<AudioContext | null>(null);
   const analyserHolderRef = useRef<AnalyserNode | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-attach when `activeUrl` changes (same `audioRef`, new `<audio>` source).
   useLayoutEffect(() => {
     if (!enabled || typeof window === "undefined") {
       return;
@@ -183,7 +185,7 @@ export function useGingerLiveAnalyzer(
       timeRef.current = emptyTime;
       setMeta({ frequencyBinCount: 0, sampleRate: 0 });
     };
-  }, [enabled, audioRef, opts, state.currentIndex]);
+  }, [enabled, audioRef, opts, activeUrl]);
 
   return {
     frequencyData: freqRef.current,

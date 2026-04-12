@@ -88,14 +88,9 @@ export function GingerPlayer({
       lastTimeSnapshotRef.current = { currentTime: -1, duration: -1, bufferedFraction: -1 };
     }
     lastActiveUrlRef.current = url;
-  }, [audioRef, dispatch, state.currentIndex, state.tracks, url]);
-
-  useEffect(() => {
-    const el = audioRef.current;
-    if (!el) return;
-    // Browsers reset playbackRate to 1.0 when source changes + load() runs.
+    // Browsers reset playbackRate to 1.0 when source changes + load() runs; re-apply after load.
     el.playbackRate = state.playbackRate;
-  }, [audioRef, state.playbackRate, url]);
+  }, [audioRef, dispatch, url, state.playbackRate]);
 
   return (
     <audio

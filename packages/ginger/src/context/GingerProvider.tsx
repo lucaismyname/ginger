@@ -156,7 +156,7 @@ export function GingerProvider({
         playbackRate: p.playbackRate,
       },
     });
-  }, [initialStateKey, dispatch]);
+  }, [initialStateKey]);
 
   useEffect(() => {
     stateRef.current = state;
@@ -412,6 +412,7 @@ export function GingerProvider({
 
   const currentUrl = state.tracks[state.currentIndex]?.fileUrl;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `currentUrl` cancels in-flight play when the active track/source changes; not implied by `state.isPaused` alone.
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -525,7 +526,6 @@ export function GingerProvider({
     }),
     [
       cycleRepeat,
-      dispatch,
       init,
       next,
       notifyEnded,
@@ -610,7 +610,6 @@ export function GingerProvider({
       selectTrackAt,
       setPlaylistMeta,
       setPlaybackMode,
-      dispatch,
     ],
   );
 
@@ -647,9 +646,7 @@ export function GingerProvider({
       setMuted,
       toggleMute,
       setPlaybackRate,
-      audioRef,
       notifyEnded,
-      dispatch,
     ],
   );
 
