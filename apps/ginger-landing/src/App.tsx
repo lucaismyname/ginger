@@ -530,9 +530,7 @@ export function App() {
               <SectionLabel icon={Package}>Install</SectionLabel>
               <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
                 <pre className="min-w-0 flex-1 overflow-x-hidden w-full whitespace-nowrap font-mono text-base text-zinc-900 dark:text-zinc-100">
-                  <code className="font-pixel whitespace-nowrap">
-                    {NPM_CMD}
-                  </code>
+                  <code className="font-mono whitespace-nowrap">{NPM_CMD}</code>
                 </pre>
                 <button
                   aria-describedby="install-copy-status"
@@ -565,7 +563,7 @@ export function App() {
               <section className="flex flex-row gap-4 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -573,7 +571,7 @@ export function App() {
                 </a>
                 <a
                   href={REPO_URL}
-                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -581,7 +579,7 @@ export function App() {
                 </a>
                 <a
                   href={"https://lucamack.com"}
-                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-mono block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
