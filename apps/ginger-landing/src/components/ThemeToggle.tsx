@@ -61,10 +61,17 @@ export function ThemeToggle() {
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-blend-icon lucide-blend"
+          aria-hidden
         >
-          <circle cx="9" cy="9" r="7" />
-          <circle cx="15" cy="15" r="7" />
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2.5" />
+          <path d="M12 19.5V22" />
+          <path d="M2 12h2.5" />
+          <path d="M19.5 12H22" />
+          <path d="m4.93 4.93 1.77 1.77" />
+          <path d="m17.3 17.3 1.77 1.77" />
+          <path d="m19.07 4.93-1.77 1.77" />
+          <path d="m6.7 17.3-1.77 1.77" />
         </svg>
       ) : (
         <svg
@@ -77,10 +84,9 @@ export function ThemeToggle() {
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-blend-icon lucide-blend"
+          aria-hidden
         >
-          <circle cx="9" cy="9" r="7" />
-          <circle cx="15" cy="15" r="7" />
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
         </svg>
       )}
     </button>

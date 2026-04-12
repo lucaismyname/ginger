@@ -70,6 +70,7 @@ export function App() {
               key={e.id}
               type="button"
               onClick={() => setId(e.id)}
+              aria-current={e.id === id ? "page" : undefined}
               className={`rounded-xl px-4 py-2.5 text-left text-sm font-medium transition ${
                 e.id === id
                   ? "bg-zinc-900 text-white shadow-md"

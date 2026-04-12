@@ -7,10 +7,26 @@ export type UseAudioPeaksState = {
   error: string | null;
 };
 
+export type UseAudioPeaksOptions = {
+  /**
+   * Hard cap for computed buckets to avoid very expensive loops.
+   * Default: 512.
+   */
+  maxBuckets?: number;
+  /**
+   * Maximum number of samples scanned per bucket.
+   * Large files are sampled with a stride once this limit is exceeded.
+   * Default: 20_000.
+   */
+  maxSamplesPerBucket?: number;
+};
+
 export function useAudioPeaks(
   fileUrl: string | null | undefined,
   buckets = 64,
+  options: UseAudioPeaksOptions = {},
 ): UseAudioPeaksState {
+  const { maxBuckets = 512, maxSamplesPerBucket = 20_000 } = options;
   const [state, setState] = useState<UseAudioPeaksState>({
     peaks: [],
     isLoading: false,
@@ -42,13 +58,17 @@ export function useAudioPeaks(
         try {
           const audioBuffer = await audioContext.decodeAudioData(buffer);
           const channel = audioBuffer.getChannelData(0);
-          const step = Math.max(1, Math.floor(channel.length / buckets));
+          const safeBuckets = Math.min(Math.max(1, buckets), Math.max(1, maxBuckets));
+          const step = Math.max(1, Math.floor(channel.length / safeBuckets));
           const peaks: number[] = [];
-          for (let i = 0; i < buckets; i += 1) {
+          for (let i = 0; i < safeBuckets; i += 1) {
             let max = 0;
             const start = i * step;
             const end = Math.min(channel.length, start + step);
-            for (let j = start; j < end; j += 1) {
+            const sampleCount = end - start;
+            const stride =
+              sampleCount > maxSamplesPerBucket ? Math.ceil(sampleCount / maxSamplesPerBucket) : 1;
+            for (let j = start; j < end; j += stride) {
               max = Math.max(max, Math.abs(channel[j] ?? 0));
             }
             peaks.push(max);
@@ -73,7 +93,7 @@ export function useAudioPeaks(
     return () => {
       cancelled = true;
     };
-  }, [buckets, fileUrl]);
+  }, [buckets, fileUrl, maxBuckets, maxSamplesPerBucket]);
 
   return state;
 }

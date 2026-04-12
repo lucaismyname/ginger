@@ -8,7 +8,7 @@
   }
 
   *:is(:focus) {
-    outline: 1px solid theme("colors.orange.500");
+    outline: 1px solid #f97316;
   }
 
   html.dark {
@@ -32,12 +32,5 @@
 
   * {
     @apply selection:bg-orange-200 selection:text-zinc-900 dark:selection:bg-orange-900/50 dark:selection:text-zinc-50;
-  }
-
-  @font-face {
-    font-family: "Fusion Pixel 12px Monospaced SC";
-    src: url("/fonts/FusionPixel12pxMonospacedSC-Regular.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
   }
 }

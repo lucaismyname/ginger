@@ -23,6 +23,26 @@ function parseString(transcript: string, format: "vtt" | "srt" | "auto"): Transc
   return parseTranscriptAuto(transcript);
 }
 
+function findLastCueIndexAtOrBeforeTime(cues: TranscriptCue[], currentTime: number): number {
+  let low = 0;
+  let high = cues.length - 1;
+  let best = -1;
+
+  while (low <= high) {
+    const mid = low + Math.floor((high - low) / 2);
+    const cue = cues[mid];
+    if (!cue) break;
+    if (cue.startTime <= currentTime) {
+      best = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  return best;
+}
+
 /**
  * Syncs SRT / WebVTT transcript cues to the current Ginger playback time.
  *
@@ -52,15 +72,15 @@ export function useGingerTranscriptSync(
   }, [transcript, format]);
 
   const activeIndex = useMemo(() => {
-    for (let i = cues.length - 1; i >= 0; i -= 1) {
-      if (currentTime >= cues[i]!.startTime) return i;
-    }
-    return -1;
+    return findLastCueIndexAtOrBeforeTime(cues, currentTime);
   }, [currentTime, cues]);
 
   const activeCues = useMemo(() => {
-    return cues.filter((c) => currentTime >= c.startTime && currentTime < c.endTime);
-  }, [currentTime, cues]);
+    if (activeIndex < 0) return [];
+    return cues
+      .slice(0, activeIndex + 1)
+      .filter((c) => currentTime >= c.startTime && currentTime < c.endTime);
+  }, [currentTime, cues, activeIndex]);
 
   return {
     cues,

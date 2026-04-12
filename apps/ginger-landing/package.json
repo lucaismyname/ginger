@@ -14,7 +14,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check ../../apps/ginger-landing/src --config-path ../../biome.json",
+    "lint:fix": "biome check --write ../../apps/ginger-landing/src --config-path ../../biome.json",
+    "format": "biome format --write ../../apps/ginger-landing/src --config-path ../../biome.json"
   },
   "dependencies": {
     "@fontsource/fusion-pixel-12px-monospaced-sc": "^5.2.5",

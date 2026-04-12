@@ -49,15 +49,17 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 
 ## Documentation
 
-- Getting started: [`docs/getting-started.md`](./docs/getting-started.md)
-- Testing guide: [`docs/guides/testing.md`](./docs/guides/testing.md)
-- Recipes: [`docs/guides/recipes.md`](./docs/guides/recipes.md)
-- Accessibility checklist: [`docs/guides/accessibility.md`](./docs/guides/accessibility.md)
-- Streaming adapters: [`docs/guides/streaming-adapters.md`](./docs/guides/streaming-adapters.md)
-- Components reference: [`docs/reference/components.md`](./docs/reference/components.md)
-- Hooks reference: [`docs/reference/hooks.md`](./docs/reference/hooks.md)
-- Subpath exports (waveform, EQ, spatial, transcript, remote, …): [`docs/reference/subpaths.md`](./docs/reference/subpaths.md)
-- Generated API docs: [`docs/api/index.html`](./docs/api/index.html)
+For docs beyond this README, use the repository links below:
+
+- Getting started: [`docs/getting-started.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/getting-started.md)
+- Testing guide: [`docs/guides/testing.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/testing.md)
+- Recipes: [`docs/guides/recipes.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/recipes.md)
+- Accessibility checklist: [`docs/guides/accessibility.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/accessibility.md)
+- Streaming adapters: [`docs/guides/streaming-adapters.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/streaming-adapters.md)
+- Components reference: [`docs/reference/components.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/components.md)
+- Hooks reference: [`docs/reference/hooks.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/hooks.md)
+- Subpath exports (waveform, EQ, spatial, transcript, remote, …): [`docs/reference/subpaths.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/subpaths.md)
+- Generated API docs: [`docs/api/index.html`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/api/index.html)
 
 ## Subpath Exports
 
@@ -206,15 +208,12 @@ It currently provides capability metadata only and does not alter playback behav
 ## Release Process
 
 - Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
-- Release note template: [`../../.github/release-template.md`](../../.github/release-template.md)
+- Release note template: [`.github/release-template.md`](https://github.com/lucaismyname/ginger/blob/main/.github/release-template.md)
 
 Before publishing:
 
 ```bash
-npm run build
-npm run test
-npm run typecheck
-npm run lint
+npm run verify:release
 npm run docs:api
 ```
 
@@ -960,7 +959,7 @@ function FileViz({ url }: { url: string }) {
 }
 ```
 
-**`useAudioPeaks`** (same subpath) remains a lightweight helper: a single row of decoded amplitude peaks. Prefer **`useAudioFileAnalysis`** when you need a 2D amplitude grid or spectrogram.
+**`useAudioPeaks`** (same subpath) remains a lightweight helper: a single row of decoded amplitude peaks. For large files, pass `maxBuckets` and `maxSamplesPerBucket` as the third argument to cap compute cost. Prefer **`useAudioFileAnalysis`** when you need a 2D amplitude grid or spectrogram.
 
 ## Recipes
 

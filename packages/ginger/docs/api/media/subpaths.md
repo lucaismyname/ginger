@@ -17,7 +17,7 @@ See [`guides/testing.md`](../guides/testing.md).
 Waveform and analysis utilities for visualizations and offline audio analysis:
 
 - `useAudioFileAnalysis`, `analyzeAudioFile`, `analyzeAudioBuffer`
-- `useAudioPeaks` for a lightweight single row of peaks
+- `useAudioPeaks` for a lightweight single row of peaks (supports `maxBuckets` and `maxSamplesPerBucket` guardrails for large files)
 
 ## `@lucaismyname/ginger/equalizer`
 

@@ -26,26 +26,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build library
-        run: npm run build
-
-      - name: Test library
-        run: npm run test
-
-      - name: Typecheck library
-        run: npm run typecheck
-
-      - name: Typecheck apps
-        run: npm run typecheck:apps
-
-      - name: Lint library
-        run: npm run lint
-
-      - name: Generate API docs
-        run: npm run docs:api
-
-      - name: Build demo app
-        run: npm run build -w ginger-demo
-
-      - name: Build landing app
-        run: npm run build -w ginger-landing
+      - name: Verify monorepo
+        run: npm run verify

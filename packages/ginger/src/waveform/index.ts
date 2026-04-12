@@ -1,5 +1,5 @@
 export { useAudioPeaks } from "./useAudioPeaks";
-export type { UseAudioPeaksState } from "./useAudioPeaks";
+export type { UseAudioPeaksOptions, UseAudioPeaksState } from "./useAudioPeaks";
 export { analyzeAudioBuffer, analyzeAudioFile } from "./analyzeAudioFile";
 export type { AnalyzeAudioFileOptions, AudioFileAnalysis } from "./analyzeAudioFile";
 export { useAudioFileAnalysis } from "./useAudioFileAnalysis";

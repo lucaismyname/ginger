@@ -10,6 +10,13 @@ import { scan } from "react-scan";
 const NPM_CMD = "npm install @lucaismyname/ginger";
 const NPM_URL = "https://www.npmjs.com/package/@lucaismyname/ginger";
 const REPO_URL = "https://github.com/lucaismyname/ginger";
+const TOOLTIP_EXAMPLE_SNIPPET = `// custom player with chapters + controls
+<Ginger.Provider initialTracks={tracks}>
+  <Ginger.Player />
+  <Ginger.Current.Title className="font-semibold" />
+  <Ginger.Control.SeekBar className="h-1" />
+  <Ginger.Control.Volume className="w-24" />
+</Ginger.Provider>`;
 if (import.meta.env.DEV) {
   scan({
     enabled: true,
@@ -129,6 +136,7 @@ function SectionLabel({
 
 export function App() {
   const [copyLabel, setCopyLabel] = useState("Copy");
+  const [tooltipCopyLabel, setTooltipCopyLabel] = useState("Copy");
 
   const handleCopyInstall = async () => {
     try {
@@ -141,16 +149,34 @@ export function App() {
     }
   };
 
+  const handleCopyTooltipExample = async () => {
+    try {
+      await navigator.clipboard.writeText(TOOLTIP_EXAMPLE_SNIPPET);
+      setTooltipCopyLabel("Copied");
+      window.setTimeout(() => setTooltipCopyLabel("Copy"), 1400);
+    } catch {
+      setTooltipCopyLabel("Failed");
+      window.setTimeout(() => setTooltipCopyLabel("Copy"), 1400);
+    }
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col md:items-start md:justify-center px-6 py-6 md:py-16 sm:px-10 lg:px-16">
       <ThemeToggle />
+      <output id="install-copy-status" aria-live="polite" className="sr-only">
+        {copyLabel === "Copy" ? "" : `Install command ${copyLabel.toLowerCase()}.`}
+      </output>
+      <output id="tooltip-copy-status" aria-live="polite" className="sr-only">
+        {tooltipCopyLabel === "Copy"
+          ? ""
+          : `Tooltip example ${tooltipCopyLabel.toLowerCase()}.`}
+      </output>
 
       <main className="w-full max-w-2xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
           <div
             aria-describedby="ginger-title-tooltip"
             className="group relative inline-flex flex-col items-start rounded-sm md:-ml-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
-            tabIndex={0}
           >
             <h1 className="font-pixel text-5xl sm:text-6xl font-normal tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
               &lt;
@@ -160,31 +186,54 @@ export function App() {
               /&gt;
             </h1>
             <span className="sr-only">
-              Focus the title to preview a simple Ginger player example.
+              Hover or focus the title to preview a Ginger player example.
             </span>
             <div
-              className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(90vw,26rem)] translate-y-1 opacity-0 transition duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+              className="pointer-events-none invisible absolute left-0 top-full z-20 w-[min(90vw,28rem)] pt-2.5 opacity-0 transition duration-150 ease-out group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100"
               id="ginger-title-tooltip"
               role="tooltip"
             >
-              <div className="absolute -top-1.5 left-8 h-3 w-3 rotate-45 border-l border-t border-zinc-300 bg-zinc-100/95 dark:border-zinc-700 dark:bg-zinc-900/95" />
-              <div className="rounded-lg border border-zinc-300 bg-zinc-100/95 p-3 shadow-xl shadow-black/20 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/95">
-                <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                  quick example
-                </p>
+              <div className="absolute left-8 top-1 h-3 w-3 rotate-45 border-l border-t border-zinc-300 bg-zinc-100/95 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/95" />
+              <div className="translate-y-1 rounded-lg border border-zinc-300 bg-zinc-100/95 p-3 shadow-xl shadow-black/20 backdrop-blur-sm transition duration-150 ease-out group-hover:translate-y-0 group-focus-within:translate-y-0 dark:border-zinc-700 dark:bg-zinc-900/95">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="font-mono text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                    quick start
+                  </p>
+                  <button
+                    aria-describedby="tooltip-copy-status"
+                    aria-label="Copy tooltip example code"
+                    className="rounded border border-zinc-300/80 bg-zinc-50 px-2 py-1 font-mono text-[11px] leading-none text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200/70 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    onClick={handleCopyTooltipExample}
+                    type="button"
+                  >
+                    {tooltipCopyLabel}
+                  </button>
+                </div>
                 <pre className="overflow-x-auto rounded-md border border-zinc-700/80 bg-zinc-950 px-3 py-2 font-mono text-xs leading-relaxed text-zinc-100">
                   <code>
-                    <span className="text-zinc-400">{`// simple Ginger player`}</span>
+                    <span className="text-zinc-400">
+                      {"// custom player with chapters + controls"}
+                    </span>
                     {"\n"}
-                    <span className="text-zinc-300">
+                    <span className="text-orange-300">
                       {"<Ginger.Provider initialTracks={tracks}>"}
                     </span>
                     {"\n"}
-                    <span className="text-orange-400">
-                      {"  <Ginger.Player />"}
+                    <span className="text-zinc-300">{"  <Ginger.Player />"}</span>
+                    {"\n"}
+                    <span className="text-zinc-300">
+                      {'  <Ginger.Current.Title className="font-semibold" />'}
                     </span>
                     {"\n"}
                     <span className="text-zinc-300">
+                      {"  <Ginger.Control.SeekBar className=\"h-1\" />"}
+                    </span>
+                    {"\n"}
+                    <span className="text-zinc-300">
+                      {"  <Ginger.Control.Volume className=\"w-24\" />"}
+                    </span>
+                    {"\n"}
+                    <span className="text-orange-300">
                       {"</Ginger.Provider>"}
                     </span>
                   </code>
@@ -214,7 +263,8 @@ export function App() {
                   <code className="font-pixel whitespace-nowrap">{NPM_CMD}</code>
                 </pre>
                 <button
-                  aria-live="polite"
+                  aria-describedby="install-copy-status"
+                  aria-label="Copy install command"
                   className="rounded-md border border-zinc-300/70 bg-zinc-50 p-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   onClick={handleCopyInstall}
                   type="button"
