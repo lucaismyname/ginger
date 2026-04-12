@@ -1,0 +1,262 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useGingerMedia, useGingerPlayback } from "../context/GingerSplitContexts";
+import { computeEndedTransition } from "../core/transitions";
+import {
+  type CrossfadeCurve,
+  type CrossfadeGraph,
+  attachCrossfadeGraph,
+  scheduleCrossfade,
+  teardownCrossfadeGraph,
+} from "./crossfadeGraph";
+
+export type { CrossfadeCurve };
+
+export type UseGingerCrossfadeOptions = {
+  /**
+   * Duration of the crossfade in seconds.
+   * The hook begins the fade when `timeRemaining ≤ duration`.
+   * @default 3
+   */
+  duration?: number;
+  /**
+   * Gain curve shape applied to both gain nodes.
+   * `"equal-power"` uses a cosine/sine curve to maintain consistent perceived
+   * loudness; `"linear"` is a straight ramp that may dip slightly at the midpoint.
+   * @default "equal-power"
+   */
+  curve?: CrossfadeCurve;
+  /**
+   * `crossOrigin` attribute for the incoming `<audio>` element.
+   * Match this to the `crossOrigin` prop on `Ginger.Player` when serving
+   * cross-origin audio so the browser can reuse the cached resource.
+   */
+  crossOrigin?: "" | "anonymous" | "use-credentials";
+  /**
+   * When `false`, crossfade is completely disabled and playback falls back to
+   * the default hard-cut transition.
+   * @default true
+   */
+  enabled?: boolean;
+};
+
+export type UseGingerCrossfadeResult = {
+  /** `true` while a crossfade transition is actively in progress. */
+  isCrossfading: boolean;
+  /**
+   * Progress of the current crossfade from `0` (start) to `1` (complete).
+   * Always `0` when idle.
+   */
+  crossfadeProgress: number;
+};
+
+type CrossfadeSession = {
+  graph: CrossfadeGraph;
+  incomingAudio: HTMLAudioElement;
+  startedAtIndex: number;
+  startTime: number;
+  fadeDurationMs: number;
+  timeoutId: ReturnType<typeof setTimeout>;
+  rafId: number;
+  aborted: boolean;
+};
+
+/**
+ * Smoothly crossfades between consecutive tracks using the Web Audio API.
+ *
+ * When the remaining time on the current track falls below `duration`, the hook:
+ * 1. Creates a hidden `<audio>` element and begins loading the next track.
+ * 2. Routes both the outgoing and incoming elements through `GainNode`s in a
+ *    shared `AudioContext`.
+ * 3. Schedules gain ramps so the outgoing track fades out while the incoming
+ *    track fades in simultaneously.
+ * 4. Dispatches `SET_INDEX` once the ramp completes so the Ginger queue
+ *    advances to the new track.
+ *
+ * **Limitations:**
+ * - Incompatible with `useGingerEqualizer` and `useGingerLiveAnalyzer` on the
+ *   same element — the browser only permits one `MediaElementAudioSourceNode`
+ *   per `<audio>` element.
+ * - Requires a prior user gesture before `AudioContext` can be resumed (standard
+ *   Web Audio policy).
+ * - When `repeatMode` is `"one"`, the crossfade replays the same track from the
+ *   beginning, matching the standard `notifyEnded` behaviour.
+ *
+ * Available as a subpath import:
+ * ```ts
+ * import { useGingerCrossfade } from "@lucaismyname/ginger/crossfade";
+ * ```
+ */
+export function useGingerCrossfade(
+  options: UseGingerCrossfadeOptions = {},
+): UseGingerCrossfadeResult {
+  const { duration = 3, curve = "equal-power", crossOrigin, enabled = true } = options;
+
+  const { tracks, currentIndex, isPaused, repeatMode, playbackMode, dispatch } =
+    useGingerPlayback();
+  const { currentTime, duration: trackDuration, audioRef, muted, volume } = useGingerMedia();
+
+  const [isCrossfading, setIsCrossfading] = useState(false);
+  const [crossfadeProgress, setCrossfadeProgress] = useState(0);
+
+  const sessionRef = useRef<CrossfadeSession | null>(null);
+
+  const abort = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session) return;
+    session.aborted = true;
+    clearTimeout(session.timeoutId);
+    cancelAnimationFrame(session.rafId);
+    teardownCrossfadeGraph(session.graph);
+    session.incomingAudio.pause();
+    session.incomingAudio.removeAttribute("src");
+    session.incomingAudio.load();
+    sessionRef.current = null;
+    setIsCrossfading(false);
+    setCrossfadeProgress(0);
+  }, []);
+
+  // Abort if the user pauses or manually advances/changes the track mid-fade.
+  useEffect(() => {
+    const session = sessionRef.current;
+    if (!session) return;
+    if (isPaused || currentIndex !== session.startedAtIndex) {
+      abort();
+    }
+  }, [isPaused, currentIndex, abort]);
+
+  // Clean up on unmount.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: abort is stable; intentional unmount-only cleanup
+  useEffect(() => () => abort(), []);
+
+  // Keep the incoming element's volume/muted in sync with Ginger state so that
+  // the user's volume control applies to the incoming track during the fade.
+  useEffect(() => {
+    const session = sessionRef.current;
+    if (!session) return;
+    session.incomingAudio.volume = volume;
+    session.incomingAudio.muted = muted;
+  }, [volume, muted]);
+
+  // Main trigger: start a crossfade when time remaining ≤ duration.
+  useEffect(() => {
+    if (!enabled) return;
+    if (sessionRef.current) return; // already in progress
+    if (isPaused) return;
+    if (!(trackDuration > 0)) return;
+
+    const timeRemaining = trackDuration - currentTime;
+    if (timeRemaining > duration || timeRemaining <= 0) return;
+
+    // Determine what comes next using the same logic as notifyEnded.
+    const transition = computeEndedTransition({ tracks, currentIndex, repeatMode, playbackMode });
+    if (transition.kind === "stop") return; // queue ends — nothing to crossfade into
+
+    const nextIndex = transition.kind === "replay_same" ? currentIndex : transition.nextIndex;
+    const nextTrack = tracks[nextIndex];
+    if (!nextTrack?.fileUrl) return;
+
+    const mainEl = audioRef.current;
+    if (!mainEl) return;
+
+    // Create the incoming element before attaching the graph so that both
+    // elements are ready when createMediaElementSource is called.
+    const incomingAudio = document.createElement("audio");
+    incomingAudio.preload = "auto";
+    incomingAudio.volume = volume;
+    incomingAudio.muted = muted;
+    if (crossOrigin) incomingAudio.crossOrigin = crossOrigin;
+    incomingAudio.src = nextTrack.fileUrl;
+
+    let graph: CrossfadeGraph;
+    try {
+      graph = attachCrossfadeGraph(mainEl, incomingAudio);
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          "[@lucaismyname/ginger/crossfade] Failed to attach crossfade graph. " +
+            "This may be because the audio element is already connected to a Web Audio graph " +
+            "(e.g. via useGingerEqualizer or useGingerLiveAnalyzer). " +
+            "These features are incompatible with useGingerCrossfade.",
+          e,
+        );
+      }
+      return;
+    }
+
+    // Browsers suspend AudioContext until a user gesture has occurred.
+    void graph.context.resume();
+
+    incomingAudio.load();
+    void incomingAudio.play().catch(() => {
+      // Autoplay may be blocked; the gain ramps continue regardless and the
+      // incoming audio will play once the browser permits it.
+    });
+
+    scheduleCrossfade(graph, timeRemaining, curve);
+
+    const startTime = performance.now();
+    const fadeDurationMs = timeRemaining * 1000;
+
+    setIsCrossfading(true);
+    setCrossfadeProgress(0);
+
+    // rAF loop: drive crossfadeProgress for consumers (visualisers, UI indicators).
+    let rafId = 0;
+    const tick = () => {
+      const elapsed = performance.now() - startTime;
+      const progress = Math.min(1, elapsed / fadeDurationMs);
+      setCrossfadeProgress(progress);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+    rafId = requestAnimationFrame(tick);
+
+    // Once the gain ramps complete, advance the Ginger queue.
+    const timeoutId = setTimeout(() => {
+      const session = sessionRef.current;
+      if (!session || session.aborted) return;
+
+      // GingerPlayer will swap the src on the main element and resume playback.
+      dispatch({ type: "SET_INDEX", payload: { index: nextIndex, autoPlay: true } });
+
+      teardownCrossfadeGraph(graph);
+      incomingAudio.pause();
+      incomingAudio.removeAttribute("src");
+      incomingAudio.load();
+
+      sessionRef.current = null;
+      setIsCrossfading(false);
+      setCrossfadeProgress(0);
+    }, fadeDurationMs);
+
+    sessionRef.current = {
+      graph,
+      incomingAudio,
+      startedAtIndex: currentIndex,
+      startTime,
+      fadeDurationMs,
+      timeoutId,
+      rafId,
+      aborted: false,
+    };
+  }, [
+    enabled,
+    isPaused,
+    trackDuration,
+    currentTime,
+    duration,
+    curve,
+    crossOrigin,
+    tracks,
+    currentIndex,
+    repeatMode,
+    playbackMode,
+    audioRef,
+    volume,
+    muted,
+    dispatch,
+  ]);
+
+  return { isCrossfading, crossfadeProgress };
+}

@@ -1,6 +1,6 @@
 import * as Select from "@radix-ui/react-select";
 import { useGingerLocale, useGingerMedia } from "@lucaismyname/ginger";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 const defaultRates = [0.5, 0.75, 1, 1.25, 1.5, 2] as const;
 
@@ -14,7 +14,7 @@ export type PlaybackRateSelectProps = {
  * Radix-based playback speed control using Ginger’s `useGingerMedia` / locale strings
  * (same behavior as the built-in `<select>`, custom UI).
  */
-export function PlaybackRateSelect({
+function PlaybackRateSelectImpl({
   className,
   rates = defaultRates,
 }: PlaybackRateSelectProps) {
@@ -69,6 +69,9 @@ export function PlaybackRateSelect({
     </Select.Root>
   );
 }
+
+export const PlaybackRateSelect = memo(PlaybackRateSelectImpl);
+PlaybackRateSelect.displayName = "PlaybackRateSelect";
 
 function ChevronDownIcon() {
   return (

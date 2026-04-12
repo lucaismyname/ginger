@@ -15,7 +15,15 @@ import { scan } from "react-scan";
 const NPM_CMD = "npm install @lucaismyname/ginger";
 const NPM_URL = "https://www.npmjs.com/package/@lucaismyname/ginger";
 const REPO_URL = "https://github.com/lucaismyname/ginger";
-const TOOLTIP_EXAMPLE_SNIPPET = `// custom player with chapters + controls
+const TOOLTIP_EXAMPLE_SNIPPET = `import { Ginger } from "@lucaismyname/ginger";
+const tracks = [
+  {
+    title: "Track 1",
+    artist: "Artist 1",
+    fileUrl: "https://example.com/audio/track1.mp3",
+  },
+];
+// custom player with chapters + controls
 <Ginger.Provider initialTracks={tracks}>
   <Ginger.Player />
   <Ginger.Current.Title className="font-semibold" />
@@ -214,19 +222,19 @@ function LandingPlayerControls() {
           decoding="async"
         />
         <div className="min-w-0 flex-1">
-          <Ginger.Current.Title className="block truncate text-sm font-semibold leading-snug text-zinc-900 dark:text-zinc-50" />
-          <Ginger.Current.Artist className="mt-0.5 block truncate text-xs text-zinc-500 dark:text-zinc-400" />
+          <Ginger.Current.Title className="block font-pixel text-shadow-[1px_1px_0px_rgba(0,0,0,0.2)] truncate text-base leading-snug text-zinc-900 dark:text-zinc-50" />
+          <Ginger.Current.Artist className="mt-0.5 font-mono block truncate text-xs text-zinc-500 dark:text-zinc-400" />
         </div>
       </div>
       <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row md:items-center md:justify-between">
         <section className="flex w-full flex-1 items-center gap-4 md:min-w-0">
           <Ginger.Control.PlayPause className="py-1.5 px-1.5   rounded text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
           <span className="w-11 shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
-            <Ginger.Current.Elapsed />
+            <Ginger.Current.Elapsed className="font-pixel" />
           </span>
           <SeekBarWithChapterMarkers />
 
-          <span className="w-11 shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
+          <span className="w-11 font-pixel shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
             <Ginger.Current.Duration />
           </span>
         </section>
@@ -266,7 +274,7 @@ function LandingPlayerControls() {
                   <span className="ml-3 font-pixel shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
                     {active ? (
                       <>
-                        <span className="text-[9px] uppercase text-orange-700 dark:text-orange-400 px-1 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/50 border border-orange-500/50 dark:border-orange-700/50">
+                        <span className="text-[9px] uppercase text-orange-700 dark:text-orange-400 px-1 py-0.5 mr-4 rounded-md bg-orange-50 dark:bg-orange-950/50 border border-orange-500/50 dark:border-orange-700/50">
                           playing
                         </span>{" "}
                         {track.artist}
@@ -483,7 +491,7 @@ export function App() {
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
-            , spatial support{" "}
+            , spatial{" "}
             <Activity
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
@@ -493,12 +501,12 @@ export function App() {
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
-            , media session support{" "}
+            , media sessions{" "}
             <Shell
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
-            , and more{" "}
+            , and much more{" "}
             <MoreVertical
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
