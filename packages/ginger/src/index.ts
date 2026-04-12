@@ -1,5 +1,17 @@
 /** Compound component namespace for provider, player, controls, queue, and playlist UI primitives. */
 export { Ginger } from "./ginger";
+/** Lucide-derived inline SVG building blocks; same glyphs as default `Ginger.Control` button content. */
+export {
+  Pause,
+  Play,
+  RepeatGlyph,
+  ShuffleIcon,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX,
+  Wrapper,
+} from "./components/icons";
 /** High-level hook that returns combined state, selectors, and playback actions. */
 export { useGinger } from "./hooks/useGinger";
 

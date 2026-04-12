@@ -22,11 +22,11 @@ const tracks: Track[] = [
 ];
 
 describe("PlayPause", () => {
-  it("renders with default play label when paused", () => {
+  it("renders with default play icon when paused", () => {
     const { container } = renderGinger(<PlayPause />, { tracks });
     const view = within(container);
-    expect(view.getByRole("button", { name: "Play" })).toBeTruthy();
-    expect(view.getByText("Play")).toBeTruthy();
+    const btn = view.getByRole("button", { name: "Play" });
+    expect(btn.querySelector("svg")).toBeTruthy();
   });
 
   it("calls consumer onClick alongside internal handler", () => {
@@ -36,16 +36,17 @@ describe("PlayPause", () => {
     expect(spy).toHaveBeenCalledOnce();
   });
 
-  it("accepts custom play and pause labels", () => {
+  it("uses string play and pause labels for accessible names", () => {
     const { container } = renderGinger(<PlayPause playLabel="Go" pauseLabel="Stop" />, { tracks });
-    expect(within(container).getByText("Go")).toBeTruthy();
+    expect(within(container).getByRole("button", { name: "Go" })).toBeTruthy();
   });
 });
 
 describe("Next", () => {
-  it("renders with default children", () => {
+  it("renders with default skip-forward icon", () => {
     const { container } = renderGinger(<Next />, { tracks });
-    expect(within(container).getByText("Next")).toBeTruthy();
+    const btn = within(container).getByRole("button", { name: "Next track" });
+    expect(btn.querySelector("svg")).toBeTruthy();
   });
 
   it("calls consumer onClick alongside internal handler", () => {
@@ -62,9 +63,10 @@ describe("Next", () => {
 });
 
 describe("Previous", () => {
-  it("renders with default children", () => {
+  it("renders with default skip-back icon", () => {
     const { container } = renderGinger(<Previous />, { tracks });
-    expect(within(container).getByText("Previous")).toBeTruthy();
+    const btn = within(container).getByRole("button", { name: "Previous track" });
+    expect(btn.querySelector("svg")).toBeTruthy();
   });
 
   it("calls consumer onClick alongside internal handler", () => {
@@ -91,9 +93,10 @@ describe("Shuffle", () => {
 });
 
 describe("Repeat", () => {
-  it("renders with repeat mode label", () => {
+  it("renders with repeat mode aria label and icon", () => {
     const { container } = renderGinger(<Repeat />, { tracks });
-    expect(within(container).getByRole("button")).toBeTruthy();
+    const btn = within(container).getByRole("button", { name: "Repeat off" });
+    expect(btn.querySelector("svg")).toBeTruthy();
   });
 
   it("calls consumer onClick alongside internal handler", () => {
@@ -105,10 +108,11 @@ describe("Repeat", () => {
 });
 
 describe("Mute", () => {
-  it("renders with aria-pressed false by default", () => {
+  it("renders with aria-pressed false and volume icon by default", () => {
     const { container } = renderGinger(<Mute />, { tracks });
-    const btn = within(container).getByRole("button");
+    const btn = within(container).getByRole("button", { name: "Mute" });
     expect(btn.getAttribute("aria-pressed")).toBe("false");
+    expect(btn.querySelector("svg")).toBeTruthy();
   });
 
   it("calls consumer onClick alongside internal handler", () => {

@@ -1,6 +1,7 @@
 import { GingerPlayer } from "./audio/GingerPlayer";
 import * as Control from "./components/controls/Controls";
 import * as Current from "./components/current";
+import * as Icon from "./components/icons";
 import { GingerPlaylistCompound } from "./components/playlist/GingerPlaylist";
 import * as Queue from "./components/queue/QueueDisplay";
 import { GingerProvider } from "./context/GingerProvider";
@@ -53,6 +54,17 @@ export const Ginger = {
     Volume: Control.Volume,
     Mute: Control.Mute,
     PlaybackRate: Control.PlaybackRate,
+  },
+  Icon: {
+    Play: Icon.Play,
+    Pause: Icon.Pause,
+    SkipForward: Icon.SkipForward,
+    SkipBack: Icon.SkipBack,
+    Shuffle: Icon.ShuffleIcon,
+    Volume2: Icon.Volume2,
+    VolumeX: Icon.VolumeX,
+    RepeatGlyph: Icon.RepeatGlyph,
+    Wrapper: Icon.Wrapper,
   },
   Playlist: GingerPlaylistCompound,
 };

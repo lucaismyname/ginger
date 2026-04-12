@@ -1,3 +1,4 @@
+/** Path style aligned with Lucide `pause` (stroke). */
 import { Wrapper } from "./Wrapper";
 
 export function Pause() {

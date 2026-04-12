@@ -7,18 +7,25 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 import { useGingerLocale } from "../../context/GingerLocaleContext";
-import {
-  useGingerMedia,
-  useGingerPlayback,
-} from "../../context/GingerSplitContexts";
+import { useGingerMedia, useGingerPlayback } from "../../context/GingerSplitContexts";
 import {
   usePlayPauseBinding,
   useSeekBarBinding,
   useVolumeSlider,
 } from "../../hooks/useControlBindings";
+import {
+  Pause,
+  Play,
+  RepeatGlyph,
+  ShuffleIcon,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX,
+} from "../icons";
 
 export type PlayPauseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** Optional labels; still headless—defaults are text for a11y */
+  /** When `children` is omitted, defaults are Lucide-style icons; string labels feed `playAriaLabel` / `pauseAriaLabel` fallbacks. */
   playLabel?: ReactNode;
   pauseLabel?: ReactNode;
   /** Screen-reader label when paused (playing would start); defaults to match `playLabel` when it is a string */
@@ -39,10 +46,8 @@ export function PlayPause({
   ...rest
 }: PlayPauseProps) {
   const locale = useGingerLocale();
-  const defaultPlayAria =
-    typeof playLabel === "string" ? playLabel : locale.play;
-  const defaultPauseAria =
-    typeof pauseLabel === "string" ? pauseLabel : locale.pause;
+  const defaultPlayAria = typeof playLabel === "string" ? playLabel : locale.play;
+  const defaultPauseAria = typeof pauseLabel === "string" ? pauseLabel : locale.pause;
   const b = usePlayPauseBinding({
     playAriaLabel: playAriaLabel ?? defaultPlayAria,
     pauseAriaLabel: pauseAriaLabel ?? defaultPauseAria,
@@ -58,7 +63,7 @@ export function PlayPause({
         onClick?.(e);
       }}
     >
-      {children ?? (b.isPaused ? playLabel : pauseLabel)}
+      {children ?? (b.isPaused ? <Play /> : <Pause />)}
     </button>
   );
 }
@@ -70,13 +75,7 @@ export type RepeatProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
 };
 
-export function Repeat({
-  type = "button",
-  ariaLabel,
-  onClick,
-  children,
-  ...rest
-}: RepeatProps) {
+export function Repeat({ type = "button", ariaLabel, onClick, children, ...rest }: RepeatProps) {
   const { repeatMode, cycleRepeat } = useGingerPlayback();
   const locale = useGingerLocale();
   const label = locale.repeat[repeatMode];
@@ -91,7 +90,7 @@ export function Repeat({
         onClick?.(e);
       }}
     >
-      {children ?? label}
+      {children ?? <RepeatGlyph mode={repeatMode} />}
     </button>
   );
 }
@@ -101,13 +100,7 @@ Repeat.displayName = "Ginger.Control.Repeat";
 export type NextProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   ariaLabel?: string;
 };
-export function Next({
-  type = "button",
-  children = "Next",
-  ariaLabel,
-  onClick,
-  ...rest
-}: NextProps) {
+export function Next({ type = "button", children, ariaLabel, onClick, ...rest }: NextProps) {
   const { next } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
@@ -121,7 +114,7 @@ export function Next({
         onClick?.(e);
       }}
     >
-      {children ?? locale.nextTrack}
+      {children ?? <SkipForward />}
     </button>
   );
 }
@@ -132,7 +125,7 @@ export type PreviousProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 export function Previous({
   type = "button",
-  children = "Previous",
+  children,
   ariaLabel,
   onClick,
   ...rest
@@ -150,7 +143,7 @@ export function Previous({
         onClick?.(e);
       }}
     >
-      {children}
+      {children ?? <SkipBack />}
     </button>
   );
 }
@@ -159,13 +152,7 @@ Previous.displayName = "Ginger.Control.Previous";
 export type ShuffleProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   ariaLabel?: string;
 };
-export function Shuffle({
-  type = "button",
-  children = "Shuffle",
-  ariaLabel,
-  onClick,
-  ...rest
-}: ShuffleProps) {
+export function Shuffle({ type = "button", children, ariaLabel, onClick, ...rest }: ShuffleProps) {
   const { isShuffled, toggleShuffle } = useGingerPlayback();
   const locale = useGingerLocale();
   return (
@@ -180,7 +167,7 @@ export function Shuffle({
         onClick?.(e);
       }}
     >
-      {children ?? locale.shuffle}
+      {children ?? <ShuffleIcon />}
     </button>
   );
 }
@@ -196,13 +183,7 @@ export type SeekBarProps = Omit<
   inputStyle?: CSSProperties;
 };
 
-export function SeekBar({
-  inputStyle,
-  style,
-  unstyled = false,
-  ariaLabel,
-  ...rest
-}: SeekBarProps) {
+export function SeekBar({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: SeekBarProps) {
   const b = useSeekBarBinding();
   const mergedStyle = unstyled
     ? { ...style, ...inputStyle }
@@ -237,13 +218,7 @@ export type VolumeProps = Omit<
   inputStyle?: CSSProperties;
 };
 
-export function Volume({
-  inputStyle,
-  style,
-  unstyled = false,
-  ariaLabel,
-  ...rest
-}: VolumeProps) {
+export function Volume({ inputStyle, style, unstyled = false, ariaLabel, ...rest }: VolumeProps) {
   const b = useVolumeSlider();
   const mergedStyle = unstyled
     ? { ...style, ...inputStyle }
@@ -286,8 +261,6 @@ export function Mute({
 }: MuteProps) {
   const { muted, toggleMute } = useGingerMedia();
   const locale = useGingerLocale();
-  const m = muteLabel ?? locale.mute;
-  const u = unmuteLabel ?? locale.unmute;
   return (
     <button
       data-ginger-component="Mute"
@@ -300,7 +273,7 @@ export function Mute({
         onClick?.(e);
       }}
     >
-      {children ?? (muted ? u : m)}
+      {children ?? (muted ? (unmuteLabel ?? <VolumeX />) : (muteLabel ?? <Volume2 />))}
     </button>
   );
 }

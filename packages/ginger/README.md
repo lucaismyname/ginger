@@ -487,6 +487,12 @@ Transport and media controls.
 | `Ginger.Control.Mute` | Toggle mute on/off | `muteLabel`, `unmuteLabel`, native button props |
 | `Ginger.Control.PlaybackRate` | Select input for playback speed | `rates`, native select props |
 
+**Default visuals:** `PlayPause`, `Next`, `Previous`, `Shuffle`, `Repeat`, and `Mute` render minimal inline SVGs (path data from [Lucide](https://lucide.dev), no extra npm dependency) when **`children` is omitted**. Pass **`children`** to replace the icon. Screen readers still use **`aria-label`** from locale and bindings; for `PlayPause`, **`playLabel`** / **`pauseLabel`** / **`playAriaLabel`** / **`pauseAriaLabel`** tune accessible names when those labels are strings.
+
+### `Ginger.Icon.*`
+
+The same SVG building blocks exposed for custom layouts: **`Ginger.Icon.Play`**, **`Pause`**, **`SkipForward`**, **`SkipBack`**, **`Shuffle`** (Lucide shuffle glyph), **`Volume2`**, **`VolumeX`**, **`RepeatGlyph`** (pass **`mode`**: `"off"` \| `"all"` \| `"one"`), and **`Wrapper`**. You can also import them by name from the package root (e.g. `import { Play, SkipForward } from "@lucaismyname/ginger"`).
+
 Example:
 
 ```tsx

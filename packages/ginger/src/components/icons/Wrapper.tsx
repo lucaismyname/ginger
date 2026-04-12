@@ -36,10 +36,12 @@ export function Wrapper(
       viewBox={viewBox ?? "0 0 24 24"}
       fill="none"
       stroke={stroke ?? "currentColor"}
-      stroke-width={strokeWidth ?? 2}
-      stroke-linecap={strokeLinecap ?? "round"}
-      stroke-linejoin={strokeLinejoin ?? "round"}
+      strokeWidth={strokeWidth ?? 2}
+      strokeLinecap={strokeLinecap ?? "round"}
+      strokeLinejoin={strokeLinejoin ?? "round"}
       className={className}
+      aria-hidden
+      role="presentation"
       {...rest}
     >
       {children}

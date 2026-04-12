@@ -15,17 +15,24 @@ export type GingerPlaylistConfig = {
   playOnSelect: boolean;
 };
 
-const GingerPlaylistConfigContext = createContext<GingerPlaylistConfig | null>(null);
+const GingerPlaylistConfigContext = createContext<GingerPlaylistConfig | null>(
+  null,
+);
 
 function usePlaylistConfig(): GingerPlaylistConfig {
   const ctx = useContext(GingerPlaylistConfigContext);
   if (!ctx) {
-    throw new Error("Ginger.Playlist.Track must be used inside <Ginger.Playlist>");
+    throw new Error(
+      "Ginger.Playlist.Track must be used inside <Ginger.Playlist>",
+    );
   }
   return ctx;
 }
 
-export type GingerPlaylistProps = Omit<HTMLAttributes<HTMLUListElement>, "children"> & {
+export type GingerPlaylistProps = Omit<
+  HTMLAttributes<HTMLUListElement>,
+  "children"
+> & {
   children?: ReactNode;
   /** Remove default list/row styles for fully custom playlist styling. */
   unstyled?: boolean;
@@ -53,7 +60,8 @@ export function GingerPlaylist({
   style,
   ...rest
 }: GingerPlaylistProps) {
-  const { tracks, currentIndex, playTrackAt, selectTrackAt } = useGingerPlayback();
+  const { tracks, currentIndex, playTrackAt, selectTrackAt } =
+    useGingerPlayback();
 
   const listStyle: CSSProperties = unstyled
     ? { ...style }
@@ -72,7 +80,7 @@ export function GingerPlaylist({
   if (manual) {
     return (
       <GingerPlaylistConfigContext.Provider value={{ playOnSelect }}>
-        <ul style={listStyle} {...rest}>
+        <ul data-ginger-component="Playlist" style={listStyle} {...rest}>
           {children}
         </ul>
       </GingerPlaylistConfigContext.Provider>
@@ -104,7 +112,9 @@ export function GingerPlaylist({
                   color: unstyled ? undefined : "inherit",
                   font: unstyled ? undefined : "inherit",
                   cursor: unstyled ? undefined : "pointer",
-                  padding: unstyled ? undefined : "var(--ginger-playlist-row-padding, 6px 8px)",
+                  padding: unstyled
+                    ? undefined
+                    : "var(--ginger-playlist-row-padding, 6px 8px)",
                   ...rowStyle,
                 }}
               >
@@ -127,7 +137,10 @@ export function GingerPlaylist({
 
 GingerPlaylist.displayName = "Ginger.Playlist";
 
-export type GingerPlaylistTrackProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> & {
+export type GingerPlaylistTrackProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "type"
+> & {
   index: number;
   /** Remove default row button styles for fully custom styling. */
   unstyled?: boolean;
@@ -146,21 +159,23 @@ export function GingerPlaylistTrack({
   ...buttonRest
 }: GingerPlaylistTrackProps) {
   const { playOnSelect } = usePlaylistConfig();
-  const { tracks, currentIndex, playTrackAt, selectTrackAt } = useGingerPlayback();
+  const { tracks, currentIndex, playTrackAt, selectTrackAt } =
+    useGingerPlayback();
   const active = index === currentIndex;
   const track = tracks[index];
   const defaultLabel =
     track != null ? (
-      <span>
+      <span data-ginger-component="PlaylistTrack">
         {track.title}
         {track.artist ? ` — ${track.artist}` : ""}
       </span>
     ) : null;
 
   return (
-    <li {...liProps}>
+    <li {...liProps} data-ginger-component="PlaylistTrack">
       <button
         type="button"
+        data-ginger-component="PlaylistTrackButton"
         aria-current={active ? "true" : undefined}
         data-ginger-active={active || undefined}
         className={className}
@@ -176,7 +191,9 @@ export function GingerPlaylistTrack({
           color: unstyled ? undefined : "inherit",
           font: unstyled ? undefined : "inherit",
           cursor: unstyled ? undefined : "pointer",
-          padding: unstyled ? undefined : "var(--ginger-playlist-row-padding, 6px 8px)",
+          padding: unstyled
+            ? undefined
+            : "var(--ginger-playlist-row-padding, 6px 8px)",
           ...style,
         }}
         {...buttonRest}

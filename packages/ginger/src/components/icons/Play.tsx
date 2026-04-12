@@ -1,3 +1,4 @@
+/** Path style aligned with Lucide `play` (stroke). */
 import { Wrapper } from "./Wrapper";
 export function Play() {
   return (

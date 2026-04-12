@@ -40,7 +40,7 @@ describe("GingerProvider integration", () => {
     const { container } = render(<TestPlayer />);
     const view = within(container);
     await act(() => {
-      fireEvent.click(view.getByText("Next"));
+      fireEvent.click(view.getByRole("button", { name: "Next track" }));
     });
     expect(view.getByText("Song Two")).toBeTruthy();
   });
@@ -49,11 +49,11 @@ describe("GingerProvider integration", () => {
     const { container } = render(<TestPlayer />);
     const view = within(container);
     await act(() => {
-      fireEvent.click(view.getByText("Next"));
+      fireEvent.click(view.getByRole("button", { name: "Next track" }));
     });
     expect(view.getByText("Song Two")).toBeTruthy();
     await act(() => {
-      fireEvent.click(view.getByText("Previous"));
+      fireEvent.click(view.getByRole("button", { name: "Previous track" }));
     });
     expect(view.getByText("Song One")).toBeTruthy();
   });
