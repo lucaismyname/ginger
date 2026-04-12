@@ -147,13 +147,51 @@ export function App() {
 
       <main className="w-full max-w-2xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
-          <h1 className="md:-ml-8 font-pixel text-4xl sm:text-6xl font-normal tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
-            &lt;
-            <span className="text-orange-600 dark:text-orange-500">
-              Ginger
-            </span>{" "}
-            /&gt;
-          </h1>
+          <div
+            aria-describedby="ginger-title-tooltip"
+            className="group relative inline-flex flex-col items-start rounded-sm md:-ml-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
+            tabIndex={0}
+          >
+            <h1 className="font-pixel text-5xl sm:text-6xl font-normal tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+              &lt;
+              <span className="text-orange-600 dark:text-orange-500">
+                Ginger
+              </span>{" "}
+              /&gt;
+            </h1>
+            <span className="sr-only">
+              Focus the title to preview a simple Ginger player example.
+            </span>
+            <div
+              className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(90vw,26rem)] translate-y-1 opacity-0 transition duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+              id="ginger-title-tooltip"
+              role="tooltip"
+            >
+              <div className="absolute -top-1.5 left-8 h-3 w-3 rotate-45 border-l border-t border-zinc-300 bg-zinc-100/95 dark:border-zinc-700 dark:bg-zinc-900/95" />
+              <div className="rounded-lg border border-zinc-300 bg-zinc-100/95 p-3 shadow-xl shadow-black/20 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/95">
+                <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                  quick example
+                </p>
+                <pre className="overflow-x-auto rounded-md border border-zinc-700/80 bg-zinc-950 px-3 py-2 font-mono text-xs leading-relaxed text-zinc-100">
+                  <code>
+                    <span className="text-zinc-400">{`// simple Ginger player`}</span>
+                    {"\n"}
+                    <span className="text-zinc-300">
+                      {"<Ginger.Provider initialTracks={tracks}>"}
+                    </span>
+                    {"\n"}
+                    <span className="text-orange-400">
+                      {"  <Ginger.Player />"}
+                    </span>
+                    {"\n"}
+                    <span className="text-zinc-300">
+                      {"</Ginger.Provider>"}
+                    </span>
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
 
           <p className="mt-4 text-base md:-mr-0 md:ml-0 text-pretty leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
             A headless React audio player. Build your own UI with playlists,
