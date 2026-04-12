@@ -18,7 +18,7 @@ export default {
           "sans-serif",
         ],
         pixel: [
-          'Fusion Pixel 12px Monospaced SC',
+          '"Fusion Pixel 12px Monospaced SC"',
           "ui-monospace",
           "monospace",
         ],

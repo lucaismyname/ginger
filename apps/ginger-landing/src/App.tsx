@@ -1,5 +1,8 @@
 import { Ginger, useGingerState } from "@lucaismyname/ginger";
 import type { Track, TrackChapter } from "@lucaismyname/ginger";
+import type { LucideIcon } from "lucide-react";
+import { Globe, Link2, EyeIcon, Package } from "lucide-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { PlaybackRateSelect } from "./components/PlaybackRateSelect";
 import { ThemeToggle } from "./components/ThemeToggle";
@@ -105,6 +108,25 @@ function LandingPlayerControls() {
   );
 }
 
+function SectionLabel({
+  icon: Icon,
+  children,
+}: {
+  icon: LucideIcon;
+  children: ReactNode;
+}) {
+  return (
+    <p className="mb-2 flex items-center gap-2 font-pixel text-[0.80em] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+      <Icon
+        aria-hidden
+        className="size-[1em] shrink-0 text-orange-600 dark:text-orange-500"
+        strokeWidth={2}
+      />
+      {children}
+    </p>
+  );
+}
+
 export function App() {
   const [copyLabel, setCopyLabel] = useState("Copy");
 
@@ -125,9 +147,9 @@ export function App() {
 
       <main className="w-full max-w-2xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
-          <h1 className="md:-ml-8 font-pixel text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+          <h1 className="md:-ml-8 font-pixel text-4xl sm:text-6xl font-normal tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
             &lt;
-            <span className=" font-bold text-orange-600 dark:text-orange-500">
+            <span className="text-orange-600 dark:text-orange-500">
               Ginger
             </span>{" "}
             /&gt;
@@ -140,9 +162,7 @@ export function App() {
             the library.
           </p>
           <div className="mt-8 w-full max-w-full">
-            <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
-              Example
-            </p>
+            <SectionLabel icon={EyeIcon}>Example</SectionLabel>
             <Ginger.Provider initialTracks={LANDING_TRACKS}>
               <Ginger.Player className="hidden w-32" />
               <LandingPlayerControls />
@@ -150,12 +170,10 @@ export function App() {
           </div>
           <section className="md:flex flex-col w-full md:flex-row gap-6 items-start justify-start">
             <div className="mt-8 w-full max-w-full flex-1 grow-1">
-              <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
-                Install
-              </p>
+              <SectionLabel icon={Package}>Install</SectionLabel>
               <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
-                <pre className="min-w-0 flex-1 overflow-x-hidden w-full whitespace-nowrap font-mono text-sm text-zinc-900 dark:text-zinc-100">
-                  <code className="whitespace-nowrap">{NPM_CMD}</code>
+                <pre className="min-w-0 flex-1 overflow-x-hidden w-full whitespace-nowrap font-mono text-base text-zinc-900 dark:text-zinc-100">
+                  <code className="font-pixel whitespace-nowrap">{NPM_CMD}</code>
                 </pre>
                 <button
                   aria-live="polite"
@@ -183,13 +201,11 @@ export function App() {
             </div>
 
             <div className="mt-8 text-zinc-600 dark:text-zinc-400">
-              <p className="mb-2 text-[0.66em] tracking-wider font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
-                Links
-              </p>
+              <SectionLabel icon={Globe}>Links</SectionLabel>
               <section className="flex flex-row gap-4 items-center justify-start">
                 <a
                   href={NPM_URL}
-                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -197,7 +213,7 @@ export function App() {
                 </a>
                 <a
                   href={REPO_URL}
-                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -205,7 +221,7 @@ export function App() {
                 </a>
                 <a
                   href={"https://lucamack.com"}
-                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  className="font-pixel block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
                   rel="noreferrer"
                   target="_blank"
                 >
