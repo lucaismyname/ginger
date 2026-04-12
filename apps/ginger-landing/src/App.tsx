@@ -180,7 +180,7 @@ export function App() {
             aria-describedby="ginger-title-tooltip"
             className="group relative inline-flex flex-col items-start rounded-sm md:-ml-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
           >
-            <h1 className="font-pixel text-5xl sm:text-6xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+            <h1 className="font-pixel text-5xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700">
               &lt;
               <span className="text-orange-600 dark:text-orange-500">
                 Ginger
@@ -262,9 +262,9 @@ export function App() {
           </div>
 
           <p className="mt-4 text-base md:-mr-0 md:ml-0 text-pretty leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
-            A headless React audio player. Build your own UI with playlists,
-            keyboard shortcuts, remote-control, spatial-support, audio
-            analyzers, and media session support—without fighting the DOM inside
+            A headless React audio player primitive. Build your own UI with playlists,
+            keyboard shortcuts, remote-control, spatial support, audio
+            analyzers, media session support, and more — without fighting the DOM inside
             the library.
           </p>
           <div className="mt-8 w-full max-w-full">
