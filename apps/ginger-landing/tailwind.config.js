@@ -17,6 +17,11 @@ export default {
           "system-ui",
           "sans-serif",
         ],
+        pixel: [
+          'Fusion Pixel 12px Monospaced SC',
+          "ui-monospace",
+          "monospace",
+        ],
         mono: [
           "Geist Mono",
           "ui-monospace",

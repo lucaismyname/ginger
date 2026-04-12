@@ -83,7 +83,7 @@ function LandingPlayerControls() {
       </div>
       <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row md:items-center md:justify-between">
         <section className="flex w-full flex-1 items-center gap-4 md:min-w-0">
-          <Ginger.Control.PlayPause className="rounded-full border border-zinc-300 p-1.5 text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
+          <Ginger.Control.PlayPause className="p-1.5 text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
           <span className="w-11 shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
             <Ginger.Current.Elapsed />
           </span>
@@ -123,9 +123,9 @@ export function App() {
     <div className="relative flex min-h-screen w-full flex-col md:items-start md:justify-center px-6 py-6 md:py-16 sm:px-10 lg:px-16">
       <ThemeToggle />
 
-      <main className="w-full max-w-xl text-left mx-auto">
+      <main className="w-full max-w-2xl text-left mx-auto">
         <section className="flex flex-col items-start justify-start">
-          <h1 className="lg:-ml-8 font-mono text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+          <h1 className="md:-ml-8 font-pixel text-4xl font-semibold tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
             &lt;
             <span className=" font-bold text-orange-600 dark:text-orange-500">
               Ginger
@@ -201,7 +201,15 @@ export function App() {
                   rel="noreferrer"
                   target="_blank"
                 >
-                  GitHub
+                  GH
+                </a>
+                <a
+                  href={"https://lucamack.com"}
+                  className="block flex-1 shrink-1 grow-1 rounded-lg border border-zinc-300/70 bg-zinc-100/90 w-full px-4 py-3 font-mono text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-100"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  WWW
                 </a>
               </section>
             </div>
