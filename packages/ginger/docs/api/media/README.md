@@ -10,6 +10,10 @@ A headless react audio primitive for music and podcast UIs on the native **`<aud
 npm install @lucaismyname/ginger
 ```
 
+## Changelog
+
+Release notes live in [`CHANGELOG.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/CHANGELOG.md) (also **published on npm** next to this readme).
+
 ## Quick Start
 
 ```tsx
@@ -51,6 +55,7 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 
 For docs beyond this README, use the repository links below:
 
+- **Changelog**: [`CHANGELOG.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/CHANGELOG.md)
 - **Docs folder map** (Markdown vs generated API): [`docs/README.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/README.md)
 - Getting started: [`docs/getting-started.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/getting-started.md)
 - Testing guide: [`docs/guides/testing.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/testing.md)
@@ -1252,8 +1257,9 @@ These priorities guide new work in the library; they are not a guarantee of ship
 
 | Path | Purpose |
 |------|---------|
-| [`packages/ginger`](packages/ginger) | Publishable library (`@lucaismyname/ginger`) |
-| [`apps/demo`](apps/demo) | Demo app with working examples |
+| [`packages/ginger`](https://github.com/lucaismyname/ginger/tree/main/packages/ginger) | Publishable library (`@lucaismyname/ginger`) |
+| [`apps/demo`](https://github.com/lucaismyname/ginger/tree/main/apps/demo) | Demo app (feature matrix, Playwright smoke tests) |
+| [`apps/ginger-landing`](https://github.com/lucaismyname/ginger/tree/main/apps/ginger-landing) | Landing page (live player, bundled samples) |
 
 ```bash
 npm install --include=dev
@@ -1265,18 +1271,14 @@ If your npm config sets `omit=dev`, devDependencies may not install. Use `--incl
 
 ## Publish
 
-Do **not** run `npm publish` at the repo root. The root package is **`private: true`**.
+Do **not** run `npm publish` at the **monorepo root** as if it were the package—the root `package.json` is **`private: true`**.
 
-Publish from the workspace:
+From the **repository root**, use the helper script (it `cd`s into this folder so npm’s registry metadata picks up **this** `README.md` on [npmjs.com](https://www.npmjs.com/package/@lucaismyname/ginger)):
 
 ```bash
 npm run publish:lib
 ```
 
-Or from `packages/ginger`:
+Avoid `npm publish -w @lucaismyname/ginger` from the root for releases: the tarball contents are correct, but the **package page readme** can incorrectly show the **root** readme. Alternatively run `npm publish --access public` **from `packages/ginger`** after `npm run verify:release`.
 
-```bash
-npm publish --access public
-```
-
-`prepublishOnly` runs the library build automatically.
+`prepublishOnly` runs the library build and checks automatically.

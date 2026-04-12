@@ -1,11 +1,14 @@
 # Ginger documentation (`packages/ginger/docs`)
 
-This folder holds **narrative docs** (Markdown) and a **generated API site** (HTML). Use this README as a map; everything below is written for humans, not for npm publish (the published tarball still includes only `dist`, `README.md`, etc.—see the package root [`README.md`](../README.md) for install and overview).
+This folder holds **narrative docs** (Markdown) and a **generated API site** (HTML). Use this README as a map; everything below is written for humans, not for npm publish (the published tarball still includes only `dist`, `README.md`, `CHANGELOG.md`, `LICENSE`—see the package root [`README.md`](../README.md) for install and overview).
+
+**Monorepo context:** The [repository root `README.md`](https://github.com/lucaismyname/ginger/blob/main/README.md) describes `apps/demo`, `apps/ginger-landing`, CI, Husky, Playwright, and how to run `npm run publish:lib` so npm shows the **package** readme.
 
 ## What lives where
 
 | Path | Purpose |
 |------|---------|
+| **[`../CHANGELOG.md`](../CHANGELOG.md)** | Version history for `@lucaismyname/ginger` (also included in the npm package) |
 | **[`getting-started.md`](./getting-started.md)** | Install, minimal `<Ginger.Provider>` example, core concepts, links onward |
 | **[`api-overview.md`](./api-overview.md)** | Table of public import paths (`@lucaismyname/ginger`, subpaths), relation to TypeDoc |
 | **[`reference/subpaths.md`](./reference/subpaths.md)** | Deep dive on optional `@lucaismyname/ginger/*` entrypoints (client, testing, waveform, EQ, …) |
@@ -35,8 +38,9 @@ Requires a successful `npm run build` first if you want links to resolve against
 ## Suggested reading order
 
 1. Root [`README.md`](../README.md) (package pitch + quick example).
-2. [`getting-started.md`](./getting-started.md).
-3. [`reference/components.md`](./reference/components.md) + [`reference/hooks.md`](./reference/hooks.md) while coding.
-4. [`guides/recipes.md`](./guides/recipes.md) for queue updates, autoplay, persistence.
-5. [`reference/subpaths.md`](./reference/subpaths.md) when you need waveform, EQ, spatial, transcript, remote, crossfade, or gapless probe.
-6. [`guides/testing.md`](./guides/testing.md) if you add automated tests around Ginger.
+2. [`CHANGELOG.md`](../CHANGELOG.md) for release notes.
+3. [`getting-started.md`](./getting-started.md).
+4. [`reference/components.md`](./reference/components.md) + [`reference/hooks.md`](./reference/hooks.md) while coding.
+5. [`guides/recipes.md`](./guides/recipes.md) for queue updates, autoplay, persistence.
+6. [`reference/subpaths.md`](./reference/subpaths.md) when you need waveform, EQ, spatial, transcript, remote, crossfade, or gapless probe.
+7. [`guides/testing.md`](./guides/testing.md) if you add automated tests around Ginger.

@@ -16,7 +16,7 @@
 
 ## Apps
 
-- **`apps/ginger-landing`**: Marketing page with a live Ginger player, **same-origin MP3 samples** under `public/samples/`, Quick Start snippet with **syntax highlighting** (Prism), and install/links. UI is split across `src/components/` and `src/data/`.
+- **`apps/ginger-landing`**: Marketing page with a live Ginger player, **same-origin MP3 samples** under `public/samples/`, Quick Start snippet with **lazy-loaded** syntax highlighting (Prism in a separate chunk), and install/links. Social meta is injected at build time (`VITE_SITE_URL`, optional `VITE_OG_IMAGE_URL`; see `apps/ginger-landing/.env.example`). Default **`public/og.jpg`** is referenced via raw GitHub when the canonical URL is still the repo. UI is split across `src/components/`, `src/hooks/`, and `src/data/`.
 - **`apps/demo`**: Feature matrix for the library (queue, waveform, EQ, spatial, transcript, …). Examples use **orange** as the primary accent. **Playwright** smoke tests live under `e2e/`.
 
 ## Quality
