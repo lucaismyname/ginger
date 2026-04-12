@@ -133,11 +133,15 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
       }
       const currentIndex =
         insertIndex <= state.currentIndex ? state.currentIndex + 1 : state.currentIndex;
+      // Mirror insert into originalTracks so shuffle order is preserved
+      const originalTracks =
+        state.isShuffled && state.originalTracks
+          ? insertTrackAt(state.originalTracks, action.payload.track, state.originalTracks.length)
+          : state.originalTracks;
       return {
         ...state,
         tracks,
-        isShuffled: false,
-        originalTracks: null,
+        originalTracks,
         currentIndex: clampIndex(currentIndex, tracks.length),
       };
     }
@@ -150,11 +154,21 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
           : index === state.currentIndex
             ? Math.min(state.currentIndex, Math.max(0, tracks.length - 1))
             : state.currentIndex;
+      // Mirror removal in originalTracks by track identity so shuffle order is preserved
+      const originalTracks =
+        state.isShuffled && state.originalTracks
+          ? (() => {
+              const removedTrack = state.tracks[index];
+              const origIdx = findIndexByTrackIdentity(state.originalTracks, removedTrack);
+              return removeTrackAt(state.originalTracks, origIdx);
+            })()
+          : state.originalTracks;
+      const nextIsShuffled = state.isShuffled && tracks.length > 1;
       return {
         ...state,
         tracks,
-        isShuffled: false,
-        originalTracks: null,
+        isShuffled: nextIsShuffled,
+        originalTracks: nextIsShuffled ? originalTracks : null,
         currentIndex: clampIndex(currentIndex, tracks.length),
         ...(index === state.currentIndex ? resetTimingOnly : {}),
       };
@@ -176,11 +190,19 @@ export function gingerReducer(state: GingerState, action: GingerAction): GingerS
     }
     case "ADD_NEXT": {
       const tracks = addNextTrack(state.tracks, state.currentIndex, action.payload.track);
+      // Mirror into originalTracks: insert after the current track's position in original order
+      const originalTracks =
+        state.isShuffled && state.originalTracks
+          ? (() => {
+              const currentTrack = state.tracks[state.currentIndex];
+              const origCurrentIdx = findIndexByTrackIdentity(state.originalTracks, currentTrack);
+              return addNextTrack(state.originalTracks, origCurrentIdx, action.payload.track);
+            })()
+          : state.originalTracks;
       return {
         ...state,
         tracks,
-        isShuffled: false,
-        originalTracks: null,
+        originalTracks,
       };
     }
     case "SET_INDEX": {

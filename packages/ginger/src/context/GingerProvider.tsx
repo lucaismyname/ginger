@@ -74,11 +74,16 @@ export function GingerProvider({
   asChild = false,
   className,
   style,
+  dir: dirProp,
+  prevRestartThresholdSeconds = 3,
   onTrackChange,
   onPlay,
   onPause,
   onQueueEnd,
   onError,
+  onVolumeChange,
+  onPlaybackRateChange,
+  onSeek,
 }: GingerProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [state, dispatch] = useReducer(gingerReducer, undefined, () =>
@@ -180,6 +185,33 @@ export function GingerProvider({
     prevPausedRef.current = state.isPaused;
   }, [state.isPaused, onPause, onPlay]);
 
+  const prevVolumeRef = useRef<number | undefined>(undefined);
+  const prevMutedRef = useRef<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (prevVolumeRef.current === undefined || prevMutedRef.current === undefined) {
+      prevVolumeRef.current = state.volume;
+      prevMutedRef.current = state.muted;
+      return;
+    }
+    if (prevVolumeRef.current !== state.volume || prevMutedRef.current !== state.muted) {
+      onVolumeChange?.(state.volume, state.muted);
+    }
+    prevVolumeRef.current = state.volume;
+    prevMutedRef.current = state.muted;
+  }, [state.volume, state.muted, onVolumeChange]);
+
+  const prevPlaybackRateRef = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    if (prevPlaybackRateRef.current === undefined) {
+      prevPlaybackRateRef.current = state.playbackRate;
+      return;
+    }
+    if (prevPlaybackRateRef.current !== state.playbackRate) {
+      onPlaybackRateChange?.(state.playbackRate);
+    }
+    prevPlaybackRateRef.current = state.playbackRate;
+  }, [state.playbackRate, onPlaybackRateChange]);
+
   const play = useCallback(() => {
     dispatch({ type: "PLAY" });
   }, []);
@@ -194,12 +226,16 @@ export function GingerProvider({
     else pause();
   }, [pause, play, state.isPaused]);
 
-  const seek = useCallback((timeSeconds: number) => {
-    const el = audioRef.current;
-    if (!el) return;
-    if (!Number.isFinite(timeSeconds)) return;
-    el.currentTime = Math.max(0, timeSeconds);
-  }, []);
+  const seek = useCallback(
+    (timeSeconds: number) => {
+      const el = audioRef.current;
+      if (!el) return;
+      if (!Number.isFinite(timeSeconds)) return;
+      el.currentTime = Math.max(0, timeSeconds);
+      onSeek?.(Math.max(0, timeSeconds));
+    },
+    [onSeek],
+  );
 
   const setVolume = useCallback((volume: number) => {
     dispatch({ type: "SET_VOLUME", payload: clampVolume(volume) });
@@ -222,8 +258,15 @@ export function GingerProvider({
   }, []);
 
   const prev = useCallback(() => {
-    dispatch({ type: "PREV" });
-  }, []);
+    const el = audioRef.current;
+    const threshold = prevRestartThresholdSeconds ?? 3;
+    if (el && threshold > 0 && el.currentTime > threshold) {
+      el.currentTime = 0;
+      onSeek?.(0);
+    } else {
+      dispatch({ type: "PREV" });
+    }
+  }, [prevRestartThresholdSeconds, onSeek]);
 
   const setRepeatMode = useCallback((mode: RepeatMode) => {
     dispatch({ type: "SET_REPEAT", payload: mode });
@@ -279,39 +322,51 @@ export function GingerProvider({
 
   useEffect(() => {
     if (!persistence || !hydrateOnMount) return;
-    const volume = persistence.get("ginger:volume");
-    const muted = persistence.get("ginger:muted");
-    const playbackRate = persistence.get("ginger:playbackRate");
-    const repeatMode = persistence.get("ginger:repeatMode");
-    const currentIndex = persistence.get("ginger:currentIndex");
-    const p = latestInitRef.current;
-    dispatch({
-      type: "INIT",
-      payload: {
-        tracks: p.tracks,
-        playlistMeta: p.playlistMeta,
-        isPaused: p.isPaused,
-        isShuffled: p.isShuffled,
-        playbackMode: p.playbackMode,
-        currentIndex: typeof currentIndex === "number" ? currentIndex : p.currentIndex,
-        repeatMode:
-          repeatMode === "off" || repeatMode === "all" || repeatMode === "one"
-            ? repeatMode
-            : p.repeatMode,
-        volume: typeof volume === "number" ? volume : p.volume,
-        muted: typeof muted === "boolean" ? muted : p.muted,
-        playbackRate: typeof playbackRate === "number" ? playbackRate : p.playbackRate,
-      },
-    });
+    try {
+      const volume = persistence.get("ginger:volume");
+      const muted = persistence.get("ginger:muted");
+      const playbackRate = persistence.get("ginger:playbackRate");
+      const repeatMode = persistence.get("ginger:repeatMode");
+      const currentIndex = persistence.get("ginger:currentIndex");
+      const p = latestInitRef.current;
+      dispatch({
+        type: "INIT",
+        payload: {
+          tracks: p.tracks,
+          playlistMeta: p.playlistMeta,
+          isPaused: p.isPaused,
+          isShuffled: p.isShuffled,
+          playbackMode: p.playbackMode,
+          currentIndex: typeof currentIndex === "number" ? currentIndex : p.currentIndex,
+          repeatMode:
+            repeatMode === "off" || repeatMode === "all" || repeatMode === "one"
+              ? repeatMode
+              : p.repeatMode,
+          volume: typeof volume === "number" ? volume : p.volume,
+          muted: typeof muted === "boolean" ? muted : p.muted,
+          playbackRate: typeof playbackRate === "number" ? playbackRate : p.playbackRate,
+        },
+      });
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[@lucaismyname/ginger] persistence.get() threw during hydration:", e);
+      }
+    }
   }, [hydrateOnMount, persistence]);
 
   useEffect(() => {
     if (!persistence) return;
-    persistence.set("ginger:volume", state.volume);
-    persistence.set("ginger:muted", state.muted);
-    persistence.set("ginger:playbackRate", state.playbackRate);
-    persistence.set("ginger:repeatMode", state.repeatMode);
-    persistence.set("ginger:currentIndex", state.currentIndex);
+    try {
+      persistence.set("ginger:volume", state.volume);
+      persistence.set("ginger:muted", state.muted);
+      persistence.set("ginger:playbackRate", state.playbackRate);
+      persistence.set("ginger:repeatMode", state.repeatMode);
+      persistence.set("ginger:currentIndex", state.currentIndex);
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[@lucaismyname/ginger] persistence.set() threw:", e);
+      }
+    }
   }, [
     persistence,
     state.volume,
@@ -326,9 +381,15 @@ export function GingerProvider({
     const track = state.tracks[state.currentIndex];
     if (!track) return;
     const key = `ginger:resume:${trackIdentity(track)}`;
-    const saved = persistence.get(key);
-    if (typeof saved === "number" && Number.isFinite(saved)) {
-      seek(saved);
+    try {
+      const saved = persistence.get(key);
+      if (typeof saved === "number" && Number.isFinite(saved)) {
+        seek(saved);
+      }
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[@lucaismyname/ginger] persistence.get() threw during resume:", e);
+      }
     }
   }, [persistence, resumeOnTrackChange, state.currentIndex, state.tracks, seek]);
 
@@ -337,7 +398,15 @@ export function GingerProvider({
     const track = state.tracks[state.currentIndex];
     if (!track || !(state.currentTime >= 0)) return;
     const key = `ginger:resume:${trackIdentity(track)}`;
-    const id = setTimeout(() => persistence.set(key, state.currentTime), 250);
+    const id = setTimeout(() => {
+      try {
+        persistence.set(key, state.currentTime);
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn("[@lucaismyname/ginger] persistence.set() threw during resume save:", e);
+        }
+      }
+    }, 250);
     return () => clearTimeout(id);
   }, [persistence, resumeOnTrackChange, state.currentIndex, state.tracks, state.currentTime]);
 
@@ -410,7 +479,8 @@ export function GingerProvider({
   );
   useMediaSessionBridge(Boolean(mediaSession), state, mediaSessionActions);
 
-  const providerDir = locale?.seek && /[\u0590-\u08FF]/.test(locale.seek) ? "rtl" : "ltr";
+  const providerDir =
+    dirProp ?? (locale?.seek && /[\u0590-\u08FF]/.test(locale.seek) ? "rtl" : "ltr");
 
   const value = useMemo<GingerContextValue>(
     () => ({

@@ -20,7 +20,7 @@
         "noUselessFragments": "error"
       },
       "correctness": {
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "warn"
       },
       "a11y": {
         "useMediaCaption": "off"

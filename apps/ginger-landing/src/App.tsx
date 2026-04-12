@@ -1,4 +1,4 @@
-import { Ginger, useGinger, useGingerMedia } from "@lucaismyname/ginger";
+import { Ginger } from "@lucaismyname/ginger";
 import { useState } from "react";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { scan } from "react-scan";
@@ -21,35 +21,10 @@ const LANDING_TRACKS = [
 ];
 
 function LandingPlayerControls() {
-  const { state } = useGinger();
-  const { muted } = useGingerMedia();
-
   return (
     <div className="flex flex-col md:flex-row w-full items-between justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-100/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
       <section className="flex items-center flex-1 grow-1 w-full gap-4">
-        <Ginger.Control.PlayPause
-          aria-label={state.isPaused ? "Play" : "Pause"}
-          className="rounded-full border border-zinc-300 p-1.5 text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500"
-        >
-          {state.isPaused ? (
-            <svg
-              aria-hidden="true"
-              className="h-3.5 w-3.5 fill-current"
-              viewBox="0 0 16 16"
-            >
-              <path d="M5 3.5v9l7-4.5-7-4.5z" />
-            </svg>
-          ) : (
-            <svg
-              aria-hidden="true"
-              className="h-3.5 w-3.5 fill-current"
-              viewBox="0 0 16 16"
-            >
-              <rect x="4" y="3" width="3" height="10" rx="0.8" />
-              <rect x="9" y="3" width="3" height="10" rx="0.8" />
-            </svg>
-          )}
-        </Ginger.Control.PlayPause>
+        <Ginger.Control.PlayPause className="rounded-full border border-zinc-300 p-1.5 text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
         <span className="w-11 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
           <Ginger.Current.Elapsed />
         </span>
@@ -61,28 +36,7 @@ function LandingPlayerControls() {
       </section>
       <section className="flex items-center justify-between w-full shrink-1 gap-4">
         <div className="flex items-center gap-2">
-          <Ginger.Control.Mute
-            className="p-1.5 text-xs text-zinc-900 dark:text-zinc-50"
-            muteLabel={
-              <svg
-                aria-hidden="true"
-                className="h-4 w-4 fill-current"
-                viewBox="0 0 16 16"
-              >
-                <path d="M6.6 4.2 4.7 6H3.2A1.2 1.2 0 0 0 2 7.2v1.6c0 .66.54 1.2 1.2 1.2h1.5l1.9 1.8c.77.73 2.02.19 2.02-.87V5.07c0-1.06-1.25-1.6-2.02-.87zm4.05 2.33.85-.85L14 8.12l-2.5 2.5-.85-.85L12.3 8.1l-1.65-1.57z" />
-              </svg>
-            }
-            unmuteLabel={
-              <svg
-                aria-hidden="true"
-                className="h-3.5 w-3.5 fill-current"
-                viewBox="0 0 16 16"
-              >
-                <path d="M6.6 4.2 4.7 6H3.2A1.2 1.2 0 0 0 2 7.2v1.6c0 .66.54 1.2 1.2 1.2h1.5l1.9 1.8c.77.73 2.02.19 2.02-.87V5.07c0-1.06-1.25-1.6-2.02-.87zM10.4 6a.8.8 0 0 1 1.13.06c.93 1.03.93 2.86 0 3.88a.8.8 0 1 1-1.19-1.08c.41-.45.41-1.28 0-1.73A.8.8 0 0 1 10.4 6zm1.93-1.93a.8.8 0 0 1 1.13.06c1.9 2.08 1.9 5.66 0 7.74a.8.8 0 0 1-1.19-1.08c1.35-1.49 1.35-4.1 0-5.58a.8.8 0 0 1 .06-1.14z" />
-              </svg>
-            }
-            aria-label={muted ? "Unmute" : "Mute"}
-          />
+          <Ginger.Control.Mute className="p-1.5 text-xs text-zinc-900 dark:text-zinc-50 [&_svg]:h-3.5 [&_svg]:w-3.5" />
           <Ginger.Control.Volume className="h-1 md:w-12 !w-24 cursor-pointer appearance-none rounded-full bg-zinc-300 accent-zinc-700 dark:bg-zinc-700 dark:accent-zinc-200" />
         </div>
         <Ginger.Control.PlaybackRate

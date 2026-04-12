@@ -21,6 +21,12 @@ export type UseGingerLiveAnalyzerResult = {
   isSuspended: boolean;
   error: string | null;
   resume: () => Promise<void>;
+  /**
+   * Monotonically increasing counter incremented each animation frame.
+   * Use as a `useMemo` / `useEffect` dependency to respond to new audio data, since
+   * `frequencyData` and `timeDomainData` are mutated in-place (their reference never changes).
+   */
+  frame: number;
 };
 
 const emptyFreq = new Uint8Array(0);
@@ -179,8 +185,6 @@ export function useGingerLiveAnalyzer(
     };
   }, [enabled, audioRef, opts, state.currentIndex]);
 
-  void frame;
-
   return {
     frequencyData: freqRef.current,
     timeDomainData: timeRef.current,
@@ -189,5 +193,6 @@ export function useGingerLiveAnalyzer(
     isSuspended,
     error,
     resume,
+    frame,
   };
 }

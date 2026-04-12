@@ -6,6 +6,12 @@ export type GingerKeyboardShortcutBindings = {
   next?: string;
   previous?: string;
   mute?: string;
+  /** Key to seek forward by `seekSeconds`. Default: undefined (disabled). */
+  seekForward?: string;
+  /** Key to seek backward by `seekSeconds`. Default: undefined (disabled). */
+  seekBackward?: string;
+  /** Seconds to seek per `seekForward` / `seekBackward` keypress. Default: 5. */
+  seekSeconds?: number;
 };
 
 export function useGingerKeyboardShortcuts(
@@ -13,9 +19,13 @@ export function useGingerKeyboardShortcuts(
   bindings: GingerKeyboardShortcutBindings = {},
 ): void {
   const { togglePlayPause, next, prev } = useGingerPlayback();
-  const { toggleMute } = useGingerMedia();
+  const { toggleMute, seek, currentTime, duration } = useGingerMedia();
 
-  const muteBinding = bindings.mute;
+  const {
+    mute: muteBinding,
+    seekForward: seekForwardBinding,
+    seekBackward: seekBackwardBinding,
+  } = bindings;
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
@@ -23,6 +33,9 @@ export function useGingerKeyboardShortcuts(
     const nextKey = (bindings.next ?? "ArrowRight").toLowerCase();
     const prevKey = (bindings.previous ?? "ArrowLeft").toLowerCase();
     const muteKey = muteBinding?.toLowerCase();
+    const seekFwdKey = seekForwardBinding?.toLowerCase();
+    const seekBwdKey = seekBackwardBinding?.toLowerCase();
+    const seekSecs = bindings.seekSeconds ?? 5;
 
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
@@ -44,6 +57,13 @@ export function useGingerKeyboardShortcuts(
       } else if (muteKey && key === muteKey) {
         event.preventDefault();
         toggleMute();
+      } else if (seekFwdKey && key === seekFwdKey) {
+        event.preventDefault();
+        const dur = duration > 0 ? duration : Number.POSITIVE_INFINITY;
+        seek(Math.min(dur, currentTime + seekSecs));
+      } else if (seekBwdKey && key === seekBwdKey) {
+        event.preventDefault();
+        seek(Math.max(0, currentTime - seekSecs));
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -52,10 +72,16 @@ export function useGingerKeyboardShortcuts(
     bindings.next,
     bindings.playPause,
     bindings.previous,
+    bindings.seekSeconds,
+    currentTime,
+    duration,
     enabled,
     muteBinding,
     next,
     prev,
+    seek,
+    seekBackwardBinding,
+    seekForwardBinding,
     toggleMute,
     togglePlayPause,
   ]);

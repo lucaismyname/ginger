@@ -23,7 +23,7 @@ export type {
   UseGingerLiveAnalyzerResult,
 } from "./analyzer/useGingerLiveAnalyzer";
 /** Low-level attach/detach helpers for custom analyzer graph wiring. */
-export { attachLiveAnalyser, detachLiveAnalyser } from "./analyzer/liveAudioGraph";
+export { attachLiveAnalyser, detachLiveAnalyser, setProcessingChain } from "./analyzer/liveAudioGraph";
 /** Low-level analyzer graph option type. */
 export type { LiveAnalyserOptions } from "./analyzer/liveAudioGraph";
 
@@ -43,6 +43,8 @@ export type {
   PlaylistMeta,
   RepeatMode,
   Track,
+  TrackChapter,
+  TrackLyricLine,
 } from "./types";
 
 /** Clamp helpers used by controls and custom integrations. */
@@ -165,3 +167,30 @@ export type {
 
 /** Utility parser for LRC-format lyric text. */
 export { parseLrc } from "./internal/lyrics";
+
+/** Framework-agnostic store factory wrapping gingerReducer; usable outside React. */
+export { createGingerStore } from "./store";
+/** Store type exports. */
+export type { GingerStore, GingerStoreOptions } from "./store";
+
+/** Playback history entry and hook types. */
+export type {
+  GingerPlaybackHistoryEntry,
+  UseGingerPlaybackHistoryOptions,
+  UseGingerPlaybackHistoryResult,
+} from "./hooks/useGingerPlaybackHistory";
+/** Hook for recording the chronological track play history. */
+export { useGingerPlaybackHistory } from "./hooks/useGingerPlaybackHistory";
+
+/** Volume fade options and result types. */
+export type {
+  UseGingerVolumeFadeOptions,
+  UseGingerVolumeFadeResult,
+} from "./hooks/useGingerVolumeFade";
+/** Hook for smooth volume transitions using requestAnimationFrame. */
+export { useGingerVolumeFade } from "./hooks/useGingerVolumeFade";
+
+/** Chapter progress state type. */
+export type { GingerChapterProgress } from "./hooks/useGingerChapterProgress";
+/** Hook for per-chapter playback progress fractions. */
+export { useGingerChapterProgress } from "./hooks/useGingerChapterProgress";

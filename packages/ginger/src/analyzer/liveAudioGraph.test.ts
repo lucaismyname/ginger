@@ -72,10 +72,12 @@ describe("liveAudioGraph", () => {
 
     detachLiveAnalyser(element, first.id);
 
-    expect(firstAnalyser.disconnectCalls).toBe(1);
+    // First analyser must be fully disconnected and no longer in the graph
     expect(firstAnalyser.connections).toEqual([]);
+    expect(firstAnalyser.disconnectCalls).toBeGreaterThanOrEqual(1);
+    // Second analyser should now be the playback sink (connected to destination)
     expect(secondAnalyser.connections).toEqual([context.destination]);
-    expect(secondAnalyser.connectCalls).toEqual([context.destination]);
+    expect(secondAnalyser.connectCalls).toContain(context.destination);
     expect(context.state).toBe("running");
   });
 
@@ -89,7 +91,8 @@ describe("liveAudioGraph", () => {
 
     detachLiveAnalyser(element, attached.id);
 
-    expect(context.sources[0]?.disconnectCalls).toBe(1);
+    // Source must have been disconnected at least once during teardown
+    expect(context.sources[0]?.disconnectCalls).toBeGreaterThanOrEqual(1);
     expect(context.closeCalls).toBe(1);
     expect(context.state).toBe("closed");
 

@@ -15,18 +15,60 @@ export function useGingerSleepTimer(options: GingerSleepTimerOptions): void {
   const remainingTracksRef = useRef(stopAfterTracks ?? 0);
   const prevIndexRef = useRef(currentIndex);
 
+  // Remaining milliseconds for the duration-based timer; carried across pause/resume cycles.
+  const remainingMsRef = useRef(durationMs ?? 0);
+  // Timestamp when the current timer segment started (set when playback resumes).
+  const segmentStartRef = useRef<number | null>(null);
+
   useEffect(() => {
     remainingTracksRef.current = stopAfterTracks ?? 0;
   }, [stopAfterTracks]);
 
+  // Keep remainingMsRef in sync when durationMs changes while the timer is inactive.
+  const prevDurationMsRef = useRef(durationMs);
   useEffect(() => {
-    if (!enabled || !durationMs || durationMs <= 0) return;
-    if (respectPause && isPaused) return;
+    if (prevDurationMsRef.current !== durationMs) {
+      remainingMsRef.current = durationMs ?? 0;
+      prevDurationMsRef.current = durationMs;
+    }
+  }, [durationMs]);
+
+  useEffect(() => {
+    if (!enabled || !durationMs || durationMs <= 0) {
+      // Reset remaining when disabled or no duration
+      remainingMsRef.current = durationMs ?? 0;
+      segmentStartRef.current = null;
+      return;
+    }
+
+    if (respectPause && isPaused) {
+      // Snapshot how much time is left before pausing
+      if (segmentStartRef.current !== null) {
+        const elapsed = Date.now() - segmentStartRef.current;
+        remainingMsRef.current = Math.max(0, remainingMsRef.current - elapsed);
+        segmentStartRef.current = null;
+      }
+      return;
+    }
+
+    // Playing: start (or continue) the countdown from remainingMsRef
+    segmentStartRef.current = Date.now();
     const id = setTimeout(() => {
+      remainingMsRef.current = 0;
+      segmentStartRef.current = null;
       pause();
       onFire?.();
-    }, durationMs);
-    return () => clearTimeout(id);
+    }, remainingMsRef.current);
+
+    return () => {
+      clearTimeout(id);
+      // Snapshot remaining when effect cleans up (e.g. isPaused or deps changed)
+      if (segmentStartRef.current !== null) {
+        const elapsed = Date.now() - segmentStartRef.current;
+        remainingMsRef.current = Math.max(0, remainingMsRef.current - elapsed);
+        segmentStartRef.current = null;
+      }
+    };
   }, [durationMs, enabled, isPaused, onFire, pause, respectPause]);
 
   useEffect(() => {

@@ -11,7 +11,7 @@ class MockAudioNode {
     return node;
   }
 
-  disconnect() {
+  disconnect(_node?: MockAudioNode) {
     this.disconnectCalls += 1;
     this.connections.length = 0;
   }
@@ -48,10 +48,18 @@ export class MockAnalyserNode extends MockAudioNode {
   }
 }
 
+export class MockBiquadFilterNode extends MockAudioNode {
+  type: BiquadFilterType = "peaking";
+  readonly frequency = { value: 1000 };
+  readonly gain = { value: 0 };
+  readonly Q = { value: 1 };
+}
+
 export class MockAudioContext extends EventTarget {
   readonly destination = new MockAudioDestinationNode();
   readonly sources: MockMediaElementAudioSourceNode[] = [];
   readonly analysers: MockAnalyserNode[] = [];
+  readonly biquadFilters: MockBiquadFilterNode[] = [];
 
   sampleRate = 44_100;
   state: MockAudioContextState = "running";
@@ -68,6 +76,12 @@ export class MockAudioContext extends EventTarget {
     const analyser = new MockAnalyserNode();
     this.analysers.push(analyser);
     return analyser as unknown as AnalyserNode;
+  }
+
+  createBiquadFilter() {
+    const filter = new MockBiquadFilterNode();
+    this.biquadFilters.push(filter);
+    return filter as unknown as BiquadFilterNode;
   }
 
   async resume() {

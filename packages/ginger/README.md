@@ -64,7 +64,46 @@ Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden a
 - `@lucaismyname/ginger/client`
 - `@lucaismyname/ginger/testing`
 - `@lucaismyname/ginger/waveform`
+- `@lucaismyname/ginger/equalizer`
 - `@lucaismyname/ginger/experimental-gapless`
+
+### Equalizer
+
+```tsx
+import { useGingerEqualizer } from "@lucaismyname/ginger/equalizer";
+
+function MyPlayer() {
+  const { setBandGain, bands, error } = useGingerEqualizer({
+    bands: [
+      { frequency: 60 },
+      { frequency: 250 },
+      { frequency: 1000 },
+      { frequency: 4000 },
+      { frequency: 16000 },
+    ],
+  });
+
+  return (
+    <div>
+      {bands.map((band, i) => (
+        <input
+          key={band.frequency}
+          type="range"
+          min={-12}
+          max={12}
+          step={0.5}
+          defaultValue={0}
+          onChange={(e) => setBandGain(i, Number(e.target.value))}
+          aria-label={`${band.frequency} Hz`}
+        />
+      ))}
+      {error && <p>{error}</p>}
+    </div>
+  );
+}
+```
+
+The EQ and `useGingerLiveAnalyzer` share the same `AudioContext` and can be used together. EQ filters are inserted before the analyser in the Web Audio graph.
 
 ### Experimental Notice
 
@@ -734,15 +773,15 @@ Example:
 
 - **Headless control bindings** (bind to your own components): **`useSeekBarBinding()`**, **`useVolumeSlider()`**, **`usePlayPauseBinding({ playAriaLabel?, pauseAriaLabel? })`**. Each returns props such as `value`, `min`, `max`, handlers, and `ariaLabel` / `ariaValueText` where relevant.
 
-- **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useNextTrackPrefetch()`**, **`useGingerChapters()`**, **`useGingerLyricsSync()`**, and **`useGingerDebugLog()`** are available for custom UX and diagnostics.
+- **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useNextTrackPrefetch()`**, **`useGingerChapters()`**, **`useGingerChapterProgress()`**, **`useGingerLyricsSync()`**, **`useGingerDebugLog()`**, **`useGingerPlaybackHistory()`**, **`useGingerVolumeFade()`** are available for custom UX and diagnostics.
 
 - **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings, chapter list labels, and synced lyrics list names; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
 
-- **Track extras** — Optional **`metadata?: Record<string, unknown>`** on **`Track`** (and on **`PlaylistMeta`**) is ignored by core logic; use it for badges, flags, or UI-only fields.
+- **Track extras** — Optional **`metadata?: Record<string, unknown>`** on **`Track`** (and on **`PlaylistMeta`**) is ignored by core logic; use it for badges, flags, or UI-only fields. Chapter entries and timed lyric lines are now typed as the named exports **`TrackChapter`** and **`TrackLyricLine`** respectively.
 
 - **Buffered UI** — **`Ginger.Current.BufferRail`** shows load progress; **`Ginger.Current.TimeRail`** supports **`showBuffered`** to stack a buffered layer behind the played segment.
 
-- **Audio analyzers** — Live Web Audio data for real-time visuals (**`useGingerLiveAnalyzer`**, main package) and whole-file grids for waveforms or spectrograms (**`useAudioFileAnalysis`** / **`analyzeAudioFile`**, `@lucaismyname/ginger/waveform`). See [Audio analyzers (visualizations)](#audio-analyzers-visualizations).
+- **Audio analyzers** — Live Web Audio data for real-time visuals (**`useGingerLiveAnalyzer`**, main package), parametric EQ (**`useGingerEqualizer`**, `@lucaismyname/ginger/equalizer`), and whole-file grids for waveforms or spectrograms (**`useAudioFileAnalysis`** / **`analyzeAudioFile`**, `@lucaismyname/ginger/waveform`). See [Audio analyzers (visualizations)](#audio-analyzers-visualizations).
 
 Recipes below cover queue lifecycle and media edge cases.
 
@@ -787,7 +826,12 @@ Important:
 - **CORS** — For cross-origin `fileUrl` values, set **`crossOrigin`** on **`Ginger.Player`** (for example `"anonymous"`) so the media element is usable with **`AudioContext`**.
 - **One `MediaElementAudioSourceNode` per `<audio>`** — The library reuses a single Web Audio graph per underlying element. Multiple instances of **`useGingerLiveAnalyzer`** attach extra **`AnalyserNode`**s as taps; only one tap carries audio to **`destination`** so volume stays correct.
 - **Autoplay** — The **`AudioContext`** may start **`suspended`** until a user gesture; call **`resume()`** or start playback after interaction.
-- **Reading buffers** — `frequencyData` and `timeDomainData` are updated each animation frame while enabled; read them during render after **`frequencyBinCount > 0`** (they are backed by mutable buffers that the hook fills in a `requestAnimationFrame` loop).
+- **Reading buffers** — `frequencyData` and `timeDomainData` are updated each animation frame while enabled; read them during render after **`frequencyBinCount > 0`** (they are backed by mutable buffers that the hook fills in a `requestAnimationFrame` loop). Because the array _reference_ never changes, use the returned **`frame`** counter as a `useMemo` / `useEffect` dependency to react to new data:
+
+  ```ts
+  const { frequencyData, frame } = useGingerLiveAnalyzer();
+  const peak = useMemo(() => Math.max(...frequencyData), [frame]);
+  ```
 
 ### Whole file: `@lucaismyname/ginger/waveform`
 
@@ -864,15 +908,18 @@ import { useGingerKeyboardShortcuts } from "@lucaismyname/ginger";
 function Hotkeys() {
   useGingerKeyboardShortcuts(true, {
     playPause: " ",
-    next: "ArrowRight",
-    previous: "ArrowLeft",
+    next: "n",
+    previous: "p",
     mute: "m",
+    seekForward: "ArrowRight",
+    seekBackward: "ArrowLeft",
+    seekSeconds: 5,
   });
   return null;
 }
 ```
 
-`mute` is optional; if omitted, no mute key binding is installed.
+`mute`, `seekForward`, and `seekBackward` are all optional; keys are lower-cased before comparison. `seekSeconds` defaults to `5` when seek bindings are set.
 
 ### Chapters and synced lyrics
 
@@ -918,6 +965,76 @@ export function App() {
 
 The hook preloads the **logical** next track (same rules as the Next button) using a detached `HTMLAudioElement` with `preload="auto"`. Pass **`crossOrigin`** when it matches **`Ginger.Player`** for cross-origin URLs.
 
+### Playback history
+
+```tsx
+import { useGingerPlaybackHistory } from "@lucaismyname/ginger";
+
+function RecentTracks() {
+  const { history, clearHistory } = useGingerPlaybackHistory({ maxLength: 20 });
+  return (
+    <ul>
+      {history.map((entry, i) => (
+        <li key={i}>{entry.track.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+Records every track change in chronological order (most recent last). Useful for displaying play history or implementing "smart previous" in shuffle mode. History lives in component state and is reset on remount.
+
+### Volume fade
+
+```tsx
+import { useGingerVolumeFade } from "@lucaismyname/ginger";
+
+function FadeButton() {
+  const { fadeVolumeTo, cancelFade, isFading } = useGingerVolumeFade();
+  return (
+    <button
+      onClick={() => fadeVolumeTo({ targetVolume: 0, durationMs: 1500, onComplete: pause })}
+      disabled={isFading}
+    >
+      Fade out
+    </button>
+  );
+}
+```
+
+Smoothly interpolates volume over a given duration using `requestAnimationFrame`. Call `cancelFade()` to hold at the current level.
+
+### Chapter progress
+
+```tsx
+import { useGingerChapterProgress } from "@lucaismyname/ginger";
+
+function ChapterBar() {
+  const { progress, elapsed, remaining } = useGingerChapterProgress();
+  return <progress value={progress} max={1} />;
+}
+```
+
+Returns `progress` (0–1 fraction through the active chapter), `elapsed` (seconds into it), and `remaining` (seconds until the next chapter or track end). Complements `useGingerChapters` for chapter scrubber UIs.
+
+### Framework-agnostic store
+
+```ts
+import { createGingerStore } from "@lucaismyname/ginger";
+
+const store = createGingerStore({ tracks: myTracks });
+
+const unsub = store.subscribe((state) => {
+  console.log("current track index:", state.currentIndex);
+});
+
+store.dispatch({ type: "NEXT" });
+store.init({ tracks: newTracks });
+unsub();
+```
+
+A pure-JS store wrapping `gingerReducer` with `getState`, `dispatch`, `subscribe`, and `init`. No React required — usable in Svelte, Vue, Node.js testing environments, or server-side rendering.
+
 ### Sleep timer and drag seek
 
 ```tsx
@@ -930,6 +1047,8 @@ function Extras({ duration }: { duration: number }) {
 }
 ```
 
+When `respectPause` is `true` (default), pausing stops the countdown and elapsed time is preserved across pause/resume cycles — the timer picks up where it left off rather than restarting from the full duration.
+
 ### Persistence + resume
 
 `Ginger.Provider` accepts:
@@ -938,7 +1057,20 @@ function Extras({ duration }: { duration: number }) {
 - `hydrateOnMount?: boolean`
 - `resumeOnTrackChange?: boolean`
 
-This allows persisted volume/rate/repeat/index and optional per-track resume positions.
+This allows persisted volume/rate/repeat/index and optional per-track resume positions. Errors thrown by the adapter are caught and logged as dev-mode warnings so a storage quota error never crashes the player.
+
+### Provider event callbacks
+
+New callbacks available on `Ginger.Provider`:
+
+- `onVolumeChange?: (volume: number, muted: boolean) => void` — fired when volume or mute state changes
+- `onPlaybackRateChange?: (rate: number) => void` — fired when playback speed changes
+- `onSeek?: (timeSeconds: number) => void` — fired on any `seek()` call
+
+### Provider layout props
+
+- `dir?: "ltr" | "rtl" | "auto"` — explicit layout direction; takes priority over the automatic RTL heuristic derived from locale strings
+- `prevRestartThresholdSeconds?: number` — pressing previous restarts the current track when `currentTime > threshold` (default `3`); set to `0` to always skip to the previous track
 
 ### Queue mutation actions and single-track mode
 

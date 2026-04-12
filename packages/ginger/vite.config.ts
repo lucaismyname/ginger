@@ -32,6 +32,7 @@ export default defineConfig({
         "testing/index": resolve(__dirname, "src/testing/index.tsx"),
         "waveform/index": resolve(__dirname, "src/waveform/index.ts"),
         "experimental-gapless/index": resolve(__dirname, "src/experimental-gapless/index.ts"),
+        "equalizer/index": resolve(__dirname, "src/equalizer/index.ts"),
       },
       name: "Ginger",
       formats: ["es", "cjs"],

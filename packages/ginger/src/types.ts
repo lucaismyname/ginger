@@ -24,6 +24,18 @@ export type GingerLocaleMessages = {
   playbackRateTimes: (rate: number) => string;
 };
 
+/** A single chapter marker within a track. */
+export type TrackChapter = {
+  title: string;
+  startSeconds: number;
+};
+
+/** A single time-stamped lyric line; used for `lyricsTimed` and LRC parsing output. */
+export type TrackLyricLine = {
+  time: number;
+  text: string;
+};
+
 export type Track = {
   /** Optional stable identity for duplicate URLs / queue mutations */
   id?: string;
@@ -40,8 +52,8 @@ export type Track = {
   isrc?: string;
   trackNumber?: number;
   lyrics?: string;
-  lyricsTimed?: Array<{ time: number; text: string }>;
-  chapters?: Array<{ title: string; startSeconds: number }>;
+  lyricsTimed?: TrackLyricLine[];
+  chapters?: TrackChapter[];
   /** Hint before metadata loads; never overrides finite media duration */
   durationSeconds?: number;
   /** App-specific data for custom UI; not read by Ginger core */
@@ -184,6 +196,24 @@ export type GingerProviderProps = {
   onPause?: () => void;
   onQueueEnd?: () => void;
   onError?: (message: string) => void;
+  onVolumeChange?: (volume: number, muted: boolean) => void;
+  onPlaybackRateChange?: (rate: number) => void;
+  /**
+   * Called whenever `seek()` is invoked (i.e. a programmatic or user-initiated scrub).
+   * Fires with the requested time in seconds.
+   */
+  onSeek?: (timeSeconds: number) => void;
+  /**
+   * Explicit layout direction for the provider root. When set, this takes priority over the
+   * automatic RTL heuristic derived from locale strings.
+   */
+  dir?: "ltr" | "rtl" | "auto";
+  /**
+   * Seconds threshold for "restart current track" on previous action.
+   * When `currentTime > prevRestartThresholdSeconds`, pressing previous restarts the track
+   * instead of skipping to the prior one. Set to `0` to disable. Default: `3`.
+   */
+  prevRestartThresholdSeconds?: number;
 };
 
 export type GingerPersistenceAdapter = {
