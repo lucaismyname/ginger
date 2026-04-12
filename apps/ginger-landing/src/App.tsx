@@ -220,7 +220,7 @@ function LandingPlayerControls() {
       </div>
       <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row md:items-center md:justify-between">
         <section className="flex w-full flex-1 items-center gap-4 md:min-w-0">
-          <Ginger.Control.PlayPause className="py-1.5 px-1.5 border  rounded text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
+          <Ginger.Control.PlayPause className="py-1.5 px-1.5   rounded text-xs text-zinc-900 transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-500 [&_svg]:h-3.5 [&_svg]:w-3.5" />
           <span className="w-11 shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
             <Ginger.Current.Elapsed />
           </span>

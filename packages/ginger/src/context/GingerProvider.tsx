@@ -419,6 +419,11 @@ export function GingerProvider({
       el.pause();
       return;
     }
+    // Guard against replay loops when a stale "play" state lands after queue-end.
+    if (el.ended && computeEndedTransition(stateRef.current).kind === "stop") {
+      dispatch({ type: "PAUSE" });
+      return;
+    }
     let cancelled = false;
     void (async () => {
       if (beforePlay) {
@@ -465,6 +470,7 @@ export function GingerProvider({
       return;
     }
     if (transition.kind === "stop") {
+      audioRef.current?.pause();
       dispatch({ type: "PAUSE" });
       onQueueEnd?.();
       return;

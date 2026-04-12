@@ -36,6 +36,15 @@ function PlaybackRateAndNextButtons() {
   );
 }
 
+function PlayLastTrackButton() {
+  const { playTrackAt } = useGinger();
+  return (
+    <button type="button" onClick={() => playTrackAt(1)}>
+      play-last-track
+    </button>
+  );
+}
+
 describe("GingerPlayer + provider", () => {
   it("advances to the next track when the audio element fires ended", async () => {
     const { container } = renderGinger(<Title />, { tracks });
@@ -93,6 +102,34 @@ describe("GingerPlayer + provider", () => {
       expect(audio.playbackRate).toBe(0.5);
     } finally {
       loadSpy.mockRestore();
+    }
+  });
+
+  it("does not re-trigger play when ended at queue end", async () => {
+    const playSpy = vi
+      .spyOn(window.HTMLMediaElement.prototype, "play")
+      .mockResolvedValue(undefined);
+
+    try {
+      const { container } = renderGinger(<PlayLastTrackButton />, { tracks, initialPaused: true });
+      const audio = queryAudio(container)!;
+
+      await act(async () => {
+        fireEvent.click(within(container).getByText("play-last-track"));
+      });
+      expect(playSpy).toHaveBeenCalledTimes(1);
+
+      Object.defineProperty(audio, "ended", { configurable: true, value: true });
+      await act(async () => {
+        fireEvent.ended(audio);
+      });
+      await act(async () => {
+        fireEvent.play(audio);
+      });
+
+      expect(playSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      playSpy.mockRestore();
     }
   });
 });
