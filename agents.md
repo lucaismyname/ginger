@@ -2,17 +2,17 @@
 
 - always use `npm`
 - assume that the dev server is already running, no need to start again on a another port
-- when asked to create a react applications, always use the followinf software and packages in the project until otherwise specified:
-    - Vite (as build, HMR, dev-env and packaging tool)
-    - Typescript
-    - Tailwind for styling
-    - ShadCN with Base-UI for compoenents (and components.json)
-    - Base-UI for UI-primitives
-    - React Router (library mode)
-    - tanstack react query (when needed, not automatically installed)
-    - tanstack virtual for virtualization (when needed, not automatically installed)
-    - tanstack table for data tables (when needed, not automatically installed)
-    - React Helmet Async for SEO (when needed, not automatically installed)
+- when asked to create a react application in `apps/*` folder, always use the following software and packages in the project until otherwise specified:
+  - Vite (as build, HMR, dev-env and packaging tool)
+  - Typescript and Strict Mode
+  - Tailwind for styling
+  - ShadCN with Base-UI for components (and components.json in root of react app)
+  - Base-UI for UI-primitives
+  - React Router (library mode)
+  - tanstack react query (when needed, not automatically installed)
+  - tanstack virtual for virtualization (when needed, not automatically installed)
+  - tanstack table for data tables (when needed, not automatically installed)
+  - React Helmet Async for SEO (when needed, not automatically installed)
 
 ## Coding rules & style
 
