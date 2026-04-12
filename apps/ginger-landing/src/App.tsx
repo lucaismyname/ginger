@@ -1,3 +1,4 @@
+import * as Accordion from "@radix-ui/react-accordion";
 import { Ginger, useGingerState } from "@lucaismyname/ginger";
 import type { Track, TrackChapter } from "@lucaismyname/ginger";
 import type { LucideIcon } from "lucide-react";
@@ -39,6 +40,98 @@ const LANDING_TRACKS: Track[] = [
       { title: "Outro", startSeconds: 420 },
     ],
   },
+];
+
+const CAPABILITIES = [
+  {
+    title: "Playlists",
+    description: "Queue and switch tracks with a tiny API surface.",
+  },
+  {
+    title: "Keyboard Shortcuts",
+    description: "Wire your own key bindings without DOM coupling.",
+  },
+  {
+    title: "Media Session",
+    description: "Integrates with lock screen and OS transport controls.",
+  },
+  {
+    title: "Remote Control",
+    description: "Drive playback state from outside the visible player UI.",
+  },
+  {
+    title: "Chapter Markers",
+    description: "Expose track segments for podcasts and long mixes.",
+  },
+  {
+    title: "Audio Analyzers",
+    description: "Feed visualizers and metering from the same source.",
+  },
+  {
+    title: "Composable Controls",
+    description: "Mix and match primitives for your own layouts.",
+  },
+  {
+    title: "TypeScript First",
+    description: "Strongly typed data and component contracts by default.",
+  },
+];
+
+const HOW_IT_WORKS = [
+  {
+    title: "Provide tracks",
+    code: "<Ginger.Provider initialTracks={tracks}>",
+    description: "Give Ginger your track list and metadata.",
+  },
+  {
+    title: "Mount the engine",
+    code: "<Ginger.Player />",
+    description: "Attach the player primitive once in your tree.",
+  },
+  {
+    title: "Compose your UI",
+    code: "<Ginger.Control.* /> + <Ginger.Current.* />",
+    description: "Build custom controls and now-playing views.",
+  },
+];
+
+const API_GROUPS = [
+  {
+    label: "Core",
+    items: ["Ginger.Provider", "Ginger.Player", "useGingerState"],
+  },
+  {
+    label: "Controls",
+    items: [
+      "Ginger.Control.PlayPause",
+      "Ginger.Control.SeekBar",
+      "Ginger.Control.Volume",
+      "Ginger.Control.Mute",
+    ],
+  },
+  {
+    label: "Current Track",
+    items: [
+      "Ginger.Current.Title",
+      "Ginger.Current.Artist",
+      "Ginger.Current.Duration",
+      "Ginger.Current.Artwork",
+    ],
+  },
+];
+
+const USE_CASES = [
+  "Podcast players with chapter-aware seek bars.",
+  "Music products with custom branded control strips.",
+  "Ambient and soundboard tools with lightweight controls.",
+  "Accessibility-first UIs with explicit and semantic controls.",
+];
+
+const TRUST_POINTS = [
+  "Headless React primitives",
+  "TypeScript-first API",
+  "Composable controls",
+  "Minimal CSS assumptions",
 ];
 
 function SeekBarWithChapterMarkers() {
@@ -134,6 +227,37 @@ function SectionLabel({
   );
 }
 
+function AccordionSection({
+  value,
+  title,
+  children,
+}: {
+  value: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Accordion.Item
+      value={value}
+      className="overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100/80 dark:border-zinc-700 dark:bg-zinc-900/80"
+    >
+      <Accordion.Header>
+        <Accordion.Trigger className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left">
+          <span className="font-pixel text-sm tracking-wide text-zinc-800 dark:text-zinc-200">
+            {title}
+          </span>
+          <span className="text-lg leading-none text-orange-600 transition-transform duration-150 data-[state=open]:rotate-45 dark:text-orange-500">
+            +
+          </span>
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content className="border-t border-zinc-200/90 px-3 pb-3 pt-3 dark:border-zinc-700/90">
+        {children}
+      </Accordion.Content>
+    </Accordion.Item>
+  );
+}
+
 export function App() {
   const [copyLabel, setCopyLabel] = useState("Copy");
   const [tooltipCopyLabel, setTooltipCopyLabel] = useState("Copy");
@@ -180,7 +304,7 @@ export function App() {
             aria-describedby="ginger-title-tooltip"
             className="group relative inline-flex flex-col items-start rounded-sm md:-ml-9 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
           >
-            <h1 className="font-pixel text-5xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700">
+            <h1 className="font-pixel text-4xl sm:text-5xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700">
               &lt;
               <span className="text-orange-600 dark:text-orange-500">
                 Ginger
@@ -273,6 +397,133 @@ export function App() {
               <Ginger.Player className="hidden w-32" />
               <LandingPlayerControls />
             </Ginger.Provider>
+          </div>
+          <div className="mt-8 w-full max-w-full">
+            <SectionLabel icon={Link2}>Guides</SectionLabel>
+            <Accordion.Root
+              type="single"
+              collapsible
+              defaultValue="capabilities"
+              className="flex w-full flex-col gap-2"
+            >
+              <AccordionSection value="capabilities" title="Core Capabilities">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {CAPABILITIES.map((item) => (
+                    <article
+                      key={item.title}
+                      className="rounded-md border border-zinc-200 bg-zinc-50/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950/60"
+                    >
+                      <h3 className="font-pixel text-xs tracking-wide text-zinc-900 dark:text-zinc-100">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                        {item.description}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              </AccordionSection>
+
+              <AccordionSection value="how-it-works" title="How It Works">
+                <ol className="flex flex-col gap-2">
+                  {HOW_IT_WORKS.map((step, index) => (
+                    <li
+                      key={step.title}
+                      className="rounded-md border border-zinc-200 bg-zinc-50/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950/60"
+                    >
+                      <p className="font-pixel text-xs tracking-wide text-zinc-900 dark:text-zinc-100">
+                        {index + 1}. {step.title}
+                      </p>
+                      <code className="mt-1 block font-mono text-xs text-orange-700 dark:text-orange-300">
+                        {step.code}
+                      </code>
+                      <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
+                        {step.description}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </AccordionSection>
+
+              <AccordionSection value="api-snapshot" title="API Snapshot">
+                <div className="flex flex-col gap-2">
+                  {API_GROUPS.map((group) => (
+                    <section
+                      key={group.label}
+                      className="rounded-md border border-zinc-200 bg-zinc-50/80 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950/60"
+                    >
+                      <p className="font-pixel text-xs tracking-wide text-zinc-900 dark:text-zinc-100">
+                        {group.label}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {group.items.map((item) => (
+                          <code
+                            key={item}
+                            className="rounded border border-zinc-300 bg-zinc-100 px-1.5 py-0.5 font-mono text-[11px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+                          >
+                            {item}
+                          </code>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </AccordionSection>
+
+              <AccordionSection value="use-cases" title="Use Cases">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {USE_CASES.map((useCase) => (
+                    <p
+                      key={useCase}
+                      className="rounded-md border border-zinc-200 bg-zinc-50/80 px-3 py-2 text-xs leading-relaxed text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950/60 dark:text-zinc-300"
+                    >
+                      {useCase}
+                    </p>
+                  ))}
+                </div>
+              </AccordionSection>
+
+              <AccordionSection value="trust-cta" title="Developer Trust + CTA">
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {TRUST_POINTS.map((point) => (
+                      <p
+                        key={point}
+                        className="rounded-md border border-zinc-200 bg-zinc-50/80 px-3 py-2 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950/60 dark:text-zinc-300"
+                      >
+                        {point}
+                      </p>
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <button
+                      aria-describedby="install-copy-status"
+                      className="rounded-md border border-zinc-300/70 bg-zinc-50 px-3 py-2 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                      onClick={handleCopyInstall}
+                      type="button"
+                    >
+                      Copy install command
+                    </button>
+                    <a
+                      href={NPM_URL}
+                      rel="noreferrer"
+                      target="_blank"
+                      className="rounded-md border border-zinc-300/70 bg-zinc-50 px-3 py-2 text-center text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    >
+                      Open NPM docs
+                    </a>
+                    <a
+                      href={REPO_URL}
+                      rel="noreferrer"
+                      target="_blank"
+                      className="rounded-md border border-zinc-300/70 bg-zinc-50 px-3 py-2 text-center text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    >
+                      Open GitHub
+                    </a>
+                  </div>
+                </div>
+              </AccordionSection>
+            </Accordion.Root>
           </div>
           <section className="md:flex flex-col w-full md:flex-row gap-6 items-start justify-start">
             <div className="mt-8 w-full max-w-full flex-1 grow-1">

@@ -12,5 +12,5 @@
 
 ## Apps
 
-- `apps/ginger-landing`: Landing page with an editor-style tooltip on the `Ginger` title that previews a minimal Ginger player snippet on hover/focus.
+- `apps/ginger-landing`: Landing page with an editor-style tooltip on the `Ginger` title and a single-open Radix accordion for capabilities, setup flow, API snapshot, use cases, and trust/CTA content.
 - `apps/demo`: Demo players
