@@ -11,10 +11,13 @@ export type UseAudioFileAnalysisState = {
   error: string | null;
 };
 
+/** When extending {@link AnalyzeAudioFileOptions}, thread new fields through the destructuring below and the effect dependency array. */
 export function useAudioFileAnalysis(
   fileUrl: string | null | undefined,
   options: AnalyzeAudioFileOptions = {},
 ): UseAudioFileAnalysisState {
+  const { timeSlices, samplesPerSlice, spectrogram, fftSize, frequencyBins, channel } = options;
+
   const [state, setState] = useState<UseAudioFileAnalysisState>({
     data: null,
     isLoading: false,
@@ -36,7 +39,14 @@ export function useAudioFileAnalysis(
 
     void (async () => {
       try {
-        const data = await analyzeAudioFile(fileUrl, options);
+        const data = await analyzeAudioFile(fileUrl, {
+          timeSlices,
+          samplesPerSlice,
+          spectrogram,
+          fftSize,
+          frequencyBins,
+          channel,
+        });
         if (!cancelled) {
           setState({ data, isLoading: false, error: null });
         }
@@ -54,15 +64,7 @@ export function useAudioFileAnalysis(
     return () => {
       cancelled = true;
     };
-  }, [
-    fileUrl,
-    options.timeSlices,
-    options.samplesPerSlice,
-    options.spectrogram,
-    options.fftSize,
-    options.frequencyBins,
-    options.channel,
-  ]);
+  }, [fileUrl, timeSlices, samplesPerSlice, spectrogram, fftSize, frequencyBins, channel]);
 
   return state;
 }

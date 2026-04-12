@@ -1,4 +1,5 @@
 import { clampFftSize, hanningWindow, realFftMagnitudes } from "../internal/fft";
+import { getAudioContextConstructor } from "./getAudioContextConstructor";
 
 export type AnalyzeAudioFileOptions = {
   /** Number of time rows in the amplitude grid (and spectrogram if enabled). Default 128. */
@@ -168,9 +169,7 @@ export async function analyzeAudioFile(
     throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
   }
   const raw = await response.arrayBuffer();
-  const Context =
-    window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const Context = getAudioContextConstructor();
   if (!Context) {
     throw new Error("Web Audio API is not available");
   }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGinger } from "../hooks/useGinger";
 import type { GingerInitPayload } from "../types";
 import { DEFAULT_REMOTE_CHANNEL_NAME, type RemoteMessage } from "./remoteProtocol";
+import { validateGingerInitPayloadDev } from "./validateGingerInitPayloadDev";
 
 export type UseGingerRemoteOptions = {
   /** BroadcastChannel name. Default: `"ginger-remote"`. */
@@ -206,6 +207,15 @@ export function useGingerRemote(options: UseGingerRemoteOptions = {}): UseGinger
         }
         case "STATE_SNAPSHOT": {
           if (roleRef.current === "follower" && msg.tabId !== myId) {
+            if (
+              process.env.NODE_ENV !== "production" &&
+              !validateGingerInitPayloadDev(msg.snapshot)
+            ) {
+              console.warn(
+                "[@lucaismyname/ginger] ignored STATE_SNAPSHOT: invalid GingerInitPayload",
+              );
+              break;
+            }
             initRef.current(msg.snapshot);
           }
           break;

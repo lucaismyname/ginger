@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getAudioContextConstructor } from "./getAudioContextConstructor";
 
 export type UseAudioPeaksState = {
   peaks: number[];
@@ -21,6 +22,10 @@ export function useAudioPeaks(
       setState({ peaks: [], isLoading: false, error: null });
       return;
     }
+    if (typeof window === "undefined") {
+      setState({ peaks: [], isLoading: false, error: null });
+      return;
+    }
     let cancelled = false;
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     void (async () => {
@@ -29,7 +34,11 @@ export function useAudioPeaks(
         if (!response.ok)
           throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
         const buffer = await response.arrayBuffer();
-        const audioContext = new AudioContext();
+        const Context = getAudioContextConstructor();
+        if (!Context) {
+          throw new Error("Web Audio API is not available");
+        }
+        const audioContext = new Context();
         try {
           const audioBuffer = await audioContext.decodeAudioData(buffer);
           const channel = audioBuffer.getChannelData(0);

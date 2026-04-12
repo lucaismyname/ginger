@@ -16,6 +16,9 @@ export type UseNextTrackPrefetchOptions = {
  * Warms the browser cache for the **logical** next track (same rules as the Next control:
  * `computeNextIndex` from queue, repeat, and playback mode) using a detached `HTMLAudioElement`
  * with `preload="auto"`. Safe to call alongside `Ginger.Player`; it does not replace main playback.
+ *
+ * The effect depends on the `tracks` array reference from context. If the parent recreates `tracks`
+ * every render, prefetch will restart repeatedly; keep a stable queue reference (e.g. memoize) when possible.
  */
 export function useNextTrackPrefetch(options: UseNextTrackPrefetchOptions = {}): void {
   const { enabled = true, crossOrigin } = options;

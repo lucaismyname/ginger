@@ -35,6 +35,9 @@ jobs:
       - name: Typecheck library
         run: npm run typecheck
 
+      - name: Typecheck apps
+        run: npm run typecheck:apps
+
       - name: Lint library
         run: npm run lint
 
