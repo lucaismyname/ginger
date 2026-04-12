@@ -40,6 +40,20 @@ describe("Chapters", () => {
     });
     expect(audio?.currentTime).toBe(30);
   });
+
+  it("uses default chapter rows without timestamp spans when unstyled", () => {
+    const { container } = renderGinger(<Chapters unstyled />, { tracks: [trackWithChapters] });
+    const buttons = within(container).getAllByRole("button");
+    expect(buttons[0]?.querySelectorAll("span")).toHaveLength(0);
+  });
+
+  it("uses locale for list accessible name", () => {
+    renderGinger(<Chapters />, {
+      tracks: [trackWithChapters],
+      locale: { chaptersList: "Kapitel" },
+    });
+    expect(screen.getByRole("list", { name: "Kapitel" })).toBeTruthy();
+  });
 });
 
 describe("LyricsSynced", () => {
@@ -49,5 +63,13 @@ describe("LyricsSynced", () => {
     expect(items).toHaveLength(2);
     expect(items[0]?.getAttribute("aria-current")).toBe("true");
     expect(items[1]?.getAttribute("aria-current")).toBeNull();
+  });
+
+  it("uses locale for list accessible name", () => {
+    renderGinger(<LyricsSynced />, {
+      tracks: [trackWithLyrics],
+      locale: { syncedLyricsList: "Liedtext" },
+    });
+    expect(screen.getByRole("list", { name: "Liedtext" })).toBeTruthy();
   });
 });

@@ -1,6 +1,8 @@
 # @lucaismyname/ginger
 
-Headless React audio player primitives for building custom music and podcast UIs.
+**Batteries-included** React audio primitives for music and podcast UIs on the native **`<audio>`** element: a reducer-backed provider, composable **`Ginger.*`** components, and **`useGinger()`** for full control. Many pieces ship sensible defaults (CSS variables, layout helpers); use **`unstyled`** (and related flags below) when you want **behavior and data only**, with your own styling.
+
+**Peer dependencies:** **`react` ≥ 18** (required). **`react-dom` ≥ 18** is listed as a peer for typical DOM apps; it is **optional** in `peerDependenciesMeta`, so setups that do not use `react-dom` can omit it when appropriate.
 
 ## Install
 
@@ -8,32 +10,42 @@ Headless React audio player primitives for building custom music and podcast UIs
 npm install @lucaismyname/ginger
 ```
 
-Peer dependencies:
-
-- `react >= 18`
-- `react-dom >= 18`
-
 ## Quick Start
 
 ```tsx
 import { Ginger } from "@lucaismyname/ginger";
 
-const tracks = [{ id: "a", title: "Track A", fileUrl: "/audio/a.mp3" }];
+const tracks = [
+  {
+    id: "one",
+    title: "One",
+    artist: "Demo Artist",
+    fileUrl: "https://example.com/audio/one.mp3",
+    artworkUrl: "https://example.com/art/one.jpg",
+  },
+  {
+    id: "two",
+    title: "Two",
+    artist: "Demo Artist",
+    fileUrl: "https://example.com/audio/two.mp3",
+  },
+];
 
-export function Player() {
+export function App() {
   return (
-    <Ginger.Provider initialTracks={tracks}>
+    <Ginger.Provider initialTracks={tracks} initialPlaylistMeta={{ title: "My Playlist" }}>
       <Ginger.Player />
+      <Ginger.Current.Title />
+      <Ginger.Current.Artist />
       <Ginger.Control.PlayPause />
-      <Ginger.Control.Previous />
       <Ginger.Control.Next />
-      <Ginger.Control.SeekBar />
-      <Ginger.Control.Volume />
-      <Ginger.Current.Title fallback="No track" />
+      <Ginger.Playlist />
     </Ginger.Provider>
   );
 }
 ```
+
+Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden audio element exists. Everything else is optional and can be replaced with your own UI (including hooks only).
 
 ## Documentation
 
@@ -73,58 +85,6 @@ npm run typecheck
 npm run lint
 npm run docs:api
 ```
-
-# ginger
-
-**`@lucaismyname/ginger`** is a headless React audio player built on the native **`<audio>`** element. It gives you a provider, a hidden media element, a typed state/control hook, and composable React components for transport controls, track metadata, queue metadata, and playlists.
-
-## Install
-
-```bash
-npm install @lucaismyname/ginger
-```
-
-Peer dependencies:
-
-- `react >= 18`
-- `react-dom >= 18`
-
-## Quick Start
-
-```tsx
-import { Ginger } from "@lucaismyname/ginger";
-
-const tracks = [
-  {
-    id: "one",
-    title: "One",
-    artist: "Demo Artist",
-    fileUrl: "https://example.com/audio/one.mp3",
-    artworkUrl: "https://example.com/art/one.jpg",
-  },
-  {
-    id: "two",
-    title: "Two",
-    artist: "Demo Artist",
-    fileUrl: "https://example.com/audio/two.mp3",
-  },
-];
-
-export function App() {
-  return (
-    <Ginger.Provider initialTracks={tracks} initialPlaylistMeta={{ title: "My Playlist" }}>
-      <Ginger.Player />
-      <Ginger.Current.Title />
-      <Ginger.Current.Artist />
-      <Ginger.Control.PlayPause />
-      <Ginger.Control.Next />
-      <Ginger.Playlist />
-    </Ginger.Provider>
-  );
-}
-```
-
-Mount **`<Ginger.Player />`** once inside the same provider tree so the hidden audio element exists. Everything else is optional and can be replaced with your own UI.
 
 ## Copy/Paste Examples
 
@@ -419,6 +379,7 @@ Props:
 | `initialMuted` | `boolean` | `false` | Initial muted state |
 | `initialPlaybackRate` | `number` | `1` | Initial playback rate, clamped `0.25..4` |
 | `initialStateKey` | `string \| number` | `undefined` | Re-dispatches `INIT` when this key changes |
+| `locale` | `Partial<GingerLocaleMessages>` | `undefined` | Override built-in strings (controls, chapter list, synced lyrics list, …) |
 | `mediaSession` | `boolean` | `false` | Enables Media Session lock-screen/OS controls |
 | `beforePlay` | `() => boolean \| Promise<boolean>` | `undefined` | Policy hook run before playback starts |
 | `onPlayBlocked` | `() => void` | `undefined` | Called when `beforePlay` returns `false` |
@@ -426,7 +387,8 @@ Props:
 | `hydrateOnMount` | `boolean` | `false` | Hydrate persisted values into initial provider state |
 | `resumeOnTrackChange` | `boolean` | `false` | Restore/save per-track playback position |
 | `unstyled` | `boolean` | `false` | Skip provider default CSS variable/theme styles |
-| `className` | `string` | `undefined` | Class for the provider wrapper |
+| `asChild` | `boolean` | `false` | Merge shell props (`className`, `style`, `data-ginger-playback`, `dir`) onto the single child element instead of a wrapper `div` |
+| `className` | `string` | `undefined` | Class for the provider wrapper (merged when `asChild`) |
 | `style` | `CSSProperties` | `undefined` | Inline styles / CSS variables |
 | `onTrackChange` | `(track, index) => void` | `undefined` | Fires when current track changes |
 | `onPlay` | `() => void` | `undefined` | Fires when state changes to playing |
@@ -566,7 +528,7 @@ Other current-track components:
 | Component | Description | Important props |
 |-----------|-------------|-----------------|
 | `Ginger.Current.Artwork` | Current track artwork or playlist artwork fallback | `unstyled`, `imgStyle`, `sizes`, `loading`, `decoding`, `onError`, display-base props |
-| `Ginger.Current.Lyrics` | Track lyrics | `preserveWhitespace`, render-prop `children` |
+| `Ginger.Current.Lyrics` | Track lyrics | `preserveWhitespace`, `unstyled`, render-prop `children` |
 | `Ginger.Current.LyricsSynced` | Timed / LRC lyrics with active line | `activeClassName`, `lineClassName`, `unstyled`, render-prop `children` |
 | `Ginger.Current.Chapters` | Chapter list; click seeks to `startSeconds` | `formatStart`, `unstyled`, render-prop `children` |
 | `Ginger.Current.FileUrl` | Track `fileUrl`, hidden unless explicitly enabled | `visible`, display-base props |
@@ -768,7 +730,7 @@ Example:
 
 - **Advanced hooks** — **`useGingerKeyboardShortcuts()`**, **`useGingerSleepTimer()`**, **`useSeekDrag()`**, **`useNextTrackPrefetch()`**, **`useGingerChapters()`**, **`useGingerLyricsSync()`**, and **`useGingerDebugLog()`** are available for custom UX and diagnostics.
 
-- **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
+- **Locale** — Pass **`locale={partialMessages}`** on `Ginger.Provider` (type **`GingerLocaleMessages`**) to translate built-in control strings, chapter list labels, and synced lyrics list names; **`useGingerLocale()`** reads the merged messages anywhere under the provider.
 
 - **Track extras** — Optional **`metadata?: Record<string, unknown>`** on **`Track`** (and on **`PlaylistMeta`**) is ignored by core logic; use it for badges, flags, or UI-only fields.
 
@@ -996,10 +958,14 @@ Use `useGingerDebugLog(true)` during development to log core state transitions i
 ### Fully unstyled mode
 
 - `Ginger.Provider unstyled` disables provider theme defaults (CSS variable injection).
+- `Ginger.Provider asChild` merges the same shell props onto **one** child element (no extra wrapper `div`).
 - `Ginger.Control.SeekBar` and `Ginger.Control.Volume` accept `unstyled`.
 - `Ginger.Current.Artwork`, `Ginger.Queue.Artwork`, `Ginger.Current.TimeRail`, and `Ginger.Current.BufferRail` accept `unstyled`.
 - `Ginger.Playlist` and `Ginger.Playlist.Track` accept `unstyled`.
 - `Ginger.Current.Chapters` and `Ginger.Current.LyricsSynced` accept `unstyled`.
+- `Ginger.Current.Lyrics` accepts `unstyled` to skip default `whiteSpace: pre-wrap` when using `preserveWhitespace` (apply typography via `className` / `style` instead).
+
+With `Ginger.Current.TimeRail` / `showBuffered`, **`unstyled`** removes positioning and background layers; you still get percentage widths on inner segments—supply your own layout (e.g. `position: relative` on the rail, bar heights) so the headless variant lays out correctly.
 
 This gives you a pure state+behavior layer while keeping convenience components available.
 

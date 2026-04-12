@@ -89,4 +89,18 @@ describe("GingerProvider integration", () => {
     const div = container.firstElementChild as HTMLElement;
     expect(div.getAttribute("data-ginger-playback")).toBeTruthy();
   });
+
+  it("merges shell props onto a single child when asChild", () => {
+    const { container } = render(
+      <Ginger.Provider asChild initialTracks={tracks} className="wrap" unstyled>
+        <div data-testid="shell">
+          <Ginger.Player />
+        </div>
+      </Ginger.Provider>,
+    );
+    const shell = container.querySelector<HTMLElement>("[data-testid='shell']");
+    expect(shell).toBeTruthy();
+    expect(shell?.className).toContain("wrap");
+    expect(shell?.getAttribute("data-ginger-playback")).toBeTruthy();
+  });
 });

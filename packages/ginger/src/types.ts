@@ -8,6 +8,10 @@ export type GingerLocaleMessages = {
   seek: string;
   volume: string;
   playbackSpeed: string;
+  /** Accessible name for the chapter list (`Ginger.Current.Chapters`). */
+  chaptersList: string;
+  /** Accessible name for the synced lyrics list (`Ginger.Current.LyricsSynced`). */
+  syncedLyricsList: string;
   nextTrack: string;
   previousTrack: string;
   shuffle: string;
@@ -168,6 +172,11 @@ export type GingerProviderProps = {
   resumeOnTrackChange?: boolean;
   /** Disable default CSS variable/theme styles on provider root. */
   unstyled?: boolean;
+  /**
+   * Merge provider props (`className`, `style`, `data-ginger-playback`, `dir`) onto the single child
+   * element instead of wrapping in an extra `div`. Use for layout systems that forbid wrapper nodes.
+   */
+  asChild?: boolean;
   className?: string;
   style?: CSSProperties;
   onTrackChange?: (track: Track | null, index: number) => void;

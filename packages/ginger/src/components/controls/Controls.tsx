@@ -309,12 +309,12 @@ export function PlaybackRate({
       style={style}
       onChange={(e) => setPlaybackRate(Number(e.currentTarget.value))}
     >
-      {children ?? locale.playbackSpeed}
-      {options.map((r) => (
-        <option key={r} value={String(r)}>
-          {r === 1 ? locale.playbackRateNormal : locale.playbackRateTimes(r)}
-        </option>
-      ))}
+      {children ??
+        options.map((r) => (
+          <option key={r} value={String(r)}>
+            {r === 1 ? locale.playbackRateNormal : locale.playbackRateTimes(r)}
+          </option>
+        ))}
     </select>
   );
 }

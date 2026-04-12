@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { useGingerLocale } from "../../context/GingerLocaleContext";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { useGingerLyricsSync } from "../../hooks/useGingerLyricsSync";
 import type { TimedLyricLine } from "../../internal/lyrics";
@@ -29,6 +30,7 @@ export function LyricsSynced({
   children,
 }: LyricsSyncedProps) {
   const state = useGingerState();
+  const locale = useGingerLocale();
   const { lines, activeIndex } = useGingerLyricsSync();
 
   if (lines.length === 0) {
@@ -52,7 +54,11 @@ export function LyricsSynced({
       };
 
   return (
-    <ul className={className} style={{ ...listStyle, ...style }} aria-label="Synced lyrics">
+    <ul
+      className={className}
+      style={{ ...listStyle, ...style }}
+      aria-label={locale.syncedLyricsList}
+    >
       {lines.map((line, index) => {
         const active = index === activeIndex;
         return (

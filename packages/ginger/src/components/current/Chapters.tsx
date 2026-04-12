@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { useGingerLocale } from "../../context/GingerLocaleContext";
 import { useGingerState } from "../../context/GingerSplitContexts";
 import { type GingerChapter, useGingerChapters } from "../../hooks/useGingerChapters";
 import { formatMmSs } from "../../internal/formatTime";
@@ -27,6 +28,7 @@ export function Chapters({
   children,
 }: ChaptersProps) {
   const state = useGingerState();
+  const locale = useGingerLocale();
   const { list, activeIndex, seekTo } = useGingerChapters();
 
   if (list.length === 0) {
@@ -50,7 +52,7 @@ export function Chapters({
       };
 
   return (
-    <ul className={className} style={{ ...listStyle, ...style }} aria-label="Chapters">
+    <ul className={className} style={{ ...listStyle, ...style }} aria-label={locale.chaptersList}>
       {list.map((chapter, index) => {
         const active = index === activeIndex;
         return (
@@ -77,6 +79,10 @@ export function Chapters({
             >
               {children ? (
                 children(chapter, index, active, state)
+              ) : unstyled ? (
+                <>
+                  {formatStart(chapter.startSeconds)} {chapter.title}
+                </>
               ) : (
                 <span>
                   <span style={{ opacity: 0.75, marginRight: "0.35em" }}>

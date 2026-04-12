@@ -62,6 +62,7 @@ export type RenderGingerProviderOptions = Partial<
     | "onQueueEnd"
     | "onError"
     | "persistence"
+    | "locale"
   >
 > & {
   /** When false, omit `Ginger.Player` (e.g. to assert missing-audio warnings). Default true. */

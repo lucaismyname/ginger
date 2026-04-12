@@ -8,7 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Pending release.
+### Changed
+
+### Fixed
+
+## [0.0.27] - 2026-04-12
+
+### Added
+
+- `Ginger.Provider` `asChild` merges shell props (`className`, `style`, `data-ginger-playback`, `dir`) onto a single child element instead of wrapping in an extra `div`.
+- `GingerLocaleMessages.chaptersList` and `syncedLyricsList` for accessible names on `Ginger.Current.Chapters` and `Ginger.Current.LyricsSynced` lists (override via `locale` on the provider).
+- `Ginger.Current.Lyrics` `unstyled` skips default `whiteSpace: pre-wrap` when `preserveWhitespace` is true so typography can be applied only via `className` / `style`.
+
+### Changed
+
+- README: single introduction (removed duplicate install/quick start), clearer **react** / **react-dom** peer story, and positioning for batteries-included defaults versus `unstyled` / headless usage.
+- Package `description` aligned with batteries-included positioning.
+
+### Fixed
+
+- `Chapters` default row content respects `unstyled` (no nested timestamp `<span>` styling when unstyled).
+- `Ginger.Control.PlaybackRate` no longer inserts a stray text node before `<option>` children in `<select>`.
 
 ## [0.0.22] - 2026-04-11
 

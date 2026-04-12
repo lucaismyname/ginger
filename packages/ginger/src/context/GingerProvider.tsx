@@ -1,4 +1,15 @@
-import { type CSSProperties, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import {
+  type CSSProperties,
+  Children,
+  type ReactElement,
+  cloneElement,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import {
   clampPlaybackRate,
   clampVolume,
@@ -60,6 +71,7 @@ export function GingerProvider({
   hydrateOnMount = false,
   resumeOnTrackChange = false,
   unstyled = false,
+  asChild = false,
   className,
   style,
   onTrackChange,
@@ -567,22 +579,58 @@ export function GingerProvider({
     [style, unstyled],
   );
 
+  const shellProps = useMemo(
+    () => ({
+      className,
+      style: mergedStyle,
+      "data-ginger-playback": playbackUi,
+      dir: providerDir,
+    }),
+    [className, mergedStyle, playbackUi, providerDir],
+  );
+
+  const shell = useMemo(() => {
+    if (!asChild) {
+      return (
+        <div
+          className={shellProps.className}
+          style={shellProps.style}
+          data-ginger-playback={shellProps["data-ginger-playback"]}
+          dir={shellProps.dir}
+        >
+          {children}
+        </div>
+      );
+    }
+    const only = Children.only(children);
+    if (!isValidElement(only)) {
+      throw new Error("Ginger.Provider asChild expects a single React element child.");
+    }
+    const child = only as ReactElement<{ className?: string; style?: CSSProperties }>;
+    const childStyle = child.props.style;
+    return cloneElement(child as ReactElement<Record<string, unknown>>, {
+      className: mergeClassNames(child.props.className, shellProps.className),
+      style:
+        childStyle && typeof childStyle === "object"
+          ? { ...childStyle, ...shellProps.style }
+          : shellProps.style,
+      "data-ginger-playback": shellProps["data-ginger-playback"],
+      dir: shellProps.dir,
+    });
+  }, [asChild, children, shellProps]);
+
   return (
     <GingerLocaleProvider locale={locale}>
       <GingerPlaybackContext.Provider value={playbackValue}>
         <GingerMediaContext.Provider value={mediaValue}>
-          <GingerContext.Provider value={value}>
-            <div
-              className={className}
-              style={mergedStyle}
-              data-ginger-playback={playbackUi}
-              dir={providerDir}
-            >
-              {children}
-            </div>
-          </GingerContext.Provider>
+          <GingerContext.Provider value={value}>{shell}</GingerContext.Provider>
         </GingerMediaContext.Provider>
       </GingerPlaybackContext.Provider>
     </GingerLocaleProvider>
   );
+}
+
+function mergeClassNames(a?: string, b?: string): string | undefined {
+  const merged = [a, b].filter(Boolean).join(" ");
+  return merged === "" ? undefined : merged;
 }

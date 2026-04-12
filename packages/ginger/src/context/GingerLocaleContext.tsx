@@ -5,6 +5,8 @@ export const defaultGingerLocale: GingerLocaleMessages = {
   seek: "Seek",
   volume: "Volume",
   playbackSpeed: "Playback speed",
+  chaptersList: "Chapters",
+  syncedLyricsList: "Synced lyrics",
   nextTrack: "Next track",
   previousTrack: "Previous track",
   shuffle: "Shuffle",

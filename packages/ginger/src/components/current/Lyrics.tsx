@@ -7,6 +7,8 @@ export type LyricsProps = DisplayBaseProps & {
   children?: (value: string, state: GingerState) => ReactNode;
   /** When true, preserves internal newlines; trims only leading/trailing whitespace */
   preserveWhitespace?: boolean;
+  /** When true, skips default `whiteSpace: pre-wrap` when `preserveWhitespace` is true (use `className` / `style` instead). */
+  unstyled?: boolean;
 };
 
 export function Lyrics({
@@ -16,6 +18,7 @@ export function Lyrics({
   empty,
   children,
   preserveWhitespace = true,
+  unstyled = false,
 }: LyricsProps) {
   const state = useGingerState();
   const raw = getCurrentTrack(state)?.lyrics ?? "";
@@ -28,9 +31,8 @@ export function Lyrics({
       </span>
     ) : null;
   }
-  const whiteStyle: CSSProperties | undefined = preserveWhitespace
-    ? { whiteSpace: "pre-wrap" }
-    : undefined;
+  const whiteStyle: CSSProperties | undefined =
+    !unstyled && preserveWhitespace ? { whiteSpace: "pre-wrap" } : undefined;
   if (children)
     return (
       <span className={className} style={{ ...whiteStyle, ...style }}>

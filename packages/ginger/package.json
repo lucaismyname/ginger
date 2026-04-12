@@ -1,7 +1,7 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.26",
-  "description": "A headless React audio player",
+  "version": "0.0.27",
+  "description": "Batteries-included React audio primitives with optional unstyled styling",
   "type": "module",
   "sideEffects": false,
   "files": [
