@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { attachLiveAnalyser, detachLiveAnalyser } from "./liveAudioGraph";
 import { installMockWebAudio } from "../testing/mockWebAudio";
+import { attachLiveAnalyser, detachLiveAnalyser } from "./liveAudioGraph";
 
 const options = {
   fftSize: 1024,

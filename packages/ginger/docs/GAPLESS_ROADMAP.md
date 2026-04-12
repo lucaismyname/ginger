@@ -4,6 +4,8 @@ Gapless transitions between adjacent tracks require coordinated buffering and sc
 
 ## Milestone 1 — Capability and constraints
 
+**Status (implemented):** browser limits are documented in [`probeGaplessCapability`](../src/experimental-gapless/probeGaplessCapability.ts) return values (`reason`, `hints.format`, `hints.crossOrigin`). Import `probeGaplessCapability` or `useExperimentalGapless` from `@lucaismyname/ginger/experimental-gapless`. The probe uses **feature detection only** (no `AudioContext` construction): it checks `AudioContext` / `decodeAudioData`, secure context, and optional `MediaSource`. When the environment is unsuitable or Ginger has not shipped scheduling yet, apps keep using [`Ginger.Player`](../src/audio/GingerPlayer.tsx) unchanged.
+
 - Document browser limits (MSE vs full file decode, CORS, codecs).
 - Expose a stable feature probe: `supported`, `reason`, and required hints (`crossOrigin`, format).
 - Define failure modes when gapless is unavailable (fall back to existing `Ginger.Player`).

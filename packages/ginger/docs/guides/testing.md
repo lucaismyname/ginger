@@ -24,9 +24,9 @@ await user.click(screen.getByRole("button", { name: "Play" }));
 ## Media session mock
 
 ```tsx
-const mediaSession = installNavigatorMediaSession();
-// ...assert handlers...
-mediaSession.restore();
+const { getHandler, getLastPositionState, restore } = installNavigatorMediaSession();
+// ...assert handlers via getHandler("play"), etc.; positionState tests use getLastPositionState()...
+restore();
 ```
 
 ## Fake audio events

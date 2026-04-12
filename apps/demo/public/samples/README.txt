@@ -1,10 +1,16 @@
 Bundled demo audio
 ------------------
-`demo.mp3` is a short CC0 clip from MDN interactive-examples (t-rex-roar), used so the playground
-can use Web Audio (equalizer, spatial) and `fetch` + `decodeAudioData` (file waveform peaks) without
-cross-origin CORS issues.
+Same-origin files in this folder keep Web Audio (equalizer, spatial) and `fetch` +
+`decodeAudioData` (file waveform peaks) working — remote URLs without
+`Access-Control-Allow-Origin` break those APIs when `crossOrigin` is set or when
+decoding for visualization.
 
-Remote URLs without `Access-Control-Allow-Origin` break those APIs when `crossOrigin` is set or when
-fetching for decode.
+Included MP3s (downloaded from archive.org — netlabels / community audio; Creative Commons–licensed uploads):
 
-Replace with your own files and point `Track.fileUrl` at `/samples/your-track.mp3`.
+1. piano-sole.mp3 — AnthonyB, “coffee and piano” (identifier `skd-1206` on archive.org). Piano-focused track.
+2. electric-guitar-get-out.mp3 — Tigerberry, “Get Out” from “Cold Wave” (`SCL160`). Rock / electric guitar.
+3. acoustic-guitar-county.mp3 — Zak Whitefield, “County” from “Dorm Room EP” (`Hfr022-zakWhitefield-DormRoomEp`). Acoustic guitar / singer-songwriter.
+
+`demo.mp3` — short CC0 clip from MDN interactive-examples (legacy tiny sample); the main playground uses the three tracks above via `src/fixtures.ts`.
+
+Attribution: respect each release’s license on its archive.org details page when redistributing or remixing.

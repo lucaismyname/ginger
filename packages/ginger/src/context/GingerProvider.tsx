@@ -477,7 +477,12 @@ export function GingerProvider({
     () => ({ play, pause, next, prev, seek }),
     [play, pause, next, prev, seek],
   );
-  useMediaSessionBridge(Boolean(mediaSession), state, mediaSessionActions);
+  const mediaSessionEnabled = typeof mediaSession === "object" ? true : Boolean(mediaSession);
+  const mediaSessionBridgeOptions = useMemo(
+    () => (typeof mediaSession === "object" ? mediaSession : {}),
+    [mediaSession],
+  );
+  useMediaSessionBridge(mediaSessionEnabled, state, mediaSessionActions, mediaSessionBridgeOptions);
 
   const providerDir =
     dirProp ?? (locale?.seek && /[\u0590-\u08FF]/.test(locale.seek) ? "rtl" : "ltr");

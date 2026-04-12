@@ -5,6 +5,7 @@ import {
   type NavigatorMediaSessionInstall,
   installNavigatorMediaSession,
 } from "../testing/helpers";
+import type { GingerMediaSessionOptions } from "../types";
 import { useMediaSessionBridge } from "./useMediaSession";
 import type { MediaSessionBridgeActions } from "./useMediaSession";
 
@@ -14,23 +15,27 @@ function Bridge({
   enabled,
   state,
   actions,
+  options,
 }: {
   enabled: boolean;
   state: ReturnType<typeof createInitialState>;
   actions: MediaSessionBridgeActions;
+  options?: GingerMediaSessionOptions;
 }) {
-  useMediaSessionBridge(enabled, state, actions);
+  useMediaSessionBridge(enabled, state, actions, options);
   return null;
 }
 
 describe("useMediaSessionBridge", () => {
   let restore: () => void;
   let getHandler: NavigatorMediaSessionInstall["getHandler"];
+  let getLastPositionState: NavigatorMediaSessionInstall["getLastPositionState"];
 
   beforeEach(() => {
     const inst = installNavigatorMediaSession();
     restore = inst.restore;
     getHandler = inst.getHandler;
+    getLastPositionState = inst.getLastPositionState;
   });
 
   afterEach(() => {
@@ -106,5 +111,62 @@ describe("useMediaSessionBridge", () => {
     expect(handler).toBeTruthy();
     handler?.({ seekTime: 42 } as Parameters<NonNullable<typeof handler>>[0]);
     expect(seek).toHaveBeenCalledWith(42);
+  });
+
+  it("registers seekforward when seekForwardSeconds is set", async () => {
+    const state = {
+      ...createInitialState({
+        tracks: [{ id: "1", title: "T", fileUrl: "/t.mp3" }],
+      }),
+      currentTime: 10,
+      duration: 100,
+    };
+    const seek = vi.fn();
+    const actions: MediaSessionBridgeActions = {
+      play: vi.fn(),
+      pause: vi.fn(),
+      next: vi.fn(),
+      prev: vi.fn(),
+      seek,
+    };
+
+    await act(async () => {
+      render(
+        <Bridge enabled state={state} actions={actions} options={{ seekForwardSeconds: 15 }} />,
+      );
+    });
+
+    const handler = getHandler("seekforward");
+    expect(handler).toBeTruthy();
+    handler?.({} as MediaSessionActionDetails);
+    expect(seek).toHaveBeenCalledWith(25);
+  });
+
+  it("updates setPositionState when positionState is enabled", async () => {
+    const state = {
+      ...createInitialState({
+        tracks: [{ id: "1", title: "T", fileUrl: "/t.mp3" }],
+        playbackRate: 1.5,
+      }),
+      currentTime: 30,
+      duration: 120,
+    };
+    const actions: MediaSessionBridgeActions = {
+      play: vi.fn(),
+      pause: vi.fn(),
+      next: vi.fn(),
+      prev: vi.fn(),
+      seek: vi.fn(),
+    };
+
+    await act(async () => {
+      render(<Bridge enabled state={state} actions={actions} options={{ positionState: true }} />);
+    });
+
+    const pos = getLastPositionState();
+    expect(pos).not.toBeNull();
+    expect(pos?.duration).toBe(120);
+    expect(pos?.position).toBe(30);
+    expect(pos?.playbackRate).toBe(1.5);
   });
 });

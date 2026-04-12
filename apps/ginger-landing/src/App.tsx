@@ -1,5 +1,5 @@
 import { Ginger, useGingerState } from "@lucaismyname/ginger";
-import type { Track } from "@lucaismyname/ginger";
+import type { Track, TrackChapter } from "@lucaismyname/ginger";
 import { useState } from "react";
 import { PlaybackRateSelect } from "./components/PlaybackRateSelect";
 import { ThemeToggle } from "./components/ThemeToggle";
@@ -49,7 +49,7 @@ function SeekBarWithChapterMarkers() {
           className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-visible"
           aria-hidden
         >
-          {chapters.map((ch) => {
+          {chapters.map((ch: TrackChapter) => {
             const pct = (ch.startSeconds / duration) * 100;
             return (
               <div

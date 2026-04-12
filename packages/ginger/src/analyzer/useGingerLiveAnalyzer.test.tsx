@@ -1,10 +1,10 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Ginger } from "../ginger";
+import { installMockWebAudio } from "../testing/mockWebAudio";
+import type { Track } from "../types";
 import type { UseGingerLiveAnalyzerResult } from "./useGingerLiveAnalyzer";
 import { useGingerLiveAnalyzer } from "./useGingerLiveAnalyzer";
-import { Ginger } from "../ginger";
-import type { Track } from "../types";
-import { installMockWebAudio } from "../testing/mockWebAudio";
 
 const tracks: Track[] = [{ id: "wave", title: "Wave", fileUrl: "/wave.mp3" }];
 

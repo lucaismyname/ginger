@@ -512,7 +512,7 @@ Props:
 | `initialPlaybackRate` | `number` | `1` | Initial playback rate, clamped `0.25..4` |
 | `initialStateKey` | `string \| number` | `undefined` | Re-dispatches `INIT` when this key changes |
 | `locale` | `Partial<GingerLocaleMessages>` | `undefined` | Override built-in strings (controls, chapter list, synced lyrics list, …) |
-| `mediaSession` | `boolean` | `false` | Enables Media Session lock-screen/OS controls |
+| `mediaSession` | `boolean \| GingerMediaSessionOptions` | `false` | `true` enables default Media Session bridge; pass `{ seekForwardSeconds, seekBackwardSeconds, positionState }` for optional OS skip controls and timeline sync |
 | `beforePlay` | `() => boolean \| Promise<boolean>` | `undefined` | Policy hook run before playback starts |
 | `onPlayBlocked` | `() => void` | `undefined` | Called when `beforePlay` returns `false` |
 | `persistence` | `{ get(key): unknown; set(key, value): void }` | `undefined` | Adapter for persisted playback settings and resume state |

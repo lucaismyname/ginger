@@ -154,6 +154,25 @@ export type GingerAction =
 /** Payload for `INIT` / `init()`; replaces queue and media timing like a fresh mount. */
 export type GingerInitPayload = Extract<GingerAction, { type: "INIT" }>["payload"];
 
+/** Optional Media Session integrations when `mediaSession` is an object (see `GingerProviderProps`). */
+export type GingerMediaSessionOptions = {
+  /**
+   * When set, registers the `seekforward` action to seek ahead by this many seconds
+   * (clamped to duration).
+   */
+  seekForwardSeconds?: number;
+  /**
+   * When set, registers the `seekbackward` action to seek back by this many seconds
+   * (clamped to zero).
+   */
+  seekBackwardSeconds?: number;
+  /**
+   * When true, updates `navigator.mediaSession.setPositionState` from current time,
+   * duration, and playback rate (best-effort; not all surfaces show it).
+   */
+  positionState?: boolean;
+};
+
 export type GingerProviderProps = {
   children: ReactNode;
   initialTracks?: Track[];
@@ -176,7 +195,8 @@ export type GingerProviderProps = {
   initialStateKey?: string | number;
   /** Override default English strings on built-in controls */
   locale?: Partial<GingerLocaleMessages>;
-  mediaSession?: boolean;
+  /** `true` enables default Media Session bridge; pass an object for optional seek skips and position state. */
+  mediaSession?: boolean | GingerMediaSessionOptions;
   beforePlay?: () => boolean | Promise<boolean>;
   onPlayBlocked?: () => void;
   persistence?: GingerPersistenceAdapter;

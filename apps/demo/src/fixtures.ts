@@ -1,64 +1,78 @@
 import type { PlaylistMeta, Track } from "@lucaismyname/ginger";
 
 /**
- * Same-origin sample (`public/samples/demo.mp3`) so Web Audio (EQ, spatial, decode peaks) and
- * `fetch` + `decodeAudioData` work — cross-origin URLs without CORS (e.g. SoundHelix) break those APIs.
+ * Bundled same-origin MP3s under `public/samples/` so Web Audio (EQ, spatial) and
+ * `fetch` + `decodeAudioData` (file waveform peaks) work without CORS issues.
+ *
+ * Sources (Internet Archive / netlabels — Creative Commons; see public/samples/README.txt):
+ * - Piano: AnthonyB — coffee and piano (skd-1206)
+ * - Electric guitar: Tigerberry — Cold Wave (SCL160)
+ * - Acoustic guitar: Zak Whitefield — Dorm Room EP (Hfr022)
  */
-export const demoAudioUrl = "/samples/demo.mp3";
+export const demoAudioUrl = "/samples/piano-sole.mp3";
 
 export const demoTracks: Track[] = [
   {
-    title: "Demo sample (MDN CC0)",
-    artist: "Ginger demo",
-    fileUrl: demoAudioUrl,
-    album: "Local / public/samples",
-    artworkUrl: "https://www.soundhelix.com/img/soundhelix.gif",
-    description: "Short clip for Web Audio–safe playback in the playground.",
-    copyright: "CC0 (via MDN interactive-examples)",
-    genre: "Demo",
-    year: 2026,
-    durationSeconds: 4,
+    id: "piano-sole",
+    title: "Sole",
+    artist: "AnthonyB",
+    fileUrl: "/samples/piano-sole.mp3",
+    album: "coffee and piano",
+    artworkUrl:
+      "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=320&h=320&q=80",
+    description: "Piano (netlabel release on Archive.org).",
+    genre: "Piano",
+    year: 2012,
   },
   {
-    title: "Same file (queue B)",
-    artist: "Ginger demo",
-    fileUrl: demoAudioUrl,
-    album: "Local / public/samples",
-    genre: "Demo",
-    year: 2026,
+    id: "electric-get-out",
+    title: "Get Out",
+    artist: "Tigerberry",
+    fileUrl: "/samples/electric-guitar-get-out.mp3",
+    album: "Cold Wave",
+    artworkUrl:
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=320&h=320&q=80",
+    description: "Rock / cold wave — electric guitar (netlabel on Archive.org).",
+    genre: "Rock",
+    year: 2014,
   },
   {
-    title: "Same file (queue C)",
-    artist: "Ginger demo",
-    fileUrl: demoAudioUrl,
-    album: "Local / public/samples",
-    genre: "Demo",
-    year: 2026,
+    id: "acoustic-county",
+    title: "County",
+    artist: "Zak Whitefield",
+    fileUrl: "/samples/acoustic-guitar-county.mp3",
+    album: "Dorm Room EP",
+    artworkUrl:
+      "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=320&h=320&q=80",
+    description: "Modern acoustic singer-songwriter (netlabel on Archive.org).",
+    genre: "Acoustic",
+    year: 2011,
   },
 ];
 
-/** SRT cues aligned to the short bundled MP3 (~few seconds) so lines advance during playback. */
+/** SRT cues for the transcript demo — spaced across the first minutes of a typical track. */
 export const demoTranscriptSrt = `
 1
-00:00:00,000 --> 00:00:00,900
-Opening — demo transcript line one.
+00:00:00,000 --> 00:00:25,000
+Intro — transcript line one (synced to playback time).
 
 2
-00:00:00,900 --> 00:00:01,800
-Middle: text follows Ginger playback time.
+00:00:25,000 --> 00:01:00,000
+Middle section: scrub the seek bar to jump between cues.
 
 3
-00:00:01,800 --> 00:00:02,700
-Third cue — scrub the seek bar to jump.
+00:01:00,000 --> 00:02:00,000
+Third cue — lines follow Ginger’s current time.
 
 4
-00:00:02,700 --> 00:00:09,000
-Closing cue (pad past track end for seeks).
+00:02:00,000 --> 00:15:00,000
+Closing cue (long pad so the last line stays active on longer songs).
 `.trim();
 
 export const demoPlaylistMeta: PlaylistMeta = {
-  title: "Demo playlist",
-  subtitle: "Example album subtitle",
+  title: "Ginger demo playlist",
+  subtitle: "Piano · electric guitar · acoustic (Archive.org netlabels)",
   description: "Queue metadata for `Ginger.Queue.*` components.",
-  artworkUrl: "https://www.soundhelix.com/img/soundhelix.gif",
+  artworkUrl:
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=320&h=320&q=80",
 };

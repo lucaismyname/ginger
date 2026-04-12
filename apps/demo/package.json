@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@lucaismyname/ginger": "0.0.37",
+    "@lucaismyname/ginger": "file:../../packages/ginger",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

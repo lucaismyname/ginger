@@ -7,7 +7,7 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w @lucaismyname/ginger",
+    "build": "npm run build -w @lucaismyname/ginger && npm run check-bundle -w @lucaismyname/ginger",
     "test": "npm run test -w @lucaismyname/ginger",
     "typecheck": "npm run typecheck -w @lucaismyname/ginger",
     "typecheck:apps": "npm run typecheck -w ginger-demo && npm run typecheck -w ginger-landing",

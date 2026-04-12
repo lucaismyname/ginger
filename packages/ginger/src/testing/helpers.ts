@@ -11,6 +11,8 @@ export type NavigatorMediaSessionInstall = {
   mock: MediaSession;
   /** Last handler registered for an action (for assertions). */
   getHandler: (action: MediaSessionAction) => MediaSessionActionHandler | null;
+  /** Last argument passed to `setPositionState`, if any. */
+  getLastPositionState: () => MediaPositionState | null;
   /** Restore previous `navigator.mediaSession`. */
   restore: () => void;
 };
@@ -21,11 +23,15 @@ export type NavigatorMediaSessionInstall = {
  */
 export function installNavigatorMediaSession(): NavigatorMediaSessionInstall {
   const handlers: Partial<Record<MediaSessionAction, MediaSessionActionHandler | null>> = {};
+  let lastPositionState: MediaPositionState | null = null;
   const mock = {
     metadata: null as MediaMetadata | null,
     playbackState: "none" as MediaSessionPlaybackState,
     setActionHandler(action: MediaSessionAction, handler: MediaSessionActionHandler | null) {
       handlers[action] = handler ?? null;
+    },
+    setPositionState(state: MediaPositionState | null) {
+      lastPositionState = state;
     },
   } as MediaSession;
 
@@ -39,6 +45,7 @@ export function installNavigatorMediaSession(): NavigatorMediaSessionInstall {
   return {
     mock,
     getHandler: (action: MediaSessionAction) => handlers[action] ?? null,
+    getLastPositionState: () => lastPositionState,
     restore: () => {
       if (prev !== undefined) {
         Object.defineProperty(navigator, "mediaSession", {
