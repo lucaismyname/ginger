@@ -14,8 +14,8 @@ export function LandingPlayerControls() {
           decoding="async"
         />
         <div className="min-w-0 flex-1">
-          <Ginger.Current.Title className="block font-pixel text-shadow-[1px_1px_0px_rgba(0,0,0,0.2)] truncate text-base leading-snug text-zinc-900 dark:text-zinc-50" />
-          <Ginger.Current.Artist className="mt-0.5 font-mono block truncate text-xs text-zinc-500 dark:text-zinc-400" />
+          <Ginger.Current.Title className="block font-mono font-bold text-shadow-[1px_1px_0px_rgba(0,0,0,0.2)] truncate text-base leading-snug text-zinc-900 dark:text-zinc-50" />
+          <Ginger.Current.Artist className="mt-0.5 font-pixel uppercase block truncate text-xs text-zinc-500 dark:text-zinc-400" />
         </div>
       </div>
       <div className="flex flex-col gap-3 px-3 py-2.5 md:flex-row md:items-center md:justify-between">
@@ -56,11 +56,13 @@ export function LandingPlayerControls() {
                   }`}
                   aria-current={active ? "true" : undefined}
                 >
-                  <span className="truncate">
-                    <span className="font-pixel text-zinc-400 dark:text-zinc-500 pr-2">
+                  <span className="truncate pl-2.5">
+                    <span className=" font-pixel text-zinc-400 dark:text-zinc-500 pr-2">
                       {index + 1}.
                     </span>{" "}
-                    <span className="font-mono">{track.title}</span>
+                    <span className="font-mono text-zinc-800 dark:text-zinc-100">
+                      {track.title}
+                    </span>
                   </span>
                   <span className="ml-3 font-pixel shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
                     {active ? (
