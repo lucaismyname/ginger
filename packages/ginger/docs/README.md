@@ -17,12 +17,13 @@ This folder holds **narrative docs** (Markdown) and a **generated API site** (HT
 | **[`guides/`](./guides/)** | How-to guides: recipes, testing, accessibility, streaming adapters |
 | **[`GAPLESS_ROADMAP.md`](./GAPLESS_ROADMAP.md)** | Experimental gapless work (milestones; not a user tutorial) |
 | **[`api/`](./api/)** | **Generated** TypeDoc output (`npm run docs:api` from `packages/ginger`). Open [`api/index.html`](./api/index.html) in a browser after building. |
-| **[`api/media/subpaths.md`](./api/media/subpaths.md)** | Short link to the canonical [`reference/subpaths.md`](./reference/subpaths.md) (avoids duplicating subpath docs beside generated HTML). |
+| **[`api/media/`](./api/media/)** | Markdown assets copied or referenced by TypeDoc during HTML generation. Treat these as support files for the generated site, not as the primary narrative docs to edit by hand. |
 
 ## Generated vs hand-written
 
 - **Hand-written** Markdown is the source of truth for *how things fit together* (architecture, mental model, SSR, testing patterns).
 - **Generated** HTML under `docs/api/` is produced by [TypeDoc](https://typedoc.org/) from `src/**/*.ts` entry points listed in [`typedoc.json`](../typedoc.json). It is ideal for **per-symbol** types, parameters, and return values.
+- **Canonical subpath guide:** use [`reference/subpaths.md`](./reference/subpaths.md) as the hand-written source of truth for `@lucaismyname/ginger/*` entrypoints. Any similarly named file under `docs/api/media/` exists to support TypeDoc output and should stay minimal to avoid drift.
 - If something disagrees, **trust the TypeScript source and generated API** for exact signatures; use Markdown for explanation and examples.
 
 ## Regenerate the API site
@@ -33,7 +34,7 @@ From `packages/ginger`:
 npm run docs:api
 ```
 
-Requires a successful `npm run build` first if you want links to resolve against built `.d.ts` the same way CI does; TypeDoc uses `tsconfig.json` and entry files directly.
+Requires a successful `npm run build` first if you want links to resolve against built `.d.ts` the same way CI does; TypeDoc uses [`typedoc.json`](../typedoc.json), `tsconfig.json`, and the listed entry files directly.
 
 ## Suggested reading order
 

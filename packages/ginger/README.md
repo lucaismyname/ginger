@@ -207,6 +207,32 @@ function RemoteAwarePlayer() {
 
 Snapshots send the current queue order with **`isShuffled: false`** so followers do not re-randomize; the visible order matches the leader. **`claimLeadership()`** requests leadership (lexicographically smaller tab IDs win conflicts).
 
+`@lucaismyname/ginger/remote` also exports **`DEFAULT_REMOTE_CHANNEL_NAME`** and the **`RemoteMessage`** type if you need to share protocol constants or type your own channel helpers.
+
+### Crossfade (`@lucaismyname/ginger/crossfade`)
+
+Adds a Web Audio crossfade graph for **overlap-based** transitions between outgoing and incoming media. This is distinct from the longer-term **gapless** work: crossfade overlaps two sources on purpose, while gapless aims for seamless adjacent track boundaries on a single playback path.
+
+```tsx
+import { useGingerCrossfade } from "@lucaismyname/ginger/crossfade";
+
+function CrossfadeSetup() {
+  const { status, error } = useGingerCrossfade({
+    enabled: true,
+    durationMs: 1200,
+  });
+
+  return (
+    <div>
+      <p>Status: {status}</p>
+      {error && <p role="alert">{error}</p>}
+    </div>
+  );
+}
+```
+
+For lower-level integrations, the subpath also exports **`attachCrossfadeGraph`**, **`scheduleCrossfade`**, and **`teardownCrossfadeGraph`** plus the related graph/curve types. Like EQ and spatial audio, crossfade attaches to the active Ginger media graph and should be torn down when you unmount or switch playback strategies.
+
 ### Experimental Notice
 
 `@lucaismyname/ginger/experimental-gapless` is intentionally non-production.
@@ -1249,7 +1275,7 @@ See [Recipes — Updating the queue after mount](#updating-the-queue-after-mount
 
 These priorities guide new work in the library; they are not a guarantee of shipping order.
 
-1. **Music libraries and continuous listening** — Features that make track-to-track playback feel better come first: **next-track prefetch** (`useNextTrackPrefetch`), future gapless or crossfade (see `@lucaismyname/ginger/experimental-gapless`), and first-class **chapter** / **synced lyrics** UI (`Ginger.Current.Chapters`, `Ginger.Current.LyricsSynced`).
+1. **Music libraries and continuous listening** — Features that make track-to-track playback feel better come first: **next-track prefetch** (`useNextTrackPrefetch`), shipped **crossfade** (`@lucaismyname/ginger/crossfade`), ongoing **gapless** capability work (`@lucaismyname/ginger/experimental-gapless`), and first-class **chapter** / **synced lyrics** UI (`Ginger.Current.Chapters`, `Ginger.Current.LyricsSynced`).
 2. **Podcasts and live-style streams** — **HLS / DASH** integration is emphasized when a concrete app needs it; the core package stays on native `<audio>` with optional adapters or documentation rather than hard dependencies. **SRT / WebVTT** transcripts are supported via `@lucaismyname/ginger/transcript`.
 3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations (Cast, proprietary cast SDKs) unless there is a dedicated use case. **Multi-tab** web apps can use `@lucaismyname/ginger/remote` (BroadcastChannel) before reaching for OS-level remote playback.
 

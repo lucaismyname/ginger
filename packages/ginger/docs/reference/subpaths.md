@@ -59,6 +59,8 @@ Options: `channelName` (default `"ginger-remote"`), `heartbeatMs`, `electionTime
 
 Requires `BroadcastChannel` (not available in some SSR environments); the hook sets `error` when unsupported.
 
+The subpath also exports **`DEFAULT_REMOTE_CHANNEL_NAME`** and the **`RemoteMessage`** type for apps that want to share channel constants or type custom protocol helpers.
+
 ## `@lucaismyname/ginger/crossfade`
 
 Web Audio–based **overlap** between outgoing and incoming media (distinct from the long-term **gapless** roadmap in [`GAPLESS_ROADMAP.md`](../GAPLESS_ROADMAP.md), which targets seamless *adjacent* track transitions on a single element).
@@ -79,7 +81,7 @@ Gapless **environment** probe (Milestone 1); Ginger playback is still a single `
 
 ## Generated API
 
-The TypeDoc build includes the main [`src/index.ts`](../../src/index.ts) entry **and** subpath entry files (see [`typedoc.json`](../../typedoc.json)), including **`crossfade`**. The docs landing page is [`api-overview.md`](../api-overview.md). This file and the package [`README.md`](../../README.md) remain the narrative reference; import paths match [`package.json` `exports`](../../package.json).
+The TypeDoc build includes the main [`src/index.ts`](../../src/index.ts) entry **and** subpath entry files (see [`typedoc.json`](../../typedoc.json)), including **`crossfade`**. The docs landing page is [`api-overview.md`](../api-overview.md). This file is the canonical hand-written reference for subpaths; import paths match [`package.json` `exports`](../../package.json).
 
 ---
 

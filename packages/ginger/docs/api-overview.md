@@ -5,7 +5,7 @@ Ginger ships two complementary documentation layers:
 1. **Markdown guides** under [`docs/`](./) (getting started, references, guides).
 2. **Generated TypeDoc HTML** under [`docs/api/`](./api/) — open [`api/index.html`](./api/index.html) after running `npm run docs:api` from `packages/ginger`.
 
-The TypeDoc build includes the **main** package entry ([`src/index.ts`](../src/index.ts)) plus **subpath modules** listed in [`typedoc.json`](../typedoc.json) so exports under `@lucaismyname/ginger/*` appear in the navigation.
+The TypeDoc build uses [`typedoc.json`](../typedoc.json), which points its `readme` field at this file and includes the **main** package entry ([`src/index.ts`](../src/index.ts)) plus the resolved subpath entry files. That keeps the generated landing page aligned with the current `package.json` exports for `@lucaismyname/ginger/*`.
 
 ## Import map
 
@@ -25,7 +25,7 @@ The TypeDoc build includes the **main** package entry ([`src/index.ts`](../src/i
 ## Narrative reference
 
 - Release history: [`CHANGELOG.md`](../CHANGELOG.md)
-- Subpath behavior and when to use each: [`reference/subpaths.md`](./reference/subpaths.md)
+- Subpath behavior and when to use each: canonical [`reference/subpaths.md`](./reference/subpaths.md)
 - Package overview and install: root [`README.md`](../README.md)
 - Docs folder map: [`README.md`](./README.md)
 
@@ -37,3 +37,4 @@ npm run docs:api
 ```
 
 Output is written to `docs/api/`. The `readme` field in `typedoc.json` points at this file so the TypeDoc landing page stays aligned with the repo.
+Files under `docs/api/media/` are support assets for that generated output and should stay minimal when a hand-written canonical page already exists elsewhere in `docs/`.
