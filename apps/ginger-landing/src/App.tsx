@@ -6,7 +6,26 @@ import {
 } from "@lucaismyname/ginger";
 import type { Track, TrackChapter } from "@lucaismyname/ginger";
 import type { LucideIcon } from "lucide-react";
-import { Globe, Link2, EyeIcon, Code, Package, List, Shell, MoreHorizontal, MoreVertical, Hammer, Activity, MonitorUp, Star } from "lucide-react";
+import {
+  Globe,
+  Link2,
+  EyeIcon,
+  Code,
+  Package,
+  List,
+  Shell,
+  MoreHorizontal,
+  MoreVertical,
+  Hammer,
+  Activity,
+  MonitorUp,
+  Star,
+  Palette,
+  Command,
+  RectangleEllipsis,
+  ChartNoAxesColumn,
+  CircleEllipsis,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { PlaybackRateSelect } from "./components/PlaybackRateSelect";
@@ -266,10 +285,10 @@ function LandingPlayerControls() {
                   aria-current={active ? "true" : undefined}
                 >
                   <span className="truncate">
-                    <span className="font-pixel text-zinc-500 dark:text-zinc-400 pr-2">
+                    <span className="font-pixel text-zinc-400 dark:text-zinc-500 pr-2">
                       {index + 1}.
                     </span>{" "}
-                    <span className="font-sans">{track.title}</span>
+                    <span className="font-mono">{track.title}</span>
                   </span>
                   <span className="ml-3 font-pixel shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
                     {active ? (
@@ -389,9 +408,9 @@ export function App() {
             aria-describedby="ginger-title-tooltip"
             className="group relative inline-flex flex-col items-start rounded-sm md:-ml-9 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
           >
-            <h1 className="font-pixel text-4xl sm:text-5xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700">
+            <h1 className="font-pixel text-3xl sm:text-5xl font-normal text-zinc-300 dark:text-zinc-700">
               &lt;
-              <span className="text-orange-600 dark:text-orange-500">
+              <span className="font-mono font-bold text-orange-600 dark:text-orange-500">
                 Ginger
               </span>{" "}
               /&gt;
@@ -470,19 +489,21 @@ export function App() {
             </div>
           </div>
 
-          <p className="mt-4 text-base md:-mr-0 md:ml-0 text-pretty leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
-            A headless React audio player primitive{" "}
+          <p className="mt-4 text-base md:-mr-0 md:ml-0 text-balance leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">
+            A headless React audio player primitive component{" "}
             <Code
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
-            . Build your own UI with playlists{" "}
+            . Build your own UI{" "}
+            <Palette className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70" />{" "}
+            with playlists{" "}
             <List
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
             , keyboard shortcuts{" "}
-            <Star
+            <Command
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
@@ -497,7 +518,7 @@ export function App() {
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
             , audio analyzers{" "}
-            <EyeIcon
+            <ChartNoAxesColumn
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
@@ -507,7 +528,7 @@ export function App() {
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />
             , and much more{" "}
-            <MoreVertical
+            <CircleEllipsis
               aria-hidden
               className="inline-block h-[0.95em] w-[0.95em] align-[-0.12em] text-zinc-400/70 dark:text-zinc-500/70"
             />{" "}
