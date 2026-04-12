@@ -66,6 +66,8 @@ export function useGingerEqualizer(
   const [error, setError] = useState<string | null>(null);
 
   const filterNodesRef = useRef<BiquadFilterNode[]>([]);
+  const bandsRef = useRef(bands);
+  bandsRef.current = bands;
 
   /** Rebuild the chain when band frequencies/types change — not on every gain tweak (see setBandGain). */
   const bandStructureKey = useMemo(
@@ -73,6 +75,7 @@ export function useGingerEqualizer(
     [bands],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: bandStructureKey and currentIndex must re-run graph setup; bands read via bandsRef
   useEffect(() => {
     const el = audioRef.current;
     if (!el || typeof window === "undefined") {
@@ -97,7 +100,8 @@ export function useGingerEqualizer(
       });
       const { context, id: tempId } = attached;
 
-      const filters: BiquadFilterNode[] = bands.map((band) => {
+      const bandsNow = bandsRef.current;
+      const filters: BiquadFilterNode[] = bandsNow.map((band) => {
         const node = context.createBiquadFilter();
         node.type = band.type ?? "peaking";
         node.frequency.value = band.frequency;
