@@ -1,6 +1,7 @@
 import { Ginger, useGingerState } from "@lucaismyname/ginger";
 import type { Track } from "@lucaismyname/ginger";
 import { useState } from "react";
+import { PlaybackRateSelect } from "./components/PlaybackRateSelect";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { scan } from "react-scan";
 const NPM_CMD = "npm install @lucaismyname/ginger";
@@ -97,10 +98,7 @@ function LandingPlayerControls() {
             <Ginger.Control.Mute className="p-1.5 text-xs text-zinc-900 dark:text-zinc-50 [&_svg]:h-3.5 [&_svg]:w-3.5" />
             <Ginger.Control.Volume className="h-1 md:w-12 !w-24 cursor-pointer appearance-none rounded-full bg-zinc-300 accent-zinc-700 dark:bg-zinc-700 dark:accent-zinc-200" />
           </div>
-          <Ginger.Control.PlaybackRate
-            className="rounded-md border border-zinc-300 bg-transparent px-1.5 py-1 text-[10px] text-zinc-700 dark:border-zinc-700 dark:text-zinc-200"
-            aria-label="Playback speed"
-          />
+          <PlaybackRateSelect />
         </section>
       </div>
     </div>
