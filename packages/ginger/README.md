@@ -1,6 +1,6 @@
 # @lucaismyname/ginger
 
-React audio primitives for music and podcast UIs on the native **`<audio>`** element: a reducer-backed provider, composable **`Ginger.*`** components, and **`useGinger()`** for full control. Many pieces ship sensible defaults (CSS variables, layout helpers); use **`unstyled`** (and related flags below) when you want **behavior and data only**, with your own styling.
+A headless react audio primitive for music and podcast UIs on the native **`<audio>`** element: a reducer-backed provider, composable **`Ginger.*`** components, and **`useGinger()`** for full control. Many pieces ship sensible defaults (CSS variables, layout helpers); use **`unstyled`** (and related flags below) when you want **behavior and data only**, with your own styling.
 
 **Peer dependencies:** **`react` ≥ 18** (required). **`react-dom` ≥ 18** is listed as a peer for typical DOM apps; it is **optional** in `peerDependenciesMeta`, so setups that do not use `react-dom` can omit it when appropriate.
 

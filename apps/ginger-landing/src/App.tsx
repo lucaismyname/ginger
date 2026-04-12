@@ -123,7 +123,7 @@ function SectionLabel({
   children: ReactNode;
 }) {
   return (
-    <p className="mb-2 flex items-center gap-2 font-pixel text-[0.80em] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+    <p className="mb-2 flex items-center gap-2 font-pixel text-[0.80em] font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
       <Icon
         aria-hidden
         className="size-[1em] shrink-0 text-orange-600 dark:text-orange-500"
@@ -164,7 +164,9 @@ export function App() {
     <div className="relative flex min-h-screen w-full flex-col md:items-start md:justify-center px-6 py-6 md:py-16 sm:px-10 lg:px-16">
       <ThemeToggle />
       <output id="install-copy-status" aria-live="polite" className="sr-only">
-        {copyLabel === "Copy" ? "" : `Install command ${copyLabel.toLowerCase()}.`}
+        {copyLabel === "Copy"
+          ? ""
+          : `Install command ${copyLabel.toLowerCase()}.`}
       </output>
       <output id="tooltip-copy-status" aria-live="polite" className="sr-only">
         {tooltipCopyLabel === "Copy"
@@ -178,7 +180,7 @@ export function App() {
             aria-describedby="ginger-title-tooltip"
             className="group relative inline-flex flex-col items-start rounded-sm md:-ml-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
           >
-            <h1 className="font-pixel text-5xl sm:text-6xl font-normal tracking-tight text-zinc-300 dark:text-zinc-700 sm:text-5xl">
+            <h1 className="font-pixel text-5xl sm:text-6xl font-normal tracking-widest text-zinc-300 dark:text-zinc-700 sm:text-5xl">
               &lt;
               <span className="text-orange-600 dark:text-orange-500">
                 Ginger
@@ -201,12 +203,27 @@ export function App() {
                   </p>
                   <button
                     aria-describedby="tooltip-copy-status"
-                    aria-label="Copy tooltip example code"
-                    className="rounded border border-zinc-300/80 bg-zinc-50 px-2 py-1 font-mono text-[11px] leading-none text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-200/70 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    aria-label={`Copy tooltip example code (${tooltipCopyLabel})`}
+                    className="rounded-md border border-zinc-300/70 bg-zinc-50 p-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                     onClick={handleCopyTooltipExample}
                     type="button"
                   >
-                    {tooltipCopyLabel}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-copy-icon lucide-copy"
+                      aria-hidden
+                    >
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
                   </button>
                 </div>
                 <pre className="overflow-x-auto rounded-md border border-zinc-700/80 bg-zinc-950 px-3 py-2 font-mono text-xs leading-relaxed text-zinc-100">
@@ -219,18 +236,20 @@ export function App() {
                       {"<Ginger.Provider initialTracks={tracks}>"}
                     </span>
                     {"\n"}
-                    <span className="text-zinc-300">{"  <Ginger.Player />"}</span>
+                    <span className="text-zinc-300">
+                      {"  <Ginger.Player />"}
+                    </span>
                     {"\n"}
                     <span className="text-zinc-300">
                       {'  <Ginger.Current.Title className="font-semibold" />'}
                     </span>
                     {"\n"}
                     <span className="text-zinc-300">
-                      {"  <Ginger.Control.SeekBar className=\"h-1\" />"}
+                      {'  <Ginger.Control.SeekBar className="h-1" />'}
                     </span>
                     {"\n"}
                     <span className="text-zinc-300">
-                      {"  <Ginger.Control.Volume className=\"w-24\" />"}
+                      {'  <Ginger.Control.Volume className="w-24" />'}
                     </span>
                     {"\n"}
                     <span className="text-orange-300">
@@ -260,7 +279,9 @@ export function App() {
               <SectionLabel icon={Package}>Install</SectionLabel>
               <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100/80 pl-4 pr-2 py-2 dark:border-zinc-700 dark:bg-zinc-900/80">
                 <pre className="min-w-0 flex-1 overflow-x-hidden w-full whitespace-nowrap font-mono text-base text-zinc-900 dark:text-zinc-100">
-                  <code className="font-pixel whitespace-nowrap">{NPM_CMD}</code>
+                  <code className="font-pixel whitespace-nowrap">
+                    {NPM_CMD}
+                  </code>
                 </pre>
                 <button
                   aria-describedby="install-copy-status"
