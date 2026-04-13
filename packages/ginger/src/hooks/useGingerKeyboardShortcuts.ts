@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useGingerMedia, useGingerPlayback } from "../context/GingerSplitContexts";
 
 export type GingerKeyboardShortcutBindings = {
@@ -20,6 +20,9 @@ export function useGingerKeyboardShortcuts(
 ): void {
   const { togglePlayPause, next, prev } = useGingerPlayback();
   const { toggleMute, seek, currentTime, duration } = useGingerMedia();
+
+  const mediaRef = useRef({ currentTime: 0, duration: 0 });
+  mediaRef.current = { currentTime, duration };
 
   const {
     mute: muteBinding,
@@ -59,11 +62,12 @@ export function useGingerKeyboardShortcuts(
         toggleMute();
       } else if (seekFwdKey && key === seekFwdKey) {
         event.preventDefault();
-        const dur = duration > 0 ? duration : Number.POSITIVE_INFINITY;
-        seek(Math.min(dur, currentTime + seekSecs));
+        const { currentTime: ct, duration: dur } = mediaRef.current;
+        const cap = dur > 0 ? dur : Number.POSITIVE_INFINITY;
+        seek(Math.min(cap, ct + seekSecs));
       } else if (seekBwdKey && key === seekBwdKey) {
         event.preventDefault();
-        seek(Math.max(0, currentTime - seekSecs));
+        seek(Math.max(0, mediaRef.current.currentTime - seekSecs));
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -73,8 +77,6 @@ export function useGingerKeyboardShortcuts(
     bindings.playPause,
     bindings.previous,
     bindings.seekSeconds,
-    currentTime,
-    duration,
     enabled,
     muteBinding,
     next,

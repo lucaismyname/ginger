@@ -14,8 +14,16 @@ describe("formatMmSs", () => {
     expect(formatMmSs(125)).toBe("2:05");
   });
 
-  it("handles large values (hours expressed as minutes)", () => {
-    expect(formatMmSs(3661)).toBe("61:01");
+  it("formats values over one hour as h:mm:ss", () => {
+    expect(formatMmSs(3661)).toBe("1:01:01");
+  });
+
+  it("formats exactly one hour", () => {
+    expect(formatMmSs(3600)).toBe("1:00:00");
+  });
+
+  it("formats multi-hour values", () => {
+    expect(formatMmSs(7384)).toBe("2:03:04");
   });
 
   it("returns 0:00 for NaN", () => {

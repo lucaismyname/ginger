@@ -89,6 +89,8 @@ export function useGingerLiveAnalyzer(
       if (ctx) setIsSuspended(ctx.state === "suspended");
     };
 
+    let frameCounter = 0;
+    const NOTIFY_EVERY = 3;
     const runLoop = () => {
       if (cancelled) return;
       const a = analyserHolderRef.current;
@@ -97,7 +99,10 @@ export function useGingerLiveAnalyzer(
       if (a && fq.length > 0 && td.length > 0) {
         a.getByteFrequencyData(fq as Uint8Array<ArrayBuffer>);
         a.getByteTimeDomainData(td as Uint8Array<ArrayBuffer>);
-        setFrame((n) => n + 1);
+        frameCounter += 1;
+        if (frameCounter % NOTIFY_EVERY === 0) {
+          setFrame((n) => n + 1);
+        }
       }
       rafId = requestAnimationFrame(runLoop);
     };

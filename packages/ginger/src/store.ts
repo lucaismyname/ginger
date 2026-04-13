@@ -78,7 +78,17 @@ export function createGingerStore(options: GingerStoreOptions = {}): GingerStore
     if (next !== state) {
       state = next;
       for (const listener of listeners) {
-        listener(state);
+        try {
+          listener(state);
+        } catch (e) {
+          if (
+            typeof globalThis !== "undefined" &&
+            (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV !==
+              "production"
+          ) {
+            console.error("[@lucaismyname/ginger] Store listener threw:", e);
+          }
+        }
       }
     }
   };

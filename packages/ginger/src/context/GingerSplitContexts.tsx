@@ -2,9 +2,11 @@ import { type Dispatch, type MutableRefObject, createContext, useContext, useMem
 import type {
   GingerAction,
   GingerInitPayload,
+  GingerMediaControlSlice,
   GingerMediaSlice,
   GingerPlaybackSlice,
   GingerState,
+  GingerTimeSlice,
   PlaybackMode,
   PlaylistMeta,
   RepeatMode,
@@ -48,8 +50,16 @@ export type GingerMediaActions = {
 
 export type GingerMediaContextValue = GingerMediaSlice & GingerMediaActions;
 
+/** High-frequency time/progress context value. */
+export type GingerTimeContextValue = GingerTimeSlice;
+
+/** Low-frequency media control context value (volume, rate, actions). */
+export type GingerMediaControlContextValue = GingerMediaControlSlice & GingerMediaActions;
+
 const GingerPlaybackContext = createContext<GingerPlaybackContextValue | null>(null);
 const GingerMediaContext = createContext<GingerMediaContextValue | null>(null);
+const GingerTimeContext = createContext<GingerTimeContextValue | null>(null);
+const GingerMediaControlContext = createContext<GingerMediaControlContextValue | null>(null);
 
 export function useGingerPlayback(): GingerPlaybackContextValue {
   const ctx = useContext(GingerPlaybackContext);
@@ -57,8 +67,32 @@ export function useGingerPlayback(): GingerPlaybackContextValue {
   return ctx;
 }
 
+/**
+ * Full media context (time + controls merged). Re-renders on every time tick.
+ * Prefer `useGingerTime()` or `useGingerMediaControls()` for narrower subscriptions.
+ */
 export function useGingerMedia(): GingerMediaContextValue {
   const ctx = useContext(GingerMediaContext);
+  if (!ctx) throw new Error("Ginger hooks must be used within <Ginger.Provider>");
+  return ctx;
+}
+
+/**
+ * High-frequency time slice only (currentTime, duration, bufferedFraction, isBuffering, errorMessage).
+ * Use when you only need progress/time data and want to avoid re-renders from volume/rate changes.
+ */
+export function useGingerTime(): GingerTimeContextValue {
+  const ctx = useContext(GingerTimeContext);
+  if (!ctx) throw new Error("Ginger hooks must be used within <Ginger.Provider>");
+  return ctx;
+}
+
+/**
+ * Low-frequency media controls (volume, muted, playbackRate, seek, setVolume, etc.).
+ * Does NOT re-render on time ticks — only when volume, mute, or playback rate changes.
+ */
+export function useGingerMediaControls(): GingerMediaControlContextValue {
+  const ctx = useContext(GingerMediaControlContext);
   if (!ctx) throw new Error("Ginger hooks must be used within <Ginger.Provider>");
   return ctx;
 }
@@ -119,4 +153,4 @@ export function gingerStateFromContextValues(
   return { ...playbackRest, ...mediaRest };
 }
 
-export { GingerPlaybackContext, GingerMediaContext };
+export { GingerPlaybackContext, GingerMediaContext, GingerTimeContext, GingerMediaControlContext };

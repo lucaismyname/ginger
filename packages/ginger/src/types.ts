@@ -73,12 +73,17 @@ export type PlaylistMeta = {
 
 export type PlaybackUiState = "idle" | "loading" | "playing" | "paused" | "ended" | "error";
 
-export type GingerMediaSlice = {
+/** High-frequency time/progress fields updated on every time tick. */
+export type GingerTimeSlice = {
   currentTime: number;
   duration: number;
   bufferedFraction: number;
   isBuffering: boolean;
   errorMessage: string | null;
+};
+
+/** Low-frequency media control fields (volume, rate). */
+export type GingerMediaControlSlice = {
   /** 0…1, mirrored on HTMLMediaElement.volume */
   volume: number;
   /** Mirrored on HTMLMediaElement.muted */
@@ -86,6 +91,8 @@ export type GingerMediaSlice = {
   /** Mirrored on HTMLMediaElement.playbackRate (typically 0.25–4) */
   playbackRate: number;
 };
+
+export type GingerMediaSlice = GingerTimeSlice & GingerMediaControlSlice;
 
 export type GingerPlaybackSlice = {
   tracks: Track[];
@@ -199,6 +206,11 @@ export type GingerProviderProps = {
   mediaSession?: boolean | GingerMediaSessionOptions;
   beforePlay?: () => boolean | Promise<boolean>;
   onPlayBlocked?: () => void;
+  /**
+   * When set, automatically retries playback on transient media errors (e.g. network failures)
+   * using exponential backoff. Pass `true` for defaults or an object to configure.
+   */
+  retryOnError?: boolean | GingerRetryConfig;
   persistence?: GingerPersistenceAdapter;
   hydrateOnMount?: boolean;
   resumeOnTrackChange?: boolean;
@@ -239,6 +251,20 @@ export type GingerProviderProps = {
 export type GingerPersistenceAdapter = {
   get: (key: string) => unknown;
   set: (key: string, value: unknown) => void;
+};
+
+export type GingerRetryConfig = {
+  /** Maximum number of retry attempts per track error. Default: 3. */
+  maxRetries?: number;
+  /** Initial delay in milliseconds before the first retry. Doubles on each subsequent attempt. Default: 1500. */
+  delayMs?: number;
+  /**
+   * Which error codes to retry. Default: `["MEDIA_ERR_NETWORK"]`.
+   * Non-retryable errors (e.g. `MEDIA_ERR_SRC_NOT_SUPPORTED`) skip immediately.
+   */
+  retryableErrors?: string[];
+  /** When true, skip to next track on unrecoverable (non-retryable) errors instead of stopping. Default: false. */
+  skipOnUnrecoverable?: boolean;
 };
 
 export type DisplayBaseProps = {

@@ -547,6 +547,7 @@ Props:
 | `mediaSession` | `boolean \| GingerMediaSessionOptions` | `false` | `true` enables default Media Session bridge; pass `{ seekForwardSeconds, seekBackwardSeconds, positionState }` for optional OS skip controls and timeline sync |
 | `beforePlay` | `() => boolean \| Promise<boolean>` | `undefined` | Policy hook run before playback starts |
 | `onPlayBlocked` | `() => void` | `undefined` | Called when `beforePlay` returns `false` |
+| `retryOnError` | `boolean \| GingerRetryConfig` | `undefined` | Auto-retry on transient media errors (e.g. network failures) with exponential backoff. `true` uses defaults (`maxRetries: 3`, `delayMs: 1500`). |
 | `persistence` | `{ get(key): unknown; set(key, value): void }` | `undefined` | Adapter for persisted playback settings and resume state |
 | `hydrateOnMount` | `boolean` | `false` | Hydrate persisted values into initial provider state |
 | `resumeOnTrackChange` | `boolean` | `false` | Restore/save per-track playback position |
@@ -898,6 +899,8 @@ Example:
 - **`useGinger()`** — One object with merged `state`, derived fields (`duration`, `progress`, `playbackUi`, …), actions, `dispatch`, and `audioRef`. Best default when you want everything in one place.
 
 - **`useGingerPlayback()`** / **`useGingerMedia()`** — Subscribe to queue/transport vs time/volume/buffering separately so dense UIs re-render less often.
+
+- **`useGingerTime()`** / **`useGingerMediaControls()`** — Granular media subscriptions: `useGingerTime()` provides only high-frequency fields (`currentTime`, `duration`, `bufferedFraction`, `isBuffering`, `errorMessage`); `useGingerMediaControls()` provides low-frequency fields (`volume`, `muted`, `playbackRate`) plus actions (`seek`, `setVolume`, etc.). Components that only need volume controls avoid re-renders on every time tick.
 
 - **`useGingerState()`** — Merged `GingerState` only (no actions); use inside custom display components together with hooks above for controls.
 

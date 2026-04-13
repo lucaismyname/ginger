@@ -38,15 +38,18 @@ export type {
   GingerInitPayload,
   GingerLocaleMessages,
   GingerMediaSessionOptions,
+  GingerMediaControlSlice,
   GingerMediaSlice,
   GingerPersistenceAdapter,
   GingerPlaybackSlice,
   GingerProviderProps,
+  GingerRetryConfig,
   GingerState,
   PlaybackMode,
   PlaybackUiState,
   PlaylistMeta,
   RepeatMode,
+  GingerTimeSlice,
   Track,
   TrackChapter,
   TrackLyricLine,
@@ -64,15 +67,19 @@ export {
   gingerStateFromContexts,
   gingerStateFromContextValues,
   useGingerMedia,
+  useGingerMediaControls,
   useGingerPlayback,
   useGingerState,
+  useGingerTime,
 } from "./context/GingerSplitContexts";
 /** Action/context types for split playback and media contexts. */
 export type {
   GingerMediaActions,
   GingerMediaContextValue,
+  GingerMediaControlContextValue,
   GingerPlaybackActions,
   GingerPlaybackContextValue,
+  GingerTimeContextValue,
 } from "./context/GingerSplitContexts";
 
 /** Locale defaults and locale hook for control labels. */

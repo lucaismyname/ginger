@@ -103,6 +103,8 @@ describe("useGingerLiveAnalyzer", () => {
 
     act(() => {
       webAudio.flushAnimationFrame();
+      webAudio.flushAnimationFrame();
+      webAudio.flushAnimationFrame();
     });
 
     expect(screen.getByTestId("frequency-values").textContent).toBe("17:34");
@@ -137,6 +139,8 @@ describe("useGingerLiveAnalyzer", () => {
     const view = render(<AnalyzerHarness enabled />);
 
     act(() => {
+      webAudio.flushAnimationFrame();
+      webAudio.flushAnimationFrame();
       webAudio.flushAnimationFrame();
     });
 
