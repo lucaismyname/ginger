@@ -72,6 +72,10 @@ Web Audio–based **overlap** between outgoing and incoming media (distinct from
 
 Shares the same design constraint as EQ/spatial: processing attaches to the **current** media element graph; call **`teardownCrossfadeGraph`** when unmounting or switching strategies to avoid leaking `AudioContext` nodes.
 
+## `@lucaismyname/ginger/devtools`
+
+Development-only debugging overlay: import **`GingerDevtools`** from **`@lucaismyname/ginger/devtools`** and render it once anywhere in the app (even outside **`Ginger.Provider`**). It discovers every active provider via a small global registry, supports multiple players (tabs / **`debugLabel`** on **`Ginger.Provider`**), and can drive playback actions (play/pause, seek, volume, queue) in addition to showing state. Styling uses Tailwind via CDN injected on mount. See the root [`README.md`](../../README.md) for usage.
+
 ## `@lucaismyname/ginger/experimental-gapless`
 
 Gapless **environment** probe (Milestone 1); Ginger playback is still a single `<audio>` via `Ginger.Player`.

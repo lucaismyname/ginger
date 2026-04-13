@@ -41,6 +41,10 @@ Each queue item is a **`Track`**: at minimum supply a stable identity and a play
 
 See the `Track` type in the generated API or [`types.ts`](../src/types.ts).
 
+### Declarative queue (optional)
+
+You can define tracks in JSX with **`Ginger.Tracks`** and **`Ginger.Tracks.Track`** (same fields as **`Track`**; use **`src`** as an alias for **`fileUrl`**). The **`merge`** prop controls how they combine with **`initialTracks`** (`append`, `prepend`, or `replace`). Details and caveats: [`reference/components.md`](./reference/components.md#gingertracks-and-gingertrack).
+
 ## Core concepts
 
 | Piece | Role |

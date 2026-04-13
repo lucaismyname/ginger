@@ -12,7 +12,7 @@ This folder holds **narrative docs** (Markdown) and a **generated API site** (HT
 | **[`getting-started.md`](./getting-started.md)** | Install, minimal `<Ginger.Provider>` example, core concepts, links onward |
 | **[`api-overview.md`](./api-overview.md)** | Table of public import paths (`@lucaismyname/ginger`, subpaths), relation to TypeDoc |
 | **[`reference/subpaths.md`](./reference/subpaths.md)** | Deep dive on optional `@lucaismyname/ginger/*` entrypoints (client, testing, waveform, EQ, …) |
-| **[`reference/components.md`](./reference/components.md)** | Checklist-style list of `Ginger.*` compound components |
+| **[`reference/components.md`](./reference/components.md)** | Checklist-style list of `Ginger.*` compound components (including declarative `Ginger.Tracks` / `Ginger.Track`) |
 | **[`reference/hooks.md`](./reference/hooks.md)** | Checklist-style list of hooks; points to subpaths for advanced hooks |
 | **[`guides/`](./guides/)** | How-to guides: recipes, testing, accessibility, streaming adapters |
 | **[`GAPLESS_ROADMAP.md`](./GAPLESS_ROADMAP.md)** | Experimental gapless work (milestones; not a user tutorial) |
@@ -43,5 +43,5 @@ Requires a successful `npm run build` first if you want links to resolve against
 3. [`getting-started.md`](./getting-started.md).
 4. [`reference/components.md`](./reference/components.md) + [`reference/hooks.md`](./reference/hooks.md) while coding.
 5. [`guides/recipes.md`](./guides/recipes.md) for queue updates, autoplay, persistence.
-6. [`reference/subpaths.md`](./reference/subpaths.md) when you need waveform, EQ, spatial, transcript, remote, crossfade, or gapless probe.
+6. [`reference/subpaths.md`](./reference/subpaths.md) when you need waveform, EQ, spatial, transcript, remote, crossfade, devtools, or gapless probe.
 7. [`guides/testing.md`](./guides/testing.md) if you add automated tests around Ginger.

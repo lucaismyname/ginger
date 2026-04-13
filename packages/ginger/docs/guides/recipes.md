@@ -17,6 +17,14 @@ The second argument is **`currentIndex`** (optional). Omit it to keep the curren
 
 ---
 
+## Declarative queue in JSX (`Ginger.Tracks` / `Ginger.Track`)
+
+As an alternative to passing every track in the **`initialTracks`** array, mount **`Ginger.Tracks`** and one **`Ginger.Tracks.Track`** per row (props mirror **`Track`**; **`src`** aliases **`fileUrl`**). Use **`merge="append"`** (default) to append after **`initialTracks`**, **`prepend`** to put declarative tracks first, or **`replace`** for a JSX-only queue. Updates when you add, remove, or reorder **`Ginger.Track`** children.
+
+Imperative **`setQueue()`** and declarative sync both dispatch **`SET_QUEUE`**; mixing them is fine, but if you change the queue only via **`setQueue()`** without updating **`initialTracks`** props, a later declarative sync can realign the queue with **props + declarative** again—see the root [`README.md`](../../README.md) and [`reference/components.md`](../reference/components.md#gingertracks-and-gingertrack).
+
+---
+
 ## Duplicate URLs safely
 
 When multiple **`Track`** rows share the same **`fileUrl`**, assign **distinct `id`** values (or stable unique keys your app uses). Queue mutation, identity helpers, and persistence resume keys all rely on stable per-track identity; duplicate URLs without IDs can make “which row is active” ambiguous.

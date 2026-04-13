@@ -847,6 +847,32 @@ function PlaylistManual() {
 }
 ```
 
+### `Ginger.Tracks` and `Ginger.Track`
+
+Declare queue entries in JSX instead of (or in addition to) the `initialTracks` array. **`Ginger.Track`** renders nothing; it registers a [`Track`](#track) with the nearest **`Ginger.Tracks`** wrapper, which syncs the merged queue on each update. **`Ginger.Playlist.Track`** remains the **row UI** (it takes an **`index`** into the existing queue); **`Ginger.Track`** is **data only**.
+
+| Prop (`Ginger.Tracks`) | Type | Default | Description |
+|--------|------|---------|-------------|
+| `merge` | `"append" \| "prepend" \| "replace"` | `"append"` | How to combine declarative tracks with `initialTracks` from `Ginger.Provider`: **`append`** → `[...initialTracks, ...declarative]`; **`prepend`** → `[...declarative, ...initialTracks]`; **`replace`** → declarative tracks only (snapshot of `initialTracks` from props is ignored for this subtree’s sync). |
+| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | Passed to a wrapper with `display: contents` (layout-neutral). |
+
+**`Ginger.Track`** accepts the same fields as [`Track`](#track). **`title`** is required; provide **`fileUrl`** or **`src`** (alias for `fileUrl`). Optional **`id`** keeps a stable identity when reordering JSX.
+
+The merge snapshot uses the provider’s latest **`initialTracks` props** (via an internal ref). If you change the queue only with **`setQueue()`** and not via props, a later sync from **`Ginger.Tracks`** can realign the queue with props + declarative children again—prefer updating **`initialTracks`** when mixing approaches, or rely on **`merge="replace"`** with only declarative children.
+
+**Shuffle:** each declarative sync dispatches **`SET_QUEUE`**, which clears shuffle state (same as imperative `setQueue`). Avoid heavy declarative churn while shuffle is on if you need shuffle to persist.
+
+```tsx
+<Ginger.Provider initialTracks={[{ id: "a", title: "Intro", fileUrl: "/a.mp3" }]}>
+  <Ginger.Tracks merge="append">
+    <Ginger.Track title="Main" src="/b.mp3" artist="Band" />
+    <Ginger.Track title="Outro" fileUrl="/c.mp3" />
+  </Ginger.Tracks>
+  <Ginger.Player />
+  <Ginger.Playlist />
+</Ginger.Provider>
+```
+
 ## Types
 
 ### `Track`

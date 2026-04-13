@@ -1,4 +1,5 @@
 import { Ginger } from "@lucaismyname/ginger";
+import { GingerDevtools } from "@lucaismyname/ginger/devtools";
 import {
   Activity,
   ChartNoAxesColumn,

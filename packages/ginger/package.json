@@ -1,6 +1,6 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.56",
+  "version": "0.0.59",
   "description": "A headless react audio-player component primitive",
   "type": "module",
   "sideEffects": false,
@@ -10,7 +10,7 @@
     "README.md",
     "CHANGELOG.md"
   ],
-  "main": "./dist/index.cjs", 
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

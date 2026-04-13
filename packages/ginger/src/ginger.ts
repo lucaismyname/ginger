@@ -4,11 +4,18 @@ import * as Current from "./components/current";
 import * as Icon from "./components/icons";
 import { GingerPlaylistCompound } from "./components/playlist/GingerPlaylist";
 import * as Queue from "./components/queue/QueueDisplay";
+import { GingerTrack } from "./components/tracks/GingerTrack";
+import { GingerTracks } from "./components/tracks/GingerTracks";
 import { GingerProvider } from "./context/GingerProvider";
+
+const GingerTracksCompound = Object.assign(GingerTracks, {
+  Track: GingerTrack,
+});
 
 export const Ginger = {
   Provider: GingerProvider,
   Player: GingerPlayer,
+  Tracks: GingerTracksCompound,
   Current: {
     Title: Current.Title,
     Artist: Current.Artist,

@@ -1,6 +1,6 @@
 # Components reference
 
-The **`Ginger`** namespace groups the provider, the hidden `<audio>` implementation, controls, current-track displays, queue metadata, playlist building blocks, and optional inline icons. All components assume a **`Ginger.Provider`** ancestor unless noted.
+The **`Ginger`** namespace groups the provider, the hidden `<audio>` implementation, controls, current-track displays, queue metadata, optional **declarative queue** definitions, playlist building blocks, and optional inline icons. All components assume a **`Ginger.Provider`** ancestor unless noted.
 
 For hook-level APIs and headless patterns, see [`hooks.md`](./hooks.md). For per-prop TypeDoc, open the generated [`../api/index.html`](../api/index.html).
 
@@ -70,6 +70,23 @@ Read-only views of the **active** track and playback state. Most accept **`fallb
 ## `Ginger.Queue.*`
 
 Metadata for the **queue as a whole** (not only the current row): titles, subtitles, artwork, etc. Use for chrome around the playlist.
+
+---
+
+## `Ginger.Tracks` and `Ginger.Track`
+
+Declare queue entries in JSX instead of (or in addition to) the **`initialTracks`** array on **`Ginger.Provider`**.
+
+| Export | Description |
+|--------|-------------|
+| **`Ginger.Tracks`** | Wrapper with a **`merge`** prop: **`append`** (default), **`prepend`**, or **`replace`**. Combines declarative children with the provider’s current **`initialTracks`** snapshot (from props via an internal ref). Renders a layout-neutral wrapper (`display: contents`). |
+| **`Ginger.Track`** | Data-only: renders **nothing**. Registers one **`Track`**; requires **`title`** and **`fileUrl`** or **`src`**. Optional **`id`** keeps identity stable when reordering siblings. Must appear under **`Ginger.Tracks`**. |
+
+Typical flow: define the queue with **`Ginger.Tracks`** / **`Ginger.Track`**, then render the list with auto **`Ginger.Playlist`** (no `children`) or manual **`Ginger.Playlist.Track`** rows by **`index`**.
+
+**Not the same as `Ginger.Playlist.Track`:** the playlist row component takes an **`index`** into **`state.tracks`** (display + click-to-play). **`Ginger.Track`** declares **what** is in the queue; **`Ginger.Playlist.Track`** renders **where** a row appears in the UI.
+
+See also: [`guides/recipes.md`](../guides/recipes.md) (imperative vs declarative queue), and the root [`README.md`](../../README.md) for merge semantics and caveats (`SET_QUEUE` / shuffle).
 
 ---
 

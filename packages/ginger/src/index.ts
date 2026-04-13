@@ -132,6 +132,12 @@ export type {
   GingerPlaylistProps,
   GingerPlaylistTrackProps,
 } from "./components/playlist/GingerPlaylist";
+/** Declarative queue (`Ginger.Tracks` / `Ginger.Track`) prop types. */
+export type {
+  GingerTrackProps,
+  GingerTracksMergeMode,
+  GingerTracksProps,
+} from "./components/tracks";
 /** Current playback status component prop types. */
 export type {
   ErrorMessageProps,

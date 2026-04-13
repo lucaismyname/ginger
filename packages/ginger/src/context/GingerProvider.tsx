@@ -10,6 +10,7 @@ import {
   useReducer,
   useRef,
 } from "react";
+import { GingerDeclarativeMergeProvider } from "../components/tracks/GingerDeclarativeMergeContext";
 import {
   clampPlaybackRate,
   clampVolume,
@@ -883,17 +884,26 @@ export function GingerProvider({
     });
   }, [asChild, children, shellProps]);
 
+  const declarativeMergeValue = useMemo(
+    () => ({
+      getInitialTracksSnapshot: () => latestInitRef.current.tracks,
+    }),
+    [],
+  );
+
   return (
     <GingerLocaleProvider locale={locale}>
-      <GingerPlaybackContext.Provider value={playbackValue}>
-        <GingerTimeContext.Provider value={timeValue}>
-          <GingerMediaControlContext.Provider value={mediaControlValue}>
-            <GingerMediaContext.Provider value={mediaValue}>
-              <GingerContext.Provider value={value}>{shell}</GingerContext.Provider>
-            </GingerMediaContext.Provider>
-          </GingerMediaControlContext.Provider>
-        </GingerTimeContext.Provider>
-      </GingerPlaybackContext.Provider>
+      <GingerDeclarativeMergeProvider value={declarativeMergeValue}>
+        <GingerPlaybackContext.Provider value={playbackValue}>
+          <GingerTimeContext.Provider value={timeValue}>
+            <GingerMediaControlContext.Provider value={mediaControlValue}>
+              <GingerMediaContext.Provider value={mediaValue}>
+                <GingerContext.Provider value={value}>{shell}</GingerContext.Provider>
+              </GingerMediaContext.Provider>
+            </GingerMediaControlContext.Provider>
+          </GingerTimeContext.Provider>
+        </GingerPlaybackContext.Provider>
+      </GingerDeclarativeMergeProvider>
     </GingerLocaleProvider>
   );
 }
