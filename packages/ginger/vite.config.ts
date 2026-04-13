@@ -36,6 +36,7 @@ export default defineConfig({
         "spatial/index": resolve(__dirname, "src/spatial/index.ts"),
         "transcript/index": resolve(__dirname, "src/transcript/index.ts"),
         "remote/index": resolve(__dirname, "src/remote/index.ts"),
+        "cast/index": resolve(__dirname, "src/cast/index.ts"),
         "crossfade/index": resolve(__dirname, "src/crossfade/index.ts"),
         "devtools/index": resolve(__dirname, "src/devtools/index.ts"),
       },

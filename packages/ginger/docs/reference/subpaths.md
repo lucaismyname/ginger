@@ -61,6 +61,18 @@ Requires `BroadcastChannel` (not available in some SSR environments); the hook s
 
 The subpath also exports **`DEFAULT_REMOTE_CHANNEL_NAME`** and the **`RemoteMessage`** type for apps that want to share channel constants or type custom protocol helpers.
 
+## `@lucaismyname/ginger/cast`
+
+Chromecast **Web Sender** (Cast Application Framework) integration:
+
+- **`loadCastFramework()`** — idempotent loader for Google’s sender script; call before using Cast APIs.
+- **`useGingerCast()`** — session lifecycle (`requestSession`, `endSession`), sender-driven **`loadMedia`** for the current `Track`, and rough play/pause/seek sync via **`RemotePlayer` / `RemotePlayerController`**.
+- **`trackToMediaInfo()`** / **`guessContentTypeFromUrl()`** — build `chrome.cast.media.LoadRequest` values from `Track` (advanced use).
+
+**Constraints:** Cast requires **HTTPS** in production (localhost is exempt for development). **`Track.fileUrl`** must be reachable by the **Cast device** with correct **CORS** (browser-only headers are not enough). Avoid **mixed content** (HTTP audio on an HTTPS page).
+
+Prefer **`{!isCasting && <Ginger.Player />}`** so the browser does not decode the same URLs as the TV. Optional **`syncLocalAudio: "pause-mute"`** mutes the local `<audio>` element while connected without changing Ginger state.
+
 ## `@lucaismyname/ginger/crossfade`
 
 Web Audio–based **overlap** between outgoing and incoming media (distinct from the long-term **gapless** roadmap in [`GAPLESS_ROADMAP.md`](../GAPLESS_ROADMAP.md), which targets seamless *adjacent* track transitions on a single element).
@@ -85,7 +97,7 @@ Gapless **environment** probe (Milestone 1); Ginger playback is still a single `
 
 ## Generated API
 
-The TypeDoc build includes the main [`src/index.ts`](../../src/index.ts) entry **and** subpath entry files (see [`typedoc.json`](../../typedoc.json)), including **`crossfade`**. The docs landing page is [`api-overview.md`](../api-overview.md). This file is the canonical hand-written reference for subpaths; import paths match [`package.json` `exports`](../../package.json).
+The TypeDoc build includes the main [`src/index.ts`](../../src/index.ts) entry **and** subpath entry files (see [`typedoc.json`](../../typedoc.json)), including **`cast`** and **`crossfade`**. The docs landing page is [`api-overview.md`](../api-overview.md). This file is the canonical hand-written reference for subpaths; import paths match [`package.json` `exports`](../../package.json).
 
 ---
 

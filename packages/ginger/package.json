@@ -1,6 +1,6 @@
 {
   "name": "@lucaismyname/ginger",
-  "version": "0.0.59",
+  "version": "0.0.61",
   "description": "A headless react audio-player component primitive",
   "type": "module",
   "sideEffects": false,
@@ -58,6 +58,11 @@
       "types": "./dist/remote/index.d.ts",
       "import": "./dist/remote/index.js",
       "require": "./dist/remote/index.cjs"
+    },
+    "./cast": {
+      "types": "./dist/cast/index.d.ts",
+      "import": "./dist/cast/index.js",
+      "require": "./dist/cast/index.cjs"
     },
     "./crossfade": {
       "types": "./dist/crossfade/index.d.ts",

@@ -64,10 +64,12 @@ For docs beyond this README, use the repository links below:
 - Streaming adapters: [`docs/guides/streaming-adapters.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/guides/streaming-adapters.md)
 - Components reference: [`docs/reference/components.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/components.md)
 - Hooks reference: [`docs/reference/hooks.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/hooks.md)
-- Subpath exports (waveform, EQ, spatial, transcript, remote, crossfade, …): [`docs/reference/subpaths.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/subpaths.md)
+- Subpath exports (waveform, EQ, spatial, transcript, remote, cast, crossfade, …): [`docs/reference/subpaths.md`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/reference/subpaths.md)
 - Generated API docs: [`docs/api/index.html`](https://github.com/lucaismyname/ginger/blob/main/packages/ginger/docs/api/index.html)
 
 ## Subpath Exports
+
+Optional entrypoints keep the core bundle small. **Copy-paste starters** (full `Ginger.Provider` + `Ginger.Player` + subpath wiring) are in [Subpath copy-paste starters](#subpath-copy-paste-starters) below.
 
 - `@lucaismyname/ginger/client`
 - `@lucaismyname/ginger/testing`
@@ -76,16 +78,106 @@ For docs beyond this README, use the repository links below:
 - `@lucaismyname/ginger/spatial`
 - `@lucaismyname/ginger/transcript`
 - `@lucaismyname/ginger/remote`
+- `@lucaismyname/ginger/cast`
 - `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
 - `@lucaismyname/ginger/devtools`
 
-### Equalizer
+### Subpath Examples
+
+Each snippet is a **single-file starting point**: replace `/your-audio.mp3` (or any `fileUrl`) with a real URL, then layer your UI. Imports use the published package names.
+
+#### <a id="subpath-starter-client"></a> `@lucaismyname/ginger/client`
+
+Same API as the root package, with a `"use client"` directive for React Server Components (for example Next.js App Router).
 
 ```tsx
+"use client";
+
+import { Ginger } from "@lucaismyname/ginger/client";
+
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+    </Ginger.Provider>
+  );
+}
+```
+
+#### <a id="subpath-starter-testing"></a> `@lucaismyname/ginger/testing`
+
+Vitest (or Jest) example: `renderGinger` wraps **`Ginger.Provider`** and optionally **`Ginger.Player`**.
+
+```tsx
+import type { Track } from "@lucaismyname/ginger";
+import { queryAudio, renderGinger } from "@lucaismyname/ginger/testing";
+import { describe, expect, it } from "vitest";
+
+const tracks: Track[] = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+describe("Ginger", () => {
+  it("mounts audio", () => {
+    const { container } = renderGinger(<p>ok</p>, { tracks });
+    expect(queryAudio(container)).toBeTruthy();
+  });
+});
+```
+
+#### <a id="subpath-starter-waveform"></a> `@lucaismyname/ginger/waveform`
+
+`useAudioPeaks` reads the **same** URL as the current track (offline scan; keep files reasonably small).
+
+```tsx
+import { Ginger, useGinger } from "@lucaismyname/ginger";
+import { useAudioPeaks } from "@lucaismyname/ginger/waveform";
+
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+function PeaksRow() {
+  const { currentTrack } = useGinger();
+  const { peaks, isLoading, error } = useAudioPeaks(currentTrack?.fileUrl, 32);
+  if (error) return <p>{error}</p>;
+  if (isLoading) return <p>Scanning…</p>;
+  return (
+    <div style={{ display: "flex", gap: 1, height: 24, alignItems: "flex-end" }}>
+      {peaks.map((p, i) => (
+        <span
+          key={i}
+          style={{
+            width: 3,
+            height: `${Math.max(2, p * 24)}px`,
+            background: "#ea580c",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <PeaksRow />
+    </Ginger.Provider>
+  );
+}
+```
+
+#### <a id="subpath-starter-equalizer"></a> `@lucaismyname/ginger/equalizer`
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
 import { useGingerEqualizer } from "@lucaismyname/ginger/equalizer";
 
-function MyPlayer() {
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+function EqSliders() {
   const { setBandGain, bands, error } = useGingerEqualizer({
     bands: [
       { frequency: 60 },
@@ -95,7 +187,6 @@ function MyPlayer() {
       { frequency: 16000 },
     ],
   });
-
   return (
     <div>
       {bands.map((band, i) => (
@@ -114,24 +205,32 @@ function MyPlayer() {
     </div>
   );
 }
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <EqSliders />
+    </Ginger.Provider>
+  );
+}
 ```
 
-The EQ and `useGingerLiveAnalyzer` share the same `AudioContext` and can be used together. EQ filters are inserted before the analyser in the Web Audio graph.
-
-### Spatial audio (`@lucaismyname/ginger/spatial`)
-
-Inserts an HRTF **`PannerNode`** into the same Web Audio graph as the EQ and live analyser (one `MediaElementAudioSourceNode` per `<audio>`).
+#### <a id="subpath-starter-spatial"></a> `@lucaismyname/ginger/spatial`
 
 ```tsx
+import { Ginger } from "@lucaismyname/ginger";
 import { useGingerSpatialAudio } from "@lucaismyname/ginger/spatial";
 
-function Spatialized() {
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+function SpatialControls() {
   const { setSourcePosition, error } = useGingerSpatialAudio({
     panningModel: "HRTF",
     position: [2, 0, 0],
     listenerPosition: [0, 0, 0],
   });
-
   return (
     <div>
       <button type="button" onClick={() => setSourcePosition(0, 0, -2)}>
@@ -141,20 +240,25 @@ function Spatialized() {
     </div>
   );
 }
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <SpatialControls />
+    </Ginger.Provider>
+  );
+}
 ```
 
-Use **`setListenerPosition`** and **`setPanningModel`** for runtime updates without rebuilding the graph.
-
-### Transcript (`@lucaismyname/ginger/transcript`)
-
-Parse **SRT** and **WebVTT** captions and sync cues to playback time (podcasts, video-style transcripts). HTML tags in cue text are stripped.
+#### <a id="subpath-starter-transcript"></a> `@lucaismyname/ginger/transcript`
 
 ```tsx
-import {
-  parseSrt,
-  parseVtt,
-  useGingerTranscriptSync,
-} from "@lucaismyname/ginger/transcript";
+import { Ginger } from "@lucaismyname/ginger";
+import { useGingerTranscriptSync } from "@lucaismyname/ginger/transcript";
+
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
 
 const vtt = `WEBVTT
 
@@ -163,11 +267,10 @@ Hello from VTT
 `;
 
 function TranscriptPanel() {
-  const { cues, activeCue, activeCues } = useGingerTranscriptSync({
+  const { activeCue, activeCues } = useGingerTranscriptSync({
     transcript: vtt,
     format: "auto",
   });
-
   return (
     <div>
       <p>Now: {activeCue?.text ?? "—"}</p>
@@ -176,26 +279,29 @@ function TranscriptPanel() {
   );
 }
 
-// Or parse ahead of time:
-const cuesFromSrt = parseSrt(srtString);
-const cuesFromVtt = parseVtt(vttString);
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <TranscriptPanel />
+    </Ginger.Provider>
+  );
+}
 ```
 
-**`useGingerTranscriptSync`** mirrors **`useGingerLyricsSync`** but uses cue **start/end** ranges and exposes **`activeCues`** for overlapping captions. **`parseTranscriptAuto`** chooses VTT when the string starts with `WEBVTT`, otherwise SRT.
-
-### Multi-tab sync (`@lucaismyname/ginger/remote`)
-
-Elects a **leader** tab via **`BroadcastChannel`** and pushes **`INIT`** snapshots to followers so queue and transport settings stay aligned. Mount **`Ginger.Player`** only on the leader so a single `<audio>` element plays.
+#### <a id="subpath-starter-remote"></a> `@lucaismyname/ginger/remote`
 
 ```tsx
 import { Ginger } from "@lucaismyname/ginger";
 import { useGingerRemote } from "@lucaismyname/ginger/remote";
 
-function RemoteAwarePlayer() {
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+function RemoteShell() {
   const { isLeader, isPending, error } = useGingerRemote({
     channelName: "my-app-ginger",
   });
-
   return (
     <>
       {error && <p role="alert">{error}</p>}
@@ -204,60 +310,187 @@ function RemoteAwarePlayer() {
     </>
   );
 }
-```
 
-Snapshots send the current queue order with **`isShuffled: false`** so followers do not re-randomize; the visible order matches the leader. **`claimLeadership()`** requests leadership (lexicographically smaller tab IDs win conflicts).
-
-`@lucaismyname/ginger/remote` also exports **`DEFAULT_REMOTE_CHANNEL_NAME`** and the **`RemoteMessage`** type if you need to share protocol constants or type your own channel helpers.
-
-### Crossfade (`@lucaismyname/ginger/crossfade`)
-
-Adds a Web Audio crossfade graph for **overlap-based** transitions between outgoing and incoming media. This is distinct from the longer-term **gapless** work: crossfade overlaps two sources on purpose, while gapless aims for seamless adjacent track boundaries on a single playback path.
-
-```tsx
-import { useGingerCrossfade } from "@lucaismyname/ginger/crossfade";
-
-function CrossfadeSetup() {
-  const { status, error } = useGingerCrossfade({
-    enabled: true,
-    durationMs: 1200,
-  });
-
+export function App() {
   return (
-    <div>
-      <p>Status: {status}</p>
-      {error && <p role="alert">{error}</p>}
-    </div>
+    <Ginger.Provider initialTracks={tracks}>
+      <RemoteShell />
+      {/* Transport controls still work in every tab */}
+      <Ginger.Control.PlayPause />
+    </Ginger.Provider>
   );
 }
 ```
 
-For lower-level integrations, the subpath also exports **`attachCrossfadeGraph`**, **`scheduleCrossfade`**, and **`teardownCrossfadeGraph`** plus the related graph/curve types. Like EQ and spatial audio, crossfade attaches to the active Ginger media graph and should be torn down when you unmount or switch playback strategies.
+#### <a id="subpath-starter-cast"></a> `@lucaismyname/ginger/cast`
 
-### Devtools (`@lucaismyname/ginger/devtools`)
-
-A debugging overlay for inspecting and controlling Ginger audio players at runtime. Supports **multiple providers** on the same page via a global registry — place a single `<GingerDevtools />` anywhere in your app and it auto-discovers every active `<Ginger.Provider>`.
+Cast needs **HTTPS** in production; use a real HTTPS `fileUrl` the receiver can fetch.
 
 ```tsx
-import { GingerDevtools } from "@lucaismyname/ginger/devtools";
+import { Ginger } from "@lucaismyname/ginger";
+import { useGingerCast } from "@lucaismyname/ginger/cast";
 
-function App() {
+const tracks = [{ title: "Demo", fileUrl: "https://your.cdn/your-audio.mp3" }];
+
+function CastShell() {
+  const { isCasting, requestSession, endSession, error } = useGingerCast();
   return (
     <>
-      <Ginger.Provider debugLabel="Main Player" initialTracks={tracks}>
-        {/* ... */}
-      </Ginger.Provider>
+      {error && <p role="alert">{error}</p>}
+      <button type="button" onClick={() => void requestSession()}>
+        Cast
+      </button>
+      <button type="button" onClick={endSession}>
+        Stop casting
+      </button>
+      {!isCasting && <Ginger.Player />}
+    </>
+  );
+}
 
-      <Ginger.Provider debugLabel="Ambient" initialTracks={ambientTracks}>
-        {/* ... */}
-      </Ginger.Provider>
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <CastShell />
+      <Ginger.Control.PlayPause />
+    </Ginger.Provider>
+  );
+}
+```
 
-      {/* Single devtools instance — discovers both providers */}
+#### <a id="subpath-starter-crossfade"></a> `@lucaismyname/ginger/crossfade`
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import { useGingerCrossfade } from "@lucaismyname/ginger/crossfade";
+
+const tracks = [
+  { title: "A", fileUrl: "/your-audio-a.mp3" },
+  { title: "B", fileUrl: "/your-audio-b.mp3" },
+];
+
+function CrossfadeReadout() {
+  const { status, error } = useGingerCrossfade({
+    enabled: true,
+    durationMs: 1200,
+  });
+  return (
+    <div>
+      <p>Crossfade: {status}</p>
+      {error && <p role="alert">{error}</p>}
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <Ginger.Control.Next />
+      <CrossfadeReadout />
+    </Ginger.Provider>
+  );
+}
+```
+
+#### <a id="subpath-starter-experimental-gapless"></a> `@lucaismyname/ginger/experimental-gapless`
+
+Probe only; does **not** change playback.
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import { useExperimentalGapless } from "@lucaismyname/ginger/experimental-gapless";
+
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+function GaplessProbe() {
+  const { supported, reason, gingerGaplessPlayback, preloadedTrackIds } =
+    useExperimentalGapless();
+  return (
+    <pre style={{ fontSize: 12 }}>
+      {JSON.stringify(
+        { supported, reason, gingerGaplessPlayback, preloadedTrackIds },
+        null,
+        2,
+      )}
+    </pre>
+  );
+}
+
+export function App() {
+  return (
+    <Ginger.Provider initialTracks={tracks}>
+      <Ginger.Player />
+      <Ginger.Control.PlayPause />
+      <GaplessProbe />
+    </Ginger.Provider>
+  );
+}
+```
+
+#### <a id="subpath-starter-devtools"></a> `@lucaismyname/ginger/devtools`
+
+`GingerDevtools` may sit **outside** `Ginger.Provider`; it discovers all registered players.
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import { GingerDevtools } from "@lucaismyname/ginger/devtools";
+
+const tracks = [{ title: "Demo", fileUrl: "/your-audio.mp3" }];
+
+export function App() {
+  return (
+    <>
+      <Ginger.Provider debugLabel="Main" initialTracks={tracks}>
+        <Ginger.Player />
+        <Ginger.Control.PlayPause />
+      </Ginger.Provider>
       <GingerDevtools />
     </>
   );
 }
 ```
+
+### Equalizer
+
+**Full shell:** [Equalizer starter](#subpath-starter-equalizer) (above). The EQ and `useGingerLiveAnalyzer` share the same `AudioContext` and can be used together. EQ filters are inserted before the analyser in the Web Audio graph.
+
+### Spatial audio (`@lucaismyname/ginger/spatial`)
+
+Inserts an HRTF **`PannerNode`** into the same Web Audio graph as the EQ and live analyser (one `MediaElementAudioSourceNode` per `<audio>`). **Full shell:** [Spatial starter](#subpath-starter-spatial). Use **`setListenerPosition`** and **`setPanningModel`** for runtime updates without rebuilding the graph.
+
+### Transcript (`@lucaismyname/ginger/transcript`)
+
+Parse **SRT** and **WebVTT** captions and sync cues to playback time (podcasts, video-style transcripts). HTML tags in cue text are stripped. **Full shell:** [Transcript starter](#subpath-starter-transcript).
+
+**`useGingerTranscriptSync`** mirrors **`useGingerLyricsSync`** but uses cue **start/end** ranges and exposes **`activeCues`** for overlapping captions. **`parseTranscriptAuto`** chooses VTT when the string starts with `WEBVTT`, otherwise SRT. Parse ahead of time with **`parseSrt`** / **`parseVtt`** when you do not need the hook.
+
+### Multi-tab sync (`@lucaismyname/ginger/remote`)
+
+Elects a **leader** tab via **`BroadcastChannel`** and pushes **`INIT`** snapshots to followers so queue and transport settings stay aligned. Mount **`Ginger.Player`** only on the leader so a single `<audio>` element plays. **Full shell:** [Remote starter](#subpath-starter-remote).
+
+Snapshots send the current queue order with **`isShuffled: false`** so followers do not re-randomize; the visible order matches the leader. **`claimLeadership()`** requests leadership (lexicographically smaller tab IDs win conflicts).
+
+`@lucaismyname/ginger/remote` also exports **`DEFAULT_REMOTE_CHANNEL_NAME`** and the **`RemoteMessage`** type if you need to share protocol constants or type your own channel helpers.
+
+### Chromecast (`@lucaismyname/ginger/cast`)
+
+Loads the **Google Cast Web Sender** (CAF), exposes **`useGingerCast`** for session + **`loadMedia`** sync, and helpers **`loadCastFramework`**, **`trackToMediaInfo`**, **`guessContentTypeFromUrl`**. The default receiver is the **Default Media Receiver**; override with **`receiverApplicationId`**.
+
+**Platform:** Cast requires **HTTPS** in production (localhost is allowed for development). **`Track.fileUrl`** must be fetchable by the **Cast device** with correct **CORS**; avoid **mixed content**.
+
+**Avoid double playback:** render **`{!isCasting && <Ginger.Player />}`** so the browser does not decode the same URLs as the TV. Optional **`syncLocalAudio: "pause-mute"`** mutes the local `<audio>` while connected. **Full shell:** [Cast starter](#subpath-starter-cast).
+
+### Crossfade (`@lucaismyname/ginger/crossfade`)
+
+Adds a Web Audio crossfade graph for **overlap-based** transitions between outgoing and incoming media. This is distinct from the longer-term **gapless** work: crossfade overlaps two sources on purpose, while gapless aims for seamless adjacent track boundaries on a single playback path. **Full shell:** [Crossfade starter](#subpath-starter-crossfade).
+
+For lower-level integrations, the subpath also exports **`attachCrossfadeGraph`**, **`scheduleCrossfade`**, and **`teardownCrossfadeGraph`** plus the related graph/curve types. Like EQ and spatial audio, crossfade attaches to the active Ginger media graph and should be torn down when you unmount or switch playback strategies.
+
+### Devtools (`@lucaismyname/ginger/devtools`)
+
+A debugging overlay for inspecting and controlling Ginger audio players at runtime. Supports **multiple providers** on the same page via a global registry — place a single `<GingerDevtools />` anywhere in your app and it auto-discovers every active `<Ginger.Provider>`. **Full shell:** [Devtools starter](#subpath-starter-devtools).
 
 The overlay provides **bidirectional controls**: you can play/pause, seek, change volume, adjust playback rate, toggle repeat/shuffle, and click tracks in the queue — all changes apply to the live player instantly. State changes from the player are reflected in the devtools panel in real-time.
 
@@ -266,7 +499,7 @@ The panel uses Tailwind CSS via CDN (injected on mount, removed on unmount) and 
 ### Experimental Notice
 
 `@lucaismyname/ginger/experimental-gapless` is intentionally non-production.
-It currently provides capability metadata only and does not alter playback behavior.
+It currently provides capability metadata only and does not alter playback behavior. **Full shell:** [Experimental gapless starter](#subpath-starter-experimental-gapless).
 
 ## Release Process
 
@@ -1313,11 +1546,12 @@ Additional entrypoints:
 - `@lucaismyname/ginger/spatial`
 - `@lucaismyname/ginger/transcript`
 - `@lucaismyname/ginger/remote`
+- `@lucaismyname/ginger/cast`
 - `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
 - `@lucaismyname/ginger/devtools`
 
-See [Subpath Exports](#subpath-exports) for **`spatial`**, **`transcript`**, **`remote`**, and **`devtools`** usage. `experimental-gapless` is explicitly non-production and does not alter core playback.
+See [Subpath Exports](#subpath-exports) for the import list, per-feature notes, and **[copy-paste starters](#subpath-copy-paste-starters)** for each subpath. `experimental-gapless` is explicitly non-production and does not alter core playback.
 
 ## Notes
 
@@ -1339,7 +1573,7 @@ These priorities guide new work in the library; they are not a guarantee of ship
 
 1. **Music libraries and continuous listening** — Features that make track-to-track playback feel better come first: **next-track prefetch** (`useNextTrackPrefetch`), shipped **crossfade** (`@lucaismyname/ginger/crossfade`), ongoing **gapless** capability work (`@lucaismyname/ginger/experimental-gapless`), and first-class **chapter** / **synced lyrics** UI (`Ginger.Current.Chapters`, `Ginger.Current.LyricsSynced`).
 2. **Podcasts and live-style streams** — **HLS / DASH** integration is emphasized when a concrete app needs it; the core package stays on native `<audio>` with optional adapters or documentation rather than hard dependencies. **SRT / WebVTT** transcripts are supported via `@lucaismyname/ginger/transcript`.
-3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations (Cast, proprietary cast SDKs) unless there is a dedicated use case. **Multi-tab** web apps can use `@lucaismyname/ginger/remote` (BroadcastChannel) before reaching for OS-level remote playback.
+3. **Embedded or internal players** — **Accessibility**, persistence, and **testing** helpers are favored over heavier ecosystem integrations unless there is a dedicated use case. For **Chromecast**, opt‑in to `@lucaismyname/ginger/cast`. **Multi-tab** web apps can use `@lucaismyname/ginger/remote` (BroadcastChannel) before reaching for OS-level remote playback.
 
 ## Monorepo Development
 

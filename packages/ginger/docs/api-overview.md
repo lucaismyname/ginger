@@ -19,6 +19,7 @@ The TypeDoc build uses [`typedoc.json`](../typedoc.json), which points its `read
 | `@lucaismyname/ginger/spatial` | HRTF / panning (`useGingerSpatialAudio`) |
 | `@lucaismyname/ginger/transcript` | SRT/VTT parsers + `useGingerTranscriptSync` |
 | `@lucaismyname/ginger/remote` | Multi-tab sync (`useGingerRemote`) |
+| `@lucaismyname/ginger/cast` | Chromecast Web Sender (`useGingerCast`, `loadCastFramework`, `trackToMediaInfo`) |
 | `@lucaismyname/ginger/crossfade` | Web Audio crossfade graph helpers + `useGingerCrossfade` |
 | `@lucaismyname/ginger/devtools` | `GingerDevtools` overlay for debugging and controlling players (multi-provider aware) |
 | `@lucaismyname/ginger/experimental-gapless` | Environment capability probe (single-`<audio>` playback unchanged) |

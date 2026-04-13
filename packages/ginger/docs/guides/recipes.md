@@ -54,6 +54,35 @@ Enable **`mediaSession`** on **`Ginger.Provider`** (boolean or options object). 
 
 ---
 
+## Chromecast (`@lucaismyname/ginger/cast`)
+
+Use **`useGingerCast`** after **`loadCastFramework()`** (the hook loads CAF when enabled). Call **`requestSession()`** from a button to pick a Cast device; the hook **`loadMedia`** calls for the current Ginger track and mirrors play/pause/seek on the **Default Media Receiver** (or your own `receiverApplicationId`).
+
+**HTTPS** is required in production (localhost is fine for dev). URLs must be valid for the **Cast device** — check **CORS** and **mixed content** (no HTTP audio on HTTPS pages).
+
+Gate the local element so it does not play in parallel with the TV:
+
+```tsx
+import { Ginger } from "@lucaismyname/ginger";
+import { useGingerCast } from "@lucaismyname/ginger/cast";
+
+function CastingShell() {
+  const { isCasting, requestSession, endSession, error } = useGingerCast();
+  return (
+    <>
+      {error && <p role="alert">{error}</p>}
+      <button type="button" onClick={() => void requestSession()}>Cast</button>
+      <button type="button" onClick={endSession}>Stop casting</button>
+      {!isCasting && <Ginger.Player />}
+    </>
+  );
+}
+```
+
+Optional **`syncLocalAudio: "pause-mute"`** keeps a mounted **`Ginger.Player`** muted on the local device while connected. Use **`receiverCurrentTime`** / **`receiverDuration`** from the hook when the local `<audio>` is not driving progress.
+
+---
+
 ## Keyboard shortcuts
 
 Call **`useGingerKeyboardShortcuts()`** with a **`bindings`** map and optional **`enabled`** flag. Keeps hotkeys out of control components so you can match your app’s shortcut scheme.

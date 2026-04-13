@@ -31,7 +31,7 @@ export function guessContentTypeFromUrl(fileUrl: string): string {
  * Builds a Cast `LoadRequest` for the given track using the runtime `chrome.cast.media` constructors.
  * Call only after `loadCastFramework()` and when `chrome.cast` is defined.
  */
-export function createCastLoadRequestFromTrack(
+export function trackToMediaInfo(
   chromeCast: ChromeCastNamespace,
   track: Track,
   options?: {
