@@ -175,7 +175,7 @@ export function App() {
                   href={NPM_URL}
                   aria-label="Open NPM package"
                   title="NPM"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-lg rounded-br-none rounded-tr-none border border-orange-300/70 bg-orange-50/90 text-orange-950 transition-colors hover:border-orange-500 hover:bg-orange-100/80 dark:border-orange-700/80 dark:bg-orange-950/50 dark:text-orange-200 dark:hover:border-orange-600 dark:hover:bg-orange-900/60"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-lg rounded-br-none rounded-tr-none border border-zinc-300/70 bg-zinc-50/90 text-zinc-950 transition-colors hover:border-zinc-500 hover:bg-zinc-100/80 dark:border-zinc-700/80 dark:bg-zinc-950/50 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/60"
                   rel="noreferrer"
                   target="_blank"
                 >

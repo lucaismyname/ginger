@@ -90,6 +90,7 @@ export function GingerProvider({
   onVolumeChange,
   onPlaybackRateChange,
   onSeek,
+  debugLabel,
 }: GingerProviderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [state, dispatch] = useReducer(gingerReducer, undefined, () =>
@@ -774,6 +775,83 @@ export function GingerProvider({
     }),
     [className, mergedStyle, playbackUi, providerDir],
   );
+
+  // --- Devtools auto-registration (zero-cost when devtools not loaded) ---
+  const providerIdRef = useRef<string | null>(null);
+  const devtoolsActionsRef = useRef({
+    play,
+    pause,
+    togglePlayPause,
+    next,
+    prev,
+    seek,
+    setVolume,
+    setMuted,
+    toggleMute,
+    setPlaybackRate,
+    setRepeatMode,
+    cycleRepeat,
+    toggleShuffle,
+    playTrackAt,
+    setPlaybackMode,
+  });
+  devtoolsActionsRef.current = {
+    play,
+    pause,
+    togglePlayPause,
+    next,
+    prev,
+    seek,
+    setVolume,
+    setMuted,
+    toggleMute,
+    setPlaybackRate,
+    setRepeatMode,
+    cycleRepeat,
+    toggleShuffle,
+    playTrackAt,
+    setPlaybackMode,
+  };
+
+  useEffect(() => {
+    const reg =
+      typeof window !== "undefined"
+        ? (window as unknown as Record<string, unknown>).__GINGER_DEVTOOLS__
+        : null;
+    if (!reg || typeof (reg as { register?: unknown }).register !== "function") return;
+    const id =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `ginger-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    providerIdRef.current = id;
+    (reg as { register: (id: string, p: Record<string, unknown>) => void }).register(id, {
+      label: debugLabel,
+      state: stateRef.current,
+      actions: devtoolsActionsRef.current,
+      audioSrc: audioRef.current?.src ?? null,
+    });
+    return () => {
+      (reg as { unregister: (id: string) => void }).unregister(id);
+      providerIdRef.current = null;
+    };
+  }, [debugLabel]);
+
+  useEffect(() => {
+    const reg =
+      typeof window !== "undefined"
+        ? (window as unknown as Record<string, unknown>).__GINGER_DEVTOOLS__
+        : null;
+    if (!reg || typeof (reg as { update?: unknown }).update !== "function") return;
+    const timer = setInterval(() => {
+      const pid = providerIdRef.current;
+      if (!pid) return;
+      (reg as { update: (id: string, p: Record<string, unknown>) => void }).update(pid, {
+        state: stateRef.current,
+        audioSrc: audioRef.current?.src ?? null,
+      });
+    }, 250);
+    return () => clearInterval(timer);
+  }, []);
 
   const shell = useMemo(() => {
     if (!asChild) {

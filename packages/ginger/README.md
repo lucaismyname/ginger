@@ -78,6 +78,7 @@ For docs beyond this README, use the repository links below:
 - `@lucaismyname/ginger/remote`
 - `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
+- `@lucaismyname/ginger/devtools`
 
 ### Equalizer
 
@@ -232,6 +233,35 @@ function CrossfadeSetup() {
 ```
 
 For lower-level integrations, the subpath also exports **`attachCrossfadeGraph`**, **`scheduleCrossfade`**, and **`teardownCrossfadeGraph`** plus the related graph/curve types. Like EQ and spatial audio, crossfade attaches to the active Ginger media graph and should be torn down when you unmount or switch playback strategies.
+
+### Devtools (`@lucaismyname/ginger/devtools`)
+
+A debugging overlay for inspecting and controlling Ginger audio players at runtime. Supports **multiple providers** on the same page via a global registry — place a single `<GingerDevtools />` anywhere in your app and it auto-discovers every active `<Ginger.Provider>`.
+
+```tsx
+import { GingerDevtools } from "@lucaismyname/ginger/devtools";
+
+function App() {
+  return (
+    <>
+      <Ginger.Provider debugLabel="Main Player" initialTracks={tracks}>
+        {/* ... */}
+      </Ginger.Provider>
+
+      <Ginger.Provider debugLabel="Ambient" initialTracks={ambientTracks}>
+        {/* ... */}
+      </Ginger.Provider>
+
+      {/* Single devtools instance — discovers both providers */}
+      <GingerDevtools />
+    </>
+  );
+}
+```
+
+The overlay provides **bidirectional controls**: you can play/pause, seek, change volume, adjust playback rate, toggle repeat/shuffle, and click tracks in the queue — all changes apply to the live player instantly. State changes from the player are reflected in the devtools panel in real-time.
+
+The panel uses Tailwind CSS via CDN (injected on mount, removed on unmount) and renders in a portal so it does not interfere with your app's layout or styles. Use the `debugLabel` prop on `<Ginger.Provider>` to give each player a human-readable tab name.
 
 ### Experimental Notice
 
@@ -565,6 +595,7 @@ Props:
 | `onSeek` | `(timeSeconds: number) => void` | `undefined` | Fires whenever `seek()` is invoked |
 | `dir` | `"ltr" \| "rtl" \| "auto"` | locale-derived | Explicit provider layout direction |
 | `prevRestartThresholdSeconds` | `number` | `3` | Previous restarts current track when `currentTime > threshold`; set `0` to always skip |
+| `debugLabel` | `string` | `undefined` | Human-readable label shown in devtools tabs when multiple providers exist |
 
 ### `Ginger.Player`
 
@@ -1208,6 +1239,7 @@ New callbacks available on `Ginger.Provider`:
 
 - `dir?: "ltr" | "rtl" | "auto"` — explicit layout direction; takes priority over the automatic RTL heuristic derived from locale strings
 - `prevRestartThresholdSeconds?: number` — pressing previous restarts the current track when `currentTime > threshold` (default `3`); set to `0` to always skip to the previous track
+- `debugLabel?: string` — human-readable label shown in the devtools tab when multiple providers exist
 
 ### Queue mutation actions and single-track mode
 
@@ -1257,8 +1289,9 @@ Additional entrypoints:
 - `@lucaismyname/ginger/remote`
 - `@lucaismyname/ginger/crossfade`
 - `@lucaismyname/ginger/experimental-gapless`
+- `@lucaismyname/ginger/devtools`
 
-See [Subpath Exports](#subpath-exports) for **`spatial`**, **`transcript`**, and **`remote`** usage. `experimental-gapless` is explicitly non-production and does not alter core playback.
+See [Subpath Exports](#subpath-exports) for **`spatial`**, **`transcript`**, **`remote`**, and **`devtools`** usage. `experimental-gapless` is explicitly non-production and does not alter core playback.
 
 ## Notes
 

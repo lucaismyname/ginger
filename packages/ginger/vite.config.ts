@@ -37,6 +37,7 @@ export default defineConfig({
         "transcript/index": resolve(__dirname, "src/transcript/index.ts"),
         "remote/index": resolve(__dirname, "src/remote/index.ts"),
         "crossfade/index": resolve(__dirname, "src/crossfade/index.ts"),
+        "devtools/index": resolve(__dirname, "src/devtools/index.ts"),
       },
       name: "Ginger",
       formats: ["es", "cjs"],

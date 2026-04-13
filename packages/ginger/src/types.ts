@@ -246,6 +246,8 @@ export type GingerProviderProps = {
    * instead of skipping to the prior one. Set to `0` to disable. Default: `3`.
    */
   prevRestartThresholdSeconds?: number;
+  /** Human-readable label shown in the devtools tab when multiple providers exist. */
+  debugLabel?: string;
 };
 
 export type GingerPersistenceAdapter = {

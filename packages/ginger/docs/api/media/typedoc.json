@@ -10,7 +10,8 @@
     "src/transcript/index.ts",
     "src/remote/index.ts",
     "src/experimental-gapless/index.ts",
-    "src/crossfade/index.ts"
+    "src/crossfade/index.ts",
+    "src/devtools/index.ts"
   ],
   "entryPointStrategy": "resolve",
   "out": "docs/api",
