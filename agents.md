@@ -313,672 +313,134 @@ Update documentation whenever behavior or workflow changes.
 
 ## React App Scaffolding
 
-Use this chapter when starting a new React app from scratch. Follow the setup order below — each tool builds on the previous one.
+Scaffold in this order. All tools are required unless marked optional.
 
----
-
-### 1. Vite + React + TypeScript
-
-**What it does:** Vite is the build tool, dev server, and bundler. It provides fast HMR and optimized production builds.
+### Setup
 
 ```bash
 npm create vite@latest my-app -- --template react-ts
-cd my-app
-npm install
-```
-
-**`vite.config.ts` — minimal base config with path alias:**
-
-```ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-});
-```
-
-The `@/` alias maps to `src/` — use it everywhere. Never use relative `../../` imports across feature boundaries.
-
-AI rules:
-- Always use `@/` imports, never relative cross-folder imports.
-- Do not add plugins speculatively.
-- Do not change the Vite port unless explicitly asked.
-
----
-
-### 2. TypeScript (strict)
-
-**What it does:** TypeScript adds static typing. Strict mode catches the most bugs.
-
-**`tsconfig.json` — required settings:**
-
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] },
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  }
-}
-```
-
-**Patterns AI must follow:**
-
-```ts
-// ✅ Narrow unknown types explicitly
-function parse(raw: unknown): string {
-  if (typeof raw !== "string") throw new Error("Expected string");
-  return raw.trim();
-}
-
-// ✅ Use type for shapes, interface only when merging is needed
-type User = { id: string; name: string };
-
-// ❌ Never use any
-const process = (data: any) => data.value; // avoid
-```
-
-- Never use `any`. Use `unknown` and narrow it.
-- Avoid non-null assertions (`!`). Use optional chaining or explicit guards.
-- Export types close to where they are used; avoid dumping everything into a single `types.ts`.
-
----
-
-### 3. Tailwind CSS
-
-**What it does:** Utility-first CSS framework. Styling happens in the JSX className, not in separate CSS files.
-
-```bash
 npm install -D tailwindcss @tailwindcss/vite
-```
-
-**`vite.config.ts` addition:**
-
-```ts
-import tailwindcss from "@tailwindcss/vite";
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});
-```
-
-**`src/index.css`:**
-
-```css
-@import "tailwindcss";
-```
-
-**`cn()` utility — always use for conditional classes:**
-
-```bash
 npm install clsx tailwind-merge
-```
-
-```ts
-// src/lib/utils.ts
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-```
-
-```tsx
-// ✅ Use cn() for conditional or composed class names
-<button className={cn("px-4 py-2 rounded", isActive && "bg-orange-500 text-white")}>
-  Submit
-</button>
-
-// ❌ Avoid inline style={{}} unless values are truly dynamic
-<div style={{ color: "orange" }} /> // avoid
-```
-
-AI rules:
-- Use `cn()` from `@/lib/utils` for all conditional class composition.
-- Never use inline `style={{}}` for values that could be Tailwind classes.
-- Design mobile-first — use base classes for mobile, `sm:` / `md:` / `lg:` for larger viewports.
-- Avoid arbitrary values like `w-[327px]` unless there is no Tailwind scale equivalent.
-
----
-
-### 4. ShadCN + Base-UI
-
-**What it does:** ShadCN provides accessible, composable components built on Radix/Base-UI primitives. Components are copied into your codebase, not installed as a black box — you own the code.
-
-```bash
+npm install react-router
 npx shadcn@latest init
 ```
 
-During init, `components.json` is created in the project root. This file drives all subsequent `npx shadcn add` commands.
+### Vite + TypeScript
 
-**`components.json` — key fields:**
+- Use `@/` as a path alias mapped to `src/` in both `vite.config.ts` and `tsconfig.json`.
+- `tsconfig.json` must have `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`.
+- Never use `any`. Use `unknown` and narrow it explicitly.
+- Avoid non-null assertions (`!`) — use optional chaining or guards.
 
-```json
-{
-  "style": "default",
-  "rsc": false,
-  "tsx": true,
-  "tailwind": {
-    "config": "",
-    "css": "src/index.css",
-    "baseColor": "neutral",
-    "cssVariables": true
-  },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
-  }
-}
-```
+### Tailwind
 
-**Adding a component:**
+- Import via `@tailwindcss/vite` plugin and `@import "tailwindcss"` in `src/index.css`.
+- Always compose classes with `cn()` from `@/lib/utils` (clsx + tailwind-merge).
+- Never use inline `style={{}}` for values that Tailwind covers.
+- Design mobile-first: base classes for mobile, `sm:` / `md:` / `lg:` for larger screens.
 
-```bash
-npx shadcn@latest add button
-npx shadcn@latest add dialog
-npx shadcn@latest add form
-```
+### ShadCN + Base-UI
 
-Components land in `src/components/ui/`. Never hand-edit generated files in `ui/` unless intentional.
+- `components.json` lives in the project root — never inside `src/`.
+- Add components with `npx shadcn@latest add <name>`. Generated files land in `src/components/ui/`.
+- Never recreate what ShadCN already provides.
+- Use Base-UI (`npm install @base-ui-components/react`) only for unstyled primitives ShadCN doesn't cover.
 
-**Usage pattern:**
+### React Router
 
-```tsx
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+- Define all routes in `src/app/router.tsx` using `createBrowserRouter`.
+- Use layout routes with `<Outlet />` — never nest `<Route>` components ad-hoc across the tree.
+- Use URL/search params for filters and pagination before reaching for global state.
+- Lazy-load heavy pages: `React.lazy(() => import("@/modules/..."))`.
 
-export function ConfirmDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you sure?</DialogTitle>
-        </DialogHeader>
-        <Button onClick={onClose}>Confirm</Button>
-      </DialogContent>
-    </Dialog>
-  );
-}
-```
-
-**Base-UI** — use for low-level, unstyled primitives when ShadCN doesn't cover a specific interaction (e.g., custom slider, tooltip, menu). Install only when needed:
-
-```bash
-npm install @base-ui-components/react
-```
-
-AI rules:
-- Before creating a custom UI component, check if ShadCN already has it.
-- Never recreate what ShadCN provides.
-- `components.json` must always live in the project root — not in `src/`.
-- When extending a ShadCN component, extend via props/composition, not by rewriting the generated file.
-
----
-
-### 5. React Router (library mode)
-
-**What it does:** Client-side routing. Use it in library mode (not framework mode) for Vite projects.
-
-```bash
-npm install react-router
-```
-
-**`src/app/router.tsx` — define all routes in one place:**
-
-```tsx
-import { createBrowserRouter } from "react-router";
-import { RootLayout } from "@/app/layouts/RootLayout";
-import { HomePage } from "@/modules/home/ui/HomePage";
-import { NotFoundPage } from "@/components/NotFoundPage";
-
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
-]);
-```
-
-**`src/main.tsx`:**
-
-```tsx
-import { RouterProvider } from "react-router";
-import { router } from "@/app/router";
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
-);
-```
-
-**Navigating and reading params:**
-
-```tsx
-import { useNavigate, useParams, Link } from "react-router";
-
-const { id } = useParams<{ id: string }>();
-const navigate = useNavigate();
-
-navigate("/dashboard");
-<Link to="/profile">Profile</Link>
-```
-
-AI rules:
-- All routes live in `src/app/router.tsx`. Never scatter `<Route>` components across the tree.
-- Use `<Outlet />` in layouts to render child routes.
-- Use URL state (search params) for filters and pagination before reaching for global state.
-- Lazy-load heavy route modules: `const Page = React.lazy(() => import("@/modules/..."))`
-
----
-
-### 6. TanStack Query *(add only when async data fetching is needed)*
-
-**What it does:** Manages server state — caching, background refetching, loading/error states, and mutations. Removes the need for manual `useEffect` + `useState` data-fetching patterns.
+### TanStack Query *(optional — add when async server data is needed)*
 
 ```bash
 npm install @tanstack/react-query
 ```
 
-**`src/main.tsx` — wrap the app:**
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { staleTime: 1000 * 60 }, // 1 min default
-  },
-});
-
-<QueryClientProvider client={queryClient}>
-  <RouterProvider router={router} />
-</QueryClientProvider>
-```
-
-**Query pattern — define queries close to where they're used:**
-
-```ts
-// src/modules/users/queries.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchUsers, createUser } from "@/services/usersApi";
-
-export function useUsers() {
-  return useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-  });
-}
-
-export function useCreateUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createUser,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
-  });
-}
-```
-
-```tsx
-// In a component
-const { data, isLoading, error } = useUsers();
-const { mutate: create, isPending } = useCreateUser();
-```
-
-AI rules:
+- Wrap the app in `<QueryClientProvider>` in `src/main.tsx`.
 - `queryKey` must always be a descriptive array, never a plain string.
 - Never use `useEffect` + `useState` for remote data — use `useQuery`.
-- Invalidate related queries in `onSuccess` of mutations.
-- Use `staleTime` to avoid unnecessary refetches for stable data.
-- Do not install if no async server-state is needed.
+- Use `useMutation` for writes; invalidate related queries in `onSuccess`.
 
----
-
-### 7. TanStack Virtual *(add only for long lists/large datasets)*
-
-**What it does:** Renders only the visible DOM nodes in a scrollable list, keeping performance stable for hundreds or thousands of items.
+### TanStack Virtual *(optional — add for lists with 100+ items)*
 
 ```bash
 npm install @tanstack/react-virtual
 ```
 
-**Usage pattern:**
+- Use `useVirtualizer`. The scroll container must have a fixed height and `overflow: auto`.
+- Do not add preemptively.
 
-```tsx
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-
-export function VirtualList({ items }: { items: string[] }) {
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 48, // estimated row height in px
-    overscan: 5,
-  });
-
-  return (
-    <div ref={parentRef} style={{ height: "600px", overflow: "auto" }}>
-      <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
-        {virtualizer.getVirtualItems().map((virtualItem) => (
-          <div
-            key={virtualItem.key}
-            style={{
-              position: "absolute",
-              top: virtualItem.start,
-              height: virtualItem.size,
-              width: "100%",
-            }}
-          >
-            {items[virtualItem.index]}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-```
-
-AI rules:
-- Only add when a list has more than ~100 items or causes measurable frame drops.
-- The scroll container must have a fixed height and `overflow: auto`.
-- `estimateSize` does not need to be exact — use the closest row height.
-- Do not install preemptively.
-
----
-
-### 8. TanStack Table *(add only for complex data tables)*
-
-**What it does:** Headless table logic — sorting, filtering, pagination, column visibility. You control all the markup.
+### TanStack Table *(optional — add for sortable/filterable/paginated tables)*
 
 ```bash
 npm install @tanstack/react-table
 ```
 
-**Usage pattern:**
-
-```tsx
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  type ColumnDef,
-} from "@tanstack/react-table";
-
-type User = { id: string; name: string; email: string };
-
-const columns: ColumnDef<User>[] = [
-  { accessorKey: "name", header: "Name" },
-  { accessorKey: "email", header: "Email" },
-];
-
-export function UsersTable({ data }: { data: User[] }) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
-
-  return (
-    <table>
-      <thead>
-        {table.getHeaderGroups().map((hg) => (
-          <tr key={hg.id}>
-            {hg.headers.map((header) => (
-              <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-```
-
-AI rules:
-- Only add for tables that need sorting, filtering, or pagination. Use a plain `<table>` or ShadCN `Table` for static display.
 - Define `columns` outside the component to avoid re-creation on every render.
-- Add `getFilteredRowModel()`, `getPaginationRowModel()` etc. only when those features are needed.
+- Only add row models you actually use (`getSortedRowModel`, `getPaginationRowModel`, etc.).
 
----
-
-### 9. React Helmet Async *(add only for public-facing pages that need SEO)*
-
-**What it does:** Manages the `<head>` tag dynamically per route — title, meta description, open graph tags.
+### React Helmet Async *(optional — add only for public SEO pages)*
 
 ```bash
 npm install react-helmet-async
 ```
 
-**`src/main.tsx`:**
+- Wrap the app in `<HelmetProvider>` above `<RouterProvider>`.
+- Every public page needs a `<title>` and `<meta name="description">`.
+- Skip for internal tools, dashboards, or apps not indexed by search engines.
 
-```tsx
-import { HelmetProvider } from "react-helmet-async";
+### Provider order in `src/main.tsx`
 
-<HelmetProvider>
-  <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-  </QueryClientProvider>
-</HelmetProvider>
 ```
-
-**Usage per page:**
-
-```tsx
-import { Helmet } from "react-helmet-async";
-
-export function ProductPage({ product }: { product: Product }) {
-  return (
-    <>
-      <Helmet>
-        <title>{product.name} | My Store</title>
-        <meta name="description" content={product.description} />
-        <meta property="og:title" content={product.name} />
-        <meta property="og:image" content={product.imageUrl} />
-      </Helmet>
-      {/* page content */}
-    </>
-  );
-}
-```
-
-AI rules:
-- Every public page should have a `<title>` and `<meta name="description">`.
-- Wrap at the top of the component tree, above `RouterProvider`.
-- Do not install for internal tools, dashboards, or apps not indexed by search engines.
-
----
-
-### Full Provider stack in `src/main.tsx`
-
-When all optional packages are active, the composition order is:
-
-```tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "react-router";
-import { router } from "@/app/router";
-import "@/index.css";
-
-const queryClient = new QueryClient();
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </HelmetProvider>
-  </StrictMode>
-);
+StrictMode > HelmetProvider > QueryClientProvider > RouterProvider
 ```
 
 ---
 
 ## UI Design Principles
 
-Good UI design is not decoration. It reduces cognitive load, makes actions obvious, and communicates state clearly. These principles apply to every screen regardless of tooling.
+Good UI reduces cognitive load and makes the next action obvious. Apply these to every screen.
 
----
+### Hierarchy
+- Every screen has one primary action — make it the most prominent element.
+- Use size, weight, and contrast to rank content importance, not color alone.
 
-### 1. Visual hierarchy — guide the eye
+### Spacing
+- Use the spacing scale consistently (4, 8, 12, 16, 24, 32, 48px). Tailwind's scale covers this.
+- More space between unrelated sections, less between related items.
+- White space is not wasted space — it creates clarity.
 
-Every screen has one primary action. Make it obvious.
+### Color
+- One primary action color. One neutral scale. Semantic colors for state (green = success, red = error, amber = warning).
+- Never rely on color alone to convey meaning — pair with text or icons.
+- Body text contrast must be ≥ 4.5:1.
 
-- **Size and weight** signal importance. Large headings, bold CTAs, muted secondary text.
-- Arrange content so the eye reads: title → context → action.
-- Avoid screens where everything competes for attention equally.
+### Typography
+- Max 2–3 font sizes per screen.
+- Body text: 14–16px. Minimum readable: 12px.
+- Line length: 55–80 characters for readable body copy.
 
-```
-✅ Clear hierarchy          ❌ Flat hierarchy
-────────────────────        ────────────────────
-[Big heading]               label  label  label
- Supportive sentence        [btn]  [btn]  [btn]
-       [Primary CTA]        text   text   text
-```
+### Feedback and state
+- Every async action needs a visible loading state (spinner, disabled button, skeleton).
+- Errors appear inline near the problem — not only as a toast.
+- Empty states explain why and suggest a next action.
+- Destructive actions require confirmation before executing.
 
----
+### Mobile-first
+- Base layout at 375px wide. Scale up with `sm:` / `md:` / `lg:`.
+- Tap targets minimum 44×44px.
+- No hover-only interactions — they don't exist on touch.
 
-### 2. Spacing — give things room to breathe
+### Consistency
+- All buttons, inputs, and spacing patterns look and behave the same across the app.
+- Before adding a new pattern, check if one already exists.
 
-Tight spacing feels chaotic. Generous spacing feels calm and professional.
-
-- Use a spacing scale consistently (4px, 8px, 12px, 16px, 24px, 32px, 48px...). Tailwind's scale covers this.
-- Add more space between unrelated sections, less between related items.
-- Increase padding inside cards and containers rather than making them too compact.
-- White space is an active design element — use it intentionally.
-
----
-
-### 3. Color — communicate meaning, not decoration
-
-- Limit your palette: one primary action color, one neutral scale, semantic colors for state (success, error, warning).
-- Use color to communicate state, not just to look interesting.
-- Never rely on color alone to convey meaning — pair it with text or icons.
-- Maintain enough contrast: body text ≥ 4.5:1 contrast ratio, large text ≥ 3:1.
-
-```
-Primary color   → call to action buttons, active states
-Neutral scale   → backgrounds, borders, muted text
-Green           → success, completed
-Red             → error, destructive action
-Yellow/amber    → warning, in-progress
-```
-
----
-
-### 4. Typography — readable and consistent
-
-- Use 2–3 font sizes maximum per screen.
-- Keep line length between 55–80 characters for readable body text.
-- Default body text: 14–16px. Minimum for readable UI text: 12px.
-- Use font weight to create hierarchy, not font size alone.
-- Avoid mixing too many font styles in the same UI.
-
----
-
-### 5. Feedback and state — always tell the user what's happening
-
-A good UI never leaves the user guessing.
-
-| Situation          | What to show                                  |
-| ------------------ | --------------------------------------------- |
-| Action in progress | Spinner, disabled button, loading skeleton    |
-| Success            | Confirmation message, updated UI              |
-| Error              | Inline message near the problem, not a toast  |
-| Empty state        | Explain why, suggest a next action            |
-| Destructive action | Confirmation dialog before executing          |
-
-```tsx
-// ✅ Communicate pending state
-<Button disabled={isPending}>
-  {isPending ? "Saving..." : "Save"}
-</Button>
-```
-
----
-
-### 6. Consistency — same thing looks and works the same way
-
-- All primary buttons look the same everywhere.
-- Spacing between form fields is the same across all forms.
-- Icons have a consistent size and weight.
-- Links behave like links. Buttons behave like buttons.
-
-Inconsistency is the fastest way to make a UI feel unpolished. Before adding a new pattern, check if one already exists.
-
----
-
-### 7. Mobile-first — design for the smallest screen first
-
-- Start layout decisions at ~375px wide, then scale up.
-- Tap targets must be at least 44×44px.
-- Avoid hover-only interactions — they don't exist on touch.
-- Scrolling is more natural than pagination on mobile.
-- Test font sizes, spacing, and button accessibility on a phone-sized viewport before calling it done.
-
----
-
-### 8. Reduce friction — every extra step loses users
-
-- Remove required fields that aren't actually required.
-- Pre-fill what you can infer.
-- Use sensible defaults in forms.
-- Prefer one clear action per screen over multiple competing ones.
-- If something feels complicated to explain, it's probably complicated to use — simplify the design, not the explanation.
-
----
-
-### Quick design checklist
-
-Before shipping a screen, verify:
-
-- [ ] Is there a clear primary action?
-- [ ] Does the hierarchy guide the eye naturally?
-- [ ] Is spacing consistent and generous?
-- [ ] Does color use pass contrast checks?
-- [ ] Are loading, error, and empty states handled?
-- [ ] Does it work at 375px wide?
-- [ ] Are all interactive elements at least 44×44px on mobile?
-- [ ] Does it feel consistent with the rest of the app?
+### Reduce friction
+- Remove fields that aren't required. Pre-fill what can be inferred.
+- One clear primary action per screen.
+- If something needs a lot of explanation, simplify the design.
 
 ---
